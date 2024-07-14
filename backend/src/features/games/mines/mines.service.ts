@@ -51,7 +51,6 @@ class Mines {
   startGame(clientSeed: string) {
     const floats = rng.generateFloats({
       clientSeed,
-      cursor: 0,
       count: NO_OF_TILES - 1,
     });
 
@@ -136,7 +135,6 @@ class Mines {
       ];
       eventIndex += 1;
     }
-    console.log('minePositions', minePositions);
 
     this.mines = minePositions;
   }

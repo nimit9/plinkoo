@@ -53,19 +53,10 @@ class RNG {
     return this.nextSeed;
   }
 
-  *byteGenerator({
-    clientSeed,
-
-    cursor,
-  }: {
-    clientSeed: string;
-    cursor: number;
-  }) {
+  *byteGenerator({ clientSeed }: { clientSeed: string }) {
     // Setup curser variables
-    let currentRound = Math.floor(cursor / 32);
-    let currentRoundCursor = cursor;
-    currentRoundCursor -= currentRound * 32;
-
+    let currentRound = 0;
+    let currentRoundCursor = 0;
     // Generate outputs until cursor requirement fullfilled
     while (!!this.seed) {
       // HMAC function used to output provided inputs into bytes
@@ -83,16 +74,8 @@ class RNG {
     }
   }
 
-  generateFloats({
-    clientSeed,
-    cursor,
-    count,
-  }: {
-    clientSeed: string;
-    cursor: number;
-    count: number;
-  }) {
-    const rng = this.byteGenerator({ clientSeed, cursor });
+  generateFloats({ clientSeed, count }: { clientSeed: string; count: number }) {
+    const rng = this.byteGenerator({ clientSeed });
 
     this.nonce += 1;
 

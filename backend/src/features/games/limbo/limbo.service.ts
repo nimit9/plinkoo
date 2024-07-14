@@ -6,9 +6,7 @@ export const getResult = (clientSeed: string) => {
   const floats = rng.generateFloats({
     clientSeed,
     count: 1,
-    cursor: 0,
   });
-  console.log('floats', floats);
 
   const floatPoint = (1e8 / (floats[0] * 1e8 + 1)) * HOUSE_EDGE;
 
