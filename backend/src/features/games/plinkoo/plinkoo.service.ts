@@ -1,16 +1,22 @@
+import { rng } from '../../rng/rng.service';
 import { OUTCOMES, TOTAL_DROPS, MULTIPLIERS } from './plinkoo.constants';
 
-export const calculateOutcome = () => {
+type TPattern = ('L' | 'R')[];
+
+const DIRECTIONS: TPattern = ['L', 'R'];
+
+export const calculateOutcome = (clientSeed: string) => {
   let outcome = 0;
-  const pattern = [];
-  for (let i = 0; i < TOTAL_DROPS; i++) {
-    if (Math.random() > 0.5) {
-      pattern.push('R');
+  const pattern: TPattern = [];
+  const floats = rng.generateFloats({ clientSeed, count: TOTAL_DROPS });
+
+  floats.forEach((float) => {
+    const direction = DIRECTIONS[Math.floor(float * 2)]; // 0 or 1 -> L or R
+    pattern.push(direction);
+    if (direction === 'R') {
       outcome++;
-    } else {
-      pattern.push('L');
     }
-  }
+  });
 
   const multiplier = MULTIPLIERS[outcome];
   const possiblieOutcomes = OUTCOMES[outcome];
