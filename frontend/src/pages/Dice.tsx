@@ -24,6 +24,9 @@ export function Dice() {
 
     return (
         <div className="items-center m-5 p-5">
+                        <div className="flex justify-center space-x-4">
+                <p className="text-xl font-bold">Result: {diceValue.toFixed(2)}</p>
+            </div>
             <div className="space-x-4 mt-4 mb-8">
                 <input
                     type="range"
@@ -31,8 +34,33 @@ export function Dice() {
                     max={98}
                     value={diceValue}
                     onChange={(e) => setDiceValue(Number(e.target.value))}
-                    className="accent-green-500 w-full"
+                    className="w-full"
                 />
+                <style>
+                    {`  @media screen and (-webkit-min-device-pixel-ratio:0) {
+                        input[type='range'] {
+                            overflow: hidden;
+                            width: 100%;
+                            -webkit-appearance: none;
+                            background-color: #1fff20;
+                        }
+                        
+                        input[type='range']::-webkit-slider-runnable-track {
+                            height: 25px; /* Specified height */
+                            -webkit-appearance: none;
+                            color: #13bba4;
+                            margin-top: -1px;
+                        }
+                        input[type='range']::-webkit-slider-thumb {
+                            width: 25px; /* Set a specific slider handle width */
+                            -webkit-appearance: none;
+                            height: 25px; /* Specified height */
+                            cursor: ew-resize;
+                            background: white;
+                            box-shadow: -100vw 0 0 100vw  red;
+                        }
+                    `}
+                </style>
             </div>
             <div className="flex justify-center space-x-4 mb-8">
                 <Button
@@ -41,9 +69,6 @@ export function Dice() {
                 >
                     Roll Dice
                 </Button>
-            </div>
-            <div className="flex justify-center space-x-4">
-                <p className="text-xl font-bold">Result: {diceValue.toFixed(2)}</p>
             </div>
             <div className="flex justify-center space-x-4 mt-4">
                 <input
