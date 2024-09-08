@@ -24,43 +24,25 @@ export function Dice() {
 
     return (
         <div className="items-center m-5 p-5">
-                        <div className="flex justify-center space-x-4">
-                <p className="text-xl font-bold">Result: {diceValue.toFixed(2)}</p>
-            </div>
-            <div className="space-x-4 mt-4 mb-8">
+            <div className="items-center space-x-4 p-5 mt-4 mb-8" style={{ backgroundColor: 'black', borderRadius:"10px" }}>
                 <input
                     type="range"
-                    min={2}
-                    max={98}
+                    min={1}
+                    max={100}
+                    step={0.01}
                     value={diceValue}
                     onChange={(e) => setDiceValue(Number(e.target.value))}
-                    className="w-full"
+                    className="accent-green-500 w-full"
+                    style={{
+                        appearance: 'none',
+                        height: '5px',
+                        borderRadius: '5px',
+                        background: 'linear-gradient(to right, #e90f3d, #e90f3d ' + diceValue + '%, #00e700 ' + diceValue + '%, #00e700)',
+                        outline: 'none',
+                        opacity: '0.7',
+                        transition: 'opacity 0.2s',
+                    }}
                 />
-                <style>
-                    {`  @media screen and (-webkit-min-device-pixel-ratio:0) {
-                        input[type='range'] {
-                            overflow: hidden;
-                            width: 100%;
-                            -webkit-appearance: none;
-                            background-color: #00e700;
-                        }
-                        
-                        input[type='range']::-webkit-slider-runnable-track {
-                            height: 25px; /* Specified height */
-                            -webkit-appearance: none;
-                            color: #13bba4;
-                            margin-top: -1px;
-                        }
-                        input[type='range']::-webkit-slider-thumb {
-                            width: 25px; /* Set a specific slider handle width */
-                            -webkit-appearance: none;
-                            height: 25px; /* Specified height */
-                            cursor: ew-resize;
-                            background: black;
-                            box-shadow: -100vw 0 0 100vw  #e90f3d;
-                        }
-                    `}
-                </style>
             </div>
             <div className="flex justify-center space-x-4 mb-8">
                 <Button
@@ -70,25 +52,34 @@ export function Dice() {
                     Roll Dice
                 </Button>
             </div>
+            <div className="flex justify-center space-x-4">
+                <p className="text-xl font-bold">Result: {diceValue.toFixed(2)}</p>
+            </div>
             <div className="flex justify-center space-x-4 mt-4">
+                <label htmlFor="clientSeed" className="text-lg font-bold">Client Seed:</label>
                 <input
                     type="text"
+                    id="clientSeed"
                     value={clientSeed}
                     onChange={(e) => setClientSeed(e.target.value)}
                     placeholder="Client Seed"
-                    className="accent-green-500"
+                    className="accent-green-500 p-2"
                 />
+                <label htmlFor="target" className="text-lg font-bold">Target:</label>
                 <input
                     type="text"
+                    id="target"
                     value={target}
                     onChange={(e) => setTarget(e.target.value)}
                     placeholder="Target"
-                    className="accent-green-500"
+                    className="accent-green-500 p-2"
                 />
+                <label htmlFor="condition" className="text-lg font-bold">Condition:</label>
                 <select
+                    id="condition"
                     value={condition}
                     onChange={(e) => setCondition(e.target.value)}
-                    className="accent-green-500"
+                    className="accent-green-500 p-2"
                 >
                     <option value="above">Above</option>
                     <option value="below">Below</option>
