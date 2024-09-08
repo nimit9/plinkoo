@@ -42,7 +42,7 @@ export function Dice() {
                             overflow: hidden;
                             width: 100%;
                             -webkit-appearance: none;
-                            background-color: #1fff20;
+                            background-color: #00e700;
                         }
                         
                         input[type='range']::-webkit-slider-runnable-track {
@@ -56,8 +56,8 @@ export function Dice() {
                             -webkit-appearance: none;
                             height: 25px; /* Specified height */
                             cursor: ew-resize;
-                            background: white;
-                            box-shadow: -100vw 0 0 100vw  red;
+                            background: black;
+                            box-shadow: -100vw 0 0 100vw  #e90f3d;
                         }
                     `}
                 </style>
