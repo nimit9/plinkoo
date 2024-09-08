@@ -3,16 +3,18 @@ import { Button } from '../components/ui';
 import axios from 'axios';
 import { baseURL } from '../utils';
 
-
 export function Dice() {
     const [diceValue, setDiceValue] = useState(1);
+    const [clientSeed, setClientSeed] = useState("R@nd()Ms33d");
+    const [target, setTarget] = useState("1");
+    const [condition, setCondition] = useState("above");
 
     const rollDice = async () => {
         const response = await axios.post(`${baseURL}/api/v1/games/dice/place-bet`, {
             data: JSON.stringify({
-                "clientSeed": "R@nd()Ms33d",
-                "target": "1",
-                "condition": "above"
+                "clientSeed": clientSeed,
+                "target": target,
+                "condition": condition
             }),
         });
         if (response.data.state.result) {
@@ -42,6 +44,30 @@ export function Dice() {
             </div>
             <div className="flex justify-center space-x-4">
                 <p className="text-xl font-bold">Result: {diceValue.toFixed(2)}</p>
+            </div>
+            <div className="flex justify-center space-x-4 mt-4">
+                <input
+                    type="text"
+                    value={clientSeed}
+                    onChange={(e) => setClientSeed(e.target.value)}
+                    placeholder="Client Seed"
+                    className="accent-green-500"
+                />
+                <input
+                    type="text"
+                    value={target}
+                    onChange={(e) => setTarget(e.target.value)}
+                    placeholder="Target"
+                    className="accent-green-500"
+                />
+                <select
+                    value={condition}
+                    onChange={(e) => setCondition(e.target.value)}
+                    className="accent-green-500"
+                >
+                    <option value="above">Above</option>
+                    <option value="below">Below</option>
+                </select>
             </div>
         </div>
     );
