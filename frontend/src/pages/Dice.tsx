@@ -23,11 +23,14 @@ export function Dice() {
     };
 
     return (
-        <div className="items-center m-5 p-5">
+        <div className="items-center m-5 p-5 bg-black">
             <div className="flex justify-center space-x-4">
                 <img src="/public/diceblue.png" alt="Dice" className="w-32 h-32" />
                 <h2 className="text-4xl font-bold">Dice</h2>
                 <img src="/public/diceblue-sm.png" alt="Dice-sm" className="w-32 h-32" />
+            </div>
+            <div className="flex space-x-4" style={{marginLeft:diceValue+'%'}}>
+                <p className="text-xl font-bold">{diceValue.toFixed(2)}</p>
             </div>
             <div className="items-center space-x-4 p-5 mt-4 mb-8 bg-black rounded">
                 <input
@@ -57,9 +60,6 @@ export function Dice() {
                     Roll Dice
                 </Button>
             </div>
-            <div className="flex justify-center space-x-4">
-                <p className="text-xl font-bold">Result: {diceValue.toFixed(2)}</p>
-            </div>
             <div className="flex flex-wrap -mx-3 mb-2">
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-white-700 text-xs font-bold mb-2" htmlFor="grid-city">
@@ -71,26 +71,26 @@ export function Dice() {
                         value={clientSeed}
                         onChange={(e) => setClientSeed(e.target.value)}
                         placeholder="Client Seed"
-                        className="appearance-none block w-full bg-gray-200 text-white-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none bg-black focus:border-gray-500" />
+                        className="appearance-none block w-full bg-black-200 text-white-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none bg-black focus:border-gray-500" />
                 </div>
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-white-700 text-xs font-bold mb-2" htmlFor="grid-zip">
                         Target
                     </label>
                     <input
-                        type="text"
+                        type="number"
                         id="target"
                         value={target}
                         onChange={(e) => setTarget(e.target.value)}
                         placeholder="Target"
-                        className="appearance-none block w-full bg-gray-200 text-white-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none bg-black focus:border-gray-500" />
+                        className="appearance-none block w-full bg-black-200 text-white-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none bg-black focus:border-gray-500" />
                 </div>
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                     <label className="block uppercase tracking-wide text-white-700 text-xs font-bold mb-2" htmlFor="grid-state">
                         Condition
                     </label>
                     <div className="relative">
-                        <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-white-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none bg-black focus:border-gray-500"
+                        <select className="block appearance-none w-full bg-black-200 border border-gray-200 text-white-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none bg-black focus:border-gray-500"
                             id="condition"
                             value={condition}
                             onChange={(e) => setCondition(e.target.value)}
