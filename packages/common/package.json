@@ -1,0 +1,29 @@
+{
+  "name": "@repo/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/db": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "crypto-browserify": "^3.12.0",
+    "zod": "^3.23.8"
+  },
+  "exports": {
+    "./types": "./types/index.ts",
+    "./game-utils/*": "./game-utils/*",
+    "./provably-fair-utils": "./provably-fair-utils/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.3.3"
+  }
+}

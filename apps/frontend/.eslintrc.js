@@ -1,0 +1,21 @@
+/** @type {import("eslint").Linter.Config} */
+module.exports = {
+  extends: ['@repo/eslint-config/react.js'],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: true,
+  },
+  rules: {
+    'unicorn/filename-case': [
+      'error',
+      {
+        cases: {
+          kebabCase: true,
+          pascalCase: true,
+          camelCase: true,
+        },
+        ignore: ['FeaturedGames.tsx'],
+      },
+    ],
+  },
+};

@@ -1,0 +1,160 @@
+import { z } from 'zod';
+import { RouletteBetTypes } from './types';
+import {
+  validCornerBets,
+  validSixLineBets,
+  validSplitBets,
+  validStreetBets,
+} from './constants';
+import { log } from 'console';
+
+const amountSchema = z.number().min(1, 'Bet amount must be at least 1');
+
+const straightBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.STRAIGHT),
+  selection: z.number().int().min(0).max(36),
+  amount: amountSchema,
+});
+
+const splitBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.SPLIT),
+  selection: z
+    .array(z.number().int().min(0).max(36))
+    .length(2)
+    .superRefine((val, ctx) => {
+      const sortedKey = val.sort((a, b) => a - b).join(',');
+      if (!validSplitBets.has(sortedKey)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'Invalid split bet selection. The two numbers must be adjacent.',
+        });
+      }
+    }),
+  amount: amountSchema,
+});
+
+const cornerBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.CORNER),
+  selection: z
+    .array(z.number().int().min(0).max(36))
+    .length(4)
+    .superRefine((val, ctx) => {
+      const sortedKey = val.sort((a, b) => a - b).join(',');
+      if (!validCornerBets.has(sortedKey)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'Invalid corner bet selection. The four numbers must form a square.',
+        });
+      }
+    }),
+  amount: amountSchema,
+});
+
+const streetBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.STREET),
+  selection: z
+    .array(z.number().int().min(1).max(36))
+    .length(3)
+    .superRefine((val, ctx) => {
+      const sortedKey = val.sort((a, b) => a - b).join(',');
+      if (!validStreetBets.has(sortedKey)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'Invalid street bet selection. The three numbers must form a straight line.',
+        });
+      }
+    }),
+  amount: amountSchema,
+});
+
+const sixLineBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.SIX_LINE),
+  selection: z
+    .array(z.number().int().min(1).max(36))
+    .length(6)
+    .superRefine((val, ctx) => {
+      const sortedKey = val.sort((a, b) => a - b).join(',');
+      if (!validSixLineBets.has(sortedKey)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid six-line bet selection.',
+        });
+      }
+    }),
+  amount: amountSchema,
+});
+
+const dozenBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.DOZEN),
+  selection: z.number().int().min(1).max(3),
+  amount: amountSchema,
+});
+
+const columnBetSchema = z.object({
+  betType: z.literal(RouletteBetTypes.COLUMN),
+  selection: z.number().int().min(1).max(3),
+  amount: amountSchema,
+});
+
+export type RouletteBet =
+  | z.infer<typeof straightBetSchema>
+  | z.infer<typeof splitBetSchema>
+  | z.infer<typeof cornerBetSchema>
+  | z.infer<typeof streetBetSchema>
+  | z.infer<typeof sixLineBetSchema>
+  | z.infer<typeof dozenBetSchema>
+  | z.infer<typeof columnBetSchema>
+  | z.infer<typeof equalPayoutBets>;
+
+const BetsSchema = z.object({
+  bets: z.array(z.unknown()), // Only checking for existence, not structure
+});
+
+const equalPayoutBets = z.object({
+  betType: z.enum([
+    RouletteBetTypes.BLACK,
+    RouletteBetTypes.RED,
+    RouletteBetTypes.EVEN,
+    RouletteBetTypes.ODD,
+    RouletteBetTypes.HIGH,
+    RouletteBetTypes.LOW,
+  ]),
+  amount: amountSchema,
+});
+
+const validateBets = (bets: RouletteBet[]) => {
+  return bets.filter((bet) => {
+    switch (bet.betType) {
+      case RouletteBetTypes.STRAIGHT:
+        return straightBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.SPLIT:
+        return splitBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.CORNER:
+        return cornerBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.STREET:
+        return streetBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.SIX_LINE:
+        return sixLineBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.DOZEN:
+        return dozenBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.COLUMN:
+        return columnBetSchema.safeParse(bet).success;
+      case RouletteBetTypes.BLACK:
+      case RouletteBetTypes.RED:
+      case RouletteBetTypes.EVEN:
+      case RouletteBetTypes.ODD:
+      case RouletteBetTypes.HIGH:
+      case RouletteBetTypes.LOW: {
+        return equalPayoutBets.safeParse(bet).success;
+      }
+
+      default:
+        return false;
+    }
+  });
+};
+
+export { BetsSchema, validateBets };
