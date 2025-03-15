@@ -192,10 +192,7 @@ class UserManager {
         });
         user.provablyFairState = provablyFairState;
       }
-      this.users.set(
-        userId,
-        new UserInstance(user, user.provablyFairState as ProvablyFairState),
-      );
+      this.users.set(userId, new UserInstance(user, user.provablyFairState));
     }
     const user = this.users.get(userId);
     if (!user) {

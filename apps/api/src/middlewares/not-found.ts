@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
 
