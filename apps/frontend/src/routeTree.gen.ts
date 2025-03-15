@@ -10,136 +10,123 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PublicImport } from './routes/_public'
-import { Route as ProtectedIndexImport } from './routes/_protected/index'
-import { Route as PublicLoginImport } from './routes/_public/login'
-import { Route as ProtectedCasinoImport } from './routes/_protected/casino'
-import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino.home'
-import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino.games'
-import { Route as ProtectedCasinoGamesDiceImport } from './routes/_protected/casino/games/dice'
-import { Route as ProtectedCasinoGamesGameIdImport } from './routes/_protected/casino/games/$gameId'
+import { Route as rootRoute } from './routes/__root';
+import { Route as PublicImport } from './routes/_public';
+import { Route as ProtectedImport } from './routes/_protected';
+import { Route as PublicLoginImport } from './routes/_public/login';
+import { Route as ProtectedCasinoImport } from './routes/_protected/casino';
+import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino/home';
+import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino/games';
+import { Route as ProtectedCasinoGamesGameIdImport } from './routes/_protected/casino/games/$gameId';
 
 // Create/Update Routes
 
 const PublicRoute = PublicImport.update({
   id: '/_public',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
-const ProtectedIndexRoute = ProtectedIndexImport.update({
-  path: '/',
+const ProtectedRoute = ProtectedImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PublicLoginRoute = PublicLoginImport.update({
   path: '/login',
   getParentRoute: () => PublicRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoRoute = ProtectedCasinoImport.update({
   path: '/casino',
-  getParentRoute: () => rootRoute,
-} as any)
+  getParentRoute: () => ProtectedRoute,
+} as any);
 
 const ProtectedCasinoHomeRoute = ProtectedCasinoHomeImport.update({
   path: '/home',
   getParentRoute: () => ProtectedCasinoRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoGamesRoute = ProtectedCasinoGamesImport.update({
   path: '/games',
   getParentRoute: () => ProtectedCasinoRoute,
-} as any)
-
-const ProtectedCasinoGamesDiceRoute = ProtectedCasinoGamesDiceImport.update({
-  path: '/dice',
-  getParentRoute: () => ProtectedCasinoGamesRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoGamesGameIdRoute = ProtectedCasinoGamesGameIdImport.update(
   {
     path: '/$gameId',
     getParentRoute: () => ProtectedCasinoGamesRoute,
   } as any,
-)
+);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_protected': {
+      id: '/_protected';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof ProtectedImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_public': {
-      id: '/_public'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PublicImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_public';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PublicImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_protected/casino': {
-      id: '/_protected/casino'
-      path: '/casino'
-      fullPath: '/casino'
-      preLoaderRoute: typeof ProtectedCasinoImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_protected/casino';
+      path: '/casino';
+      fullPath: '/casino';
+      preLoaderRoute: typeof ProtectedCasinoImport;
+      parentRoute: typeof ProtectedImport;
+    };
     '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginImport
-      parentRoute: typeof PublicImport
-    }
-    '/_protected/': {
-      id: '/_protected/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedIndexImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_public/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof PublicLoginImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_protected/casino/games': {
-      id: '/_protected/casino/games'
-      path: '/games'
-      fullPath: '/casino/games'
-      preLoaderRoute: typeof ProtectedCasinoGamesImport
-      parentRoute: typeof ProtectedCasinoImport
-    }
+      id: '/_protected/casino/games';
+      path: '/games';
+      fullPath: '/casino/games';
+      preLoaderRoute: typeof ProtectedCasinoGamesImport;
+      parentRoute: typeof ProtectedCasinoImport;
+    };
     '/_protected/casino/home': {
-      id: '/_protected/casino/home'
-      path: '/home'
-      fullPath: '/casino/home'
-      preLoaderRoute: typeof ProtectedCasinoHomeImport
-      parentRoute: typeof ProtectedCasinoImport
-    }
+      id: '/_protected/casino/home';
+      path: '/home';
+      fullPath: '/casino/home';
+      preLoaderRoute: typeof ProtectedCasinoHomeImport;
+      parentRoute: typeof ProtectedCasinoImport;
+    };
     '/_protected/casino/games/$gameId': {
-      id: '/_protected/casino/games/$gameId'
-      path: '/$gameId'
-      fullPath: '/casino/games/$gameId'
-      preLoaderRoute: typeof ProtectedCasinoGamesGameIdImport
-      parentRoute: typeof ProtectedCasinoGamesImport
-    }
-    '/_protected/casino/games/dice': {
-      id: '/_protected/casino/games/dice'
-      path: '/dice'
-      fullPath: '/casino/games/dice'
-      preLoaderRoute: typeof ProtectedCasinoGamesDiceImport
-      parentRoute: typeof ProtectedCasinoGamesImport
-    }
+      id: '/_protected/casino/games/$gameId';
+      path: '/$gameId';
+      fullPath: '/casino/games/$gameId';
+      preLoaderRoute: typeof ProtectedCasinoGamesGameIdImport;
+      parentRoute: typeof ProtectedCasinoGamesImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  PublicRoute: PublicRoute.addChildren({ PublicLoginRoute }),
-  ProtectedCasinoRoute: ProtectedCasinoRoute.addChildren({
-    ProtectedCasinoGamesRoute: ProtectedCasinoGamesRoute.addChildren({
-      ProtectedCasinoGamesGameIdRoute,
-      ProtectedCasinoGamesDiceRoute,
+  ProtectedRoute: ProtectedRoute.addChildren({
+    ProtectedCasinoRoute: ProtectedCasinoRoute.addChildren({
+      ProtectedCasinoGamesRoute: ProtectedCasinoGamesRoute.addChildren({
+        ProtectedCasinoGamesGameIdRoute,
+      }),
+      ProtectedCasinoHomeRoute,
     }),
-    ProtectedCasinoHomeRoute,
   }),
-  ProtectedIndexRoute,
-})
+  PublicRoute: PublicRoute.addChildren({ PublicLoginRoute }),
+});
 
 /* prettier-ignore-end */
 
@@ -149,9 +136,14 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/_public",
-        "/_protected/casino",
-        "/_protected/"
+        "/_protected",
+        "/_public"
+      ]
+    },
+    "/_protected": {
+      "filePath": "_protected.tsx",
+      "children": [
+        "/_protected/casino"
       ]
     },
     "/_public": {
@@ -161,7 +153,8 @@ export const routeTree = rootRoute.addChildren({
       ]
     },
     "/_protected/casino": {
-      "filePath": "_protected/casino.tsx",
+      "filePath": "_protected/casino.jsx",
+      "parent": "/_protected",
       "children": [
         "/_protected/casino/games",
         "/_protected/casino/home"
@@ -171,27 +164,19 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "_public/login.tsx",
       "parent": "/_public"
     },
-    "/_protected/": {
-      "filePath": "_protected/index.tsx"
-    },
     "/_protected/casino/games": {
-      "filePath": "_protected/casino.games.tsx",
+      "filePath": "_protected/casino/games.tsx",
       "parent": "/_protected/casino",
       "children": [
-        "/_protected/casino/games/$gameId",
-        "/_protected/casino/games/dice"
+        "/_protected/casino/games/$gameId"
       ]
     },
     "/_protected/casino/home": {
-      "filePath": "_protected/casino.home.tsx",
+      "filePath": "_protected/casino/home.tsx",
       "parent": "/_protected/casino"
     },
     "/_protected/casino/games/$gameId": {
       "filePath": "_protected/casino/games/$gameId.tsx",
-      "parent": "/_protected/casino/games"
-    },
-    "/_protected/casino/games/dice": {
-      "filePath": "_protected/casino/games/dice.tsx",
       "parent": "/_protected/casino/games"
     }
   }

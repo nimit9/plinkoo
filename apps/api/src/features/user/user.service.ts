@@ -1,42 +1,88 @@
-import { ProvablyFairState, User } from '@prisma/client';
-import { createHash, createHmac, randomBytes } from 'crypto';
+import { createHash, createHmac } from 'node:crypto';
+import type { ProvablyFairState, User } from '@prisma/client';
 import chunk from 'lodash/chunk';
 import db from '@repo/db';
-import { generateClientSeed, generateServerSeed } from './user.utils';
 import { BadRequestError } from '../../errors';
+import { generateClientSeed, generateServerSeed } from './user.utils';
 
 export class UserInstance {
   constructor(
     public user: User,
-    private gameState: ProvablyFairState,
+    private provablyFairState: ProvablyFairState,
   ) {}
 
   async updateBalance(amount: number) {
-    this.user.balance += amount;
+    // amount is in dollars, convert to cents for storage
+    const amountInCents = Math.round(amount * 100);
+    this.user.balance += amountInCents;
     await db.user.update({
       where: { id: this.user.id },
       data: { balance: this.user.balance },
     });
   }
 
+  async rotateSeed(clientSeed: string) {
+    const newServerSeed = generateServerSeed();
+
+    const result = await db.$transaction(async (tx) => {
+      // Mark current seed as revealed
+      await tx.provablyFairState.update({
+        where: { userId: this.user.id, revealed: false },
+        data: { revealed: true },
+      });
+
+      // Create new seeds
+      const updated = await tx.provablyFairState.create({
+        data: {
+          serverSeed: newServerSeed,
+          clientSeed,
+          revealed: false,
+          nonce: 0,
+          userId: this.user.id,
+        },
+      });
+
+      // Update instance state
+      this.provablyFairState = updated;
+
+      return {
+        clientSeed,
+        hashedServerSeed: this.getHashedServerSeed(),
+        nextHashedServerSeed: this.getHashedNextServerSeed(),
+        nonce: updated.nonce,
+      };
+    });
+
+    return result;
+  }
+
+  getBalance(): number {
+    // Convert cents to dollars for display
+    return this.user.balance / 100;
+  }
+
   private async updateNonce() {
-    this.gameState.nonce += 1;
+    this.provablyFairState.nonce += 1;
     await db.provablyFairState.update({
       where: { userId: this.user.id },
-      data: { nonce: this.gameState.nonce },
+      data: { nonce: this.provablyFairState.nonce },
     });
   }
 
   getServerSeed() {
-    return this.gameState.serverSeed;
+    return this.provablyFairState.serverSeed;
   }
 
   getClientSeed() {
-    return this.gameState.clientSeed;
+    return this.provablyFairState.clientSeed;
+  }
+
+  getNonce() {
+    return this.provablyFairState.nonce;
   }
 
   async updateClientSeed(newClientSeed: string) {
-    this.gameState.clientSeed = newClientSeed;
+    this.provablyFairState.clientSeed = newClientSeed;
     await db.provablyFairState.update({
       where: { userId: this.user.id },
       data: { clientSeed: newClientSeed },
@@ -44,7 +90,9 @@ export class UserInstance {
   }
 
   getHashedServerSeed() {
-    return createHash('sha256').update(this.gameState.serverSeed).digest('hex');
+    return createHash('sha256')
+      .update(this.provablyFairState.serverSeed)
+      .digest('hex');
   }
 
   getHashedNextServerSeed() {
@@ -53,15 +101,15 @@ export class UserInstance {
   }
 
   async updateServerSeed() {
-    this.gameState.serverSeed = this.generateNextServerSeed();
+    this.provablyFairState.serverSeed = this.generateNextServerSeed();
     await db.provablyFairState.update({
       where: { userId: this.user.id },
-      data: { serverSeed: this.gameState.serverSeed },
+      data: { serverSeed: this.provablyFairState.serverSeed },
     });
   }
 
   private generateNextServerSeed(): string {
-    const hmac = createHmac('sha256', this.gameState.serverSeed);
+    const hmac = createHmac('sha256', this.provablyFairState.serverSeed);
     hmac.update('next-seed');
     return hmac.digest('hex');
   }
@@ -69,10 +117,10 @@ export class UserInstance {
   private *byteGenerator() {
     let currentRound = 0;
     let currentRoundCursor = 0;
-    while (true) {
-      const hmac = createHmac('sha256', this.gameState.serverSeed);
+    for (;;) {
+      const hmac = createHmac('sha256', this.provablyFairState.serverSeed);
       hmac.update(
-        `${this.gameState.clientSeed}:${this.gameState.nonce}:${currentRound}`,
+        `${this.provablyFairState.clientSeed}:${this.provablyFairState.nonce}:${currentRound}`,
       );
       const buffer = hmac.digest();
 
@@ -106,8 +154,8 @@ export class UserInstance {
 }
 
 class UserManager {
-  private static instance: UserManager;
-  private users: Map<string, UserInstance> = new Map();
+  private static instance: UserManager | undefined;
+  private users = new Map<string, UserInstance>();
 
   static getInstance() {
     if (!UserManager.instance) {
@@ -120,26 +168,40 @@ class UserManager {
     if (!this.users.has(userId)) {
       const user = await db.user.findUnique({
         where: { id: userId },
-        include: { provablyFairState: true },
+        include: {
+          provablyFairState: {
+            where: {
+              revealed: false,
+            },
+          },
+        },
       });
       if (!user) {
         throw new BadRequestError('User not found');
       }
       if (!user.provablyFairState) {
-        // Create initial game state if it doesn't exist
-        const gameState = await db.provablyFairState.create({
+        // Create initial provably fair state if it doesn't exist
+        const provablyFairState = await db.provablyFairState.create({
           data: {
             userId: user.id,
             serverSeed: generateServerSeed(),
             clientSeed: generateClientSeed(),
             nonce: 0,
+            revealed: false,
           },
         });
-        user.provablyFairState = gameState;
+        user.provablyFairState = provablyFairState;
       }
-      this.users.set(userId, new UserInstance(user, user.provablyFairState));
+      this.users.set(
+        userId,
+        new UserInstance(user, user.provablyFairState as ProvablyFairState),
+      );
     }
-    return this.users.get(userId)!;
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new BadRequestError('User not found in manager');
+    }
+    return user;
   }
 
   removeUser(userId: string) {

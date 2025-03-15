@@ -1,18 +1,19 @@
+import axios, { type AxiosRequestConfig } from 'axios';
 import { BASE_API_URL } from '@/const/routes';
-import axios, { AxiosRequestConfig } from 'axios';
 
-export const fetchGet = async (
+export const fetchGet = async <R>(
   url: string,
-  config?: AxiosRequestConfig<any>,
-) => {
-  const response = await axios.get(BASE_API_URL + url, config);
+  config?: AxiosRequestConfig,
+): Promise<R> => {
+  const response = await axios.get<R>(BASE_API_URL + url, config);
   return response.data;
 };
 
-export const fetchPost = (
+export const fetchPost = async <T, R>(
   url: string,
-  data: any,
-  config?: AxiosRequestConfig<any>,
-) => {
-  return axios.post(BASE_API_URL + url, data, config);
+  data: T,
+  config?: AxiosRequestConfig,
+): Promise<R> => {
+  const response = await axios.post<R>(BASE_API_URL + url, data, config);
+  return response.data;
 };

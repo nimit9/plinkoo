@@ -5,25 +5,19 @@ import {
   calculateTargetWithMultiplier,
   calculateWinningChance,
   type DiceCondition,
+  type DiceResultState,
 } from '@repo/common/game-utils/dice/index.js';
 import { create } from 'zustand';
 
 const initalTarget = 50.5;
 const initialCondition: DiceCondition = 'above';
 
-export interface DiceResultState {
-  state: {
-    result: number;
-  };
-  payoutMultiplier: number;
-}
-
-interface DiceResult {
+export interface DiceResult {
   id: string;
   result: DiceResultState;
 }
 
-interface DiceStore {
+export interface DiceStore {
   betAmount: number;
   profitOnWin: number;
   multiplier: number;

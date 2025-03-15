@@ -3,26 +3,23 @@ import {
   BetsSchema,
   type RouletteBet,
   validateBets,
-} from '@repo/common/game-utils/roulette/index.ts';
+} from '@repo/common/game-utils/roulette/index.js';
 import { type User } from '@prisma/client';
 import { BadRequestError } from '../../../errors';
 import { calculatePayout, spinWheel } from './roulette.service';
-import { log } from 'console';
 
 export const placeBetAndSpin = async (
   request: Request,
   response: Response,
 ): Promise<void> => {
-  log(request.body);
   const validationResult = BetsSchema.safeParse(request.body);
-  console.log('validationResult', validationResult);
 
   if (!validationResult.success) {
     throw new BadRequestError('Invalid request for bets');
   }
 
   const { bets } = validationResult.data as { bets: RouletteBet[] };
-  log(bets);
+
   const validBets = validateBets(bets);
 
   if (validBets.length === 0) {

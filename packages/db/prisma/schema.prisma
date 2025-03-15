@@ -13,6 +13,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Game {
+  dice
+}
+
 model User {
   id                String             @id @default(cuid())
   googleId          String?            @unique
@@ -24,44 +28,43 @@ model User {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   provablyFairState ProvablyFairState?
-  games             Game[]
-  gameResults       GameResult[]
+  bets              Bet[]
+
+  @@map("users")
 }
 
 model ProvablyFairState {
   id         String   @id @default(cuid())
   userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
   serverSeed String
   clientSeed String
-  nonce      Int      @default(0)
+  nonce      Int
+  revealed   Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id])
+  bets       Bet[]
+
+  @@map("provably_fair_states")
 }
 
-model Game {
-  id        String      @id @default(cuid())
-  userId    String
-  type      String
-  betAmount Float
-  status    String
-  state     Json
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  user      User        @relation(fields: [userId], references: [id])
-  result    GameResult?
-}
+model Bet {
+  id                  String            @id @default(cuid())
+  userId              String
+  game                Game // The game this bet belongs to
+  type                String
+  betAmount           Float
+  payoutAmount        Float
+  active              Boolean           @default(true)
+  betNonce            Int // Unique nonce for this specific bet
+  provablyFairState   ProvablyFairState @relation(fields: [provablyFairStateId], references: [id])
+  provablyFairStateId String
+  state               Json // Game-specific state and result data
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  user                User              @relation(fields: [userId], references: [id])
 
-model GameResult {
-  id           String   @id @default(cuid())
-  gameId       String   @unique
-  userId       String
-  type         String
-  betAmount    Float
-  payoutAmount Float
-  outcome      String // e.g., "win", "loss", "tie"
-  resultData   Json // Game-specific result data
-  createdAt    DateTime @default(now())
-  game         Game     @relation(fields: [gameId], references: [id])
-  user         User     @relation(fields: [userId], references: [id])
+  @@index([provablyFairStateId])
+  @@index([game])
+  @@map("bets")
 }

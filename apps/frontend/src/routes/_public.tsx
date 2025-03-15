@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_public')({
   }),
   beforeLoad: ({ context, search }) => {
     if (context.authStore?.user) {
-      throw redirect({ to: search.redirect || '/' });
+      redirect({ to: search.redirect || '/' });
     }
   },
 });

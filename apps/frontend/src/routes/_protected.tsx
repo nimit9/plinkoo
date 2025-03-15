@@ -1,4 +1,3 @@
-import { getAuthState } from '@/features/auth/store/authStore';
 import {
   createFileRoute,
   MatchRoute,
@@ -6,9 +5,11 @@ import {
   redirect,
 } from '@tanstack/react-router';
 import { QueryClient } from '@tanstack/react-query';
+import { getAuthState } from '@/features/auth/store/authStore';
 import { getUserDetails } from '@/api/auth';
+import { Header } from '@/components/Header';
 
-export const Route = createFileRoute('/_protected/')({
+export const Route = createFileRoute('/_protected')({
   async beforeLoad({ context, location }) {
     const { user } = getAuthState();
 
@@ -22,35 +23,28 @@ export const Route = createFileRoute('/_protected/')({
           queryFn: getUserDetails,
           retry: false,
         });
-
-        if (!res.data) {
-          throw redirect({
-            to: '/',
-            search: {
-              redirect: location.href,
-            },
-          });
-        }
-
         // Assuming fetchAuthStatus sets the user and authentication state
         context.authStore?.setUser(res.data);
       } catch (error) {
         // Redirect to login if fetch fails
-        throw redirect({
+        redirect({
           to: '/',
           search: {
             redirect: location.href,
           },
+          params: {},
         });
       }
     }
   },
-  component: () => (
-    <>
-      <MatchRoute to="/">
-        <>HOmeeeee</>
-      </MatchRoute>
-      <Outlet />
-    </>
-  ),
+  component: ProtectedLayout,
 });
+
+function ProtectedLayout(): JSX.Element {
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <Outlet />
+    </div>
+  );
+}

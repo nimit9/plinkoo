@@ -1,21 +1,26 @@
-import { Input, InputProps } from '@/components/ui/input';
+import type { ReactNode } from 'react';
+import type { InputProps } from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
 
 interface InputWithIconProps extends InputProps {
   icon: ReactNode;
   wrapperClassName?: string;
 }
 
-const InputWithIcon = ({
+function InputWithIcon({
   icon,
   wrapperClassName,
   ...inputProps
-}: InputWithIconProps) => {
+}: InputWithIconProps): JSX.Element {
   return (
     <div
       className={cn(
-        'has-[:focus]:border-background bg-background flex items-center rounded pr-2',
+        'bg-brand-stronger flex items-center rounded pr-2',
+        {
+          'border-brand-weaker hover:border-brand-weakest border-2':
+            !inputProps.disabled,
+        },
         wrapperClassName,
       )}
     >
@@ -23,12 +28,12 @@ const InputWithIcon = ({
         {...inputProps}
         className={cn(
           'focus-visible:ring-0 border-0 bg-transparent',
-          inputProps?.className,
+          inputProps.className,
         )}
       />
       {icon}
     </div>
   );
-};
+}
 
 export default InputWithIcon;

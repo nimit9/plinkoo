@@ -1,21 +1,15 @@
+import {
+  type DiceResultState,
+  type PlaceBetRequest,
+} from '@repo/common/game-utils/dice/types.js';
 import { fetchPost } from '../_utils/fetch';
 
-export const placeBet = async ({
-  target,
-  condition,
-  clientSeed = 'P7xjSv-1ff',
-}: {
-  target: number;
-  condition: string;
-  clientSeed?: string;
-}) => {
-  return fetchPost(
+export const placeBet = async (
+  data: PlaceBetRequest,
+): Promise<DiceResultState> => {
+  return fetchPost<PlaceBetRequest, DiceResultState>(
     '/api/v1/games/dice/place-bet',
-    {
-      target,
-      condition,
-      clientSeed,
-    },
+    data,
     {
       withCredentials: true,
     },

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-
 import { cn } from '@/lib/utils';
 
 const Slider = React.forwardRef<
@@ -12,11 +11,11 @@ const Slider = React.forwardRef<
   return (
     props.value && (
       <SliderPrimitive.Root
-        ref={ref}
         className={cn(
           'relative flex w-full touch-none select-none items-center',
           className,
         )}
+        ref={ref}
         {...props}
       >
         <SliderPrimitive.Thumb
@@ -24,7 +23,7 @@ const Slider = React.forwardRef<
           className="focus-visible:outline-none mr-2"
         >
           <div className="relative min-w-[60px] min-h-[60px]">
-            <img src="/games/dice/result-dice.png" alt="Result Dice" />
+            <img alt="Result Dice" src="/games/dice/result-dice.png" />
             <div
               className={cn(
                 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-sm',
@@ -39,6 +38,7 @@ const Slider = React.forwardRef<
     )
   );
 });
+
 Slider.displayName = SliderPrimitive.Root.displayName;
 
 export { Slider };

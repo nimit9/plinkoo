@@ -1,7 +1,7 @@
 import {
   calculateMultiplier,
   type DiceCondition,
-} from '@repo/common/game-utils/dice/index.ts';
+} from '@repo/common/game-utils/dice/index.js';
 import { userManager } from '../../user/user.service';
 
 const getPayoutMultiplier = ({

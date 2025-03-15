@@ -5,13 +5,13 @@ import { json, urlencoded } from 'body-parser';
 import express, { type Express } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { authRouter, gameRouter } from './routes';
 import session from 'express-session';
 import passport from 'passport';
+import { StatusCodes } from 'http-status-codes';
+import { authRouter, gameRouter, userRouter } from './routes';
 import './config/passport';
 import notFoundMiddleware from './middlewares/not-found';
 import { errorHandlerMiddleware } from './middlewares/error-handler';
-import { StatusCodes } from 'http-status-codes';
 
 export const createServer = (): Express => {
   const app = express();
@@ -44,7 +44,8 @@ export const createServer = (): Express => {
       return res.status(StatusCodes.OK).json({ ok: true });
     })
     .use('/api/v1/auth', authRouter)
-    .use('/api/v1/games', gameRouter);
+    .use('/api/v1/games', gameRouter)
+    .use('/api/v1/user', userRouter);
 
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);

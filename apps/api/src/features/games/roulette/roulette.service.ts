@@ -3,7 +3,7 @@ import {
   redNumbers,
   type RouletteBet,
   RouletteBetTypes,
-} from '@repo/common/game-utils/roulette/index.ts';
+} from '@repo/common/game-utils/roulette/index.js';
 import { sum } from 'lodash';
 import { userManager } from '../../user/user.service';
 import { isNumberInRange } from '../../../utils/numbers';
