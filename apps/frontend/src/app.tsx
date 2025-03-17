@@ -1,10 +1,9 @@
 import './index.css';
-import { routeTree } from './routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { AuthState, useAuthStore } from './features/auth/store/authStore';
-import axios from 'axios';
-import { setupInterceptors } from './api/_utils/axiosInstance';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { routeTree } from './routeTree.gen';
+import type { AuthState } from './features/auth/store/authStore';
+import { useAuthStore } from './features/auth/store/authStore';
 
 const queryClient = new QueryClient();
 
@@ -22,12 +21,12 @@ declare module '@tanstack/react-router' {
   }
 }
 
-function App() {
+function App(): JSX.Element {
   const authStore = useAuthStore();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} context={{ authStore }} />
+      <RouterProvider context={{ authStore }} router={router} />
     </QueryClientProvider>
   );
 }

@@ -14,6 +14,49 @@
     -moz-appearance: textfield;
   }
 
+  @layer base {
+    /* WebKit Scrollbar (Chrome, Edge, Safari) */
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 10px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background: #7c3aed;
+      border-radius: 10px;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background: #a78bfa;
+    }
+
+    *::-webkit-scrollbar-button {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    /* Firefox Scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #2f4553 transparent;
+    }
+
+    .no-scrollbar {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE & Edge */
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

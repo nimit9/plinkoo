@@ -7,3 +7,10 @@ export interface IUser {
   picture: string | null;
   updatedAt: string;
 }
+
+export interface ProvablyFairStateResponse {
+  clientSeed: string;
+  hashedServerSeed: string;
+  hashedNextServerSeed: string;
+  nonce: number;
+}

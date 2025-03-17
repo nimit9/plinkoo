@@ -1,8 +1,8 @@
+import type { DicePlaceBetResponse } from '@repo/common/game-utils/dice/types.js';
 import { cn } from '@/lib/utils';
-import type { DiceResult } from '../store/diceStore';
 
 interface DiceResultPillsCarouselProps {
-  results: DiceResult[];
+  results: DicePlaceBetResponse[];
 }
 
 export function DiceResultPillsCarousel({
@@ -17,18 +17,18 @@ export function DiceResultPillsCarousel({
 
   return (
     <div className="flex w-full items-center justify-end gap-2 min-h-8">
-      {results.map(({ id, result }, index) => (
+      {results.map(({ id, payoutMultiplier, state }, index) => (
         <span
           className={cn(
             'text-white p-2 rounded-full transition-transform w-16 text-center text-xs font-semibold',
             getAnimationClass(index, results.length),
-            result.payoutMultiplier > 0
+            payoutMultiplier > 0
               ? 'bg-[#00e600] text-black'
               : 'bg-secondary-light',
           )}
           key={id}
         >
-          {result.state.result}
+          {state.result}
         </span>
       ))}
     </div>

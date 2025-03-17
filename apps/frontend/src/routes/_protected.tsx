@@ -1,9 +1,4 @@
-import {
-  createFileRoute,
-  MatchRoute,
-  Outlet,
-  redirect,
-} from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { QueryClient } from '@tanstack/react-query';
 import { getAuthState } from '@/features/auth/store/authStore';
 import { getUserDetails } from '@/api/auth';

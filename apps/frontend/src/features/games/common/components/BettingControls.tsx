@@ -1,7 +1,9 @@
 import { BadgeDollarSign } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
+import { fetchPost } from '@/api/_utils/fetch';
 
 interface BettingControlsProps {
   betAmount: number;
@@ -15,7 +17,7 @@ interface BettingControlsProps {
 function BetAmountInput({
   betAmount,
   onBetAmountChange,
-}: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'>) {
+}: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'>): JSX.Element {
   return (
     <div>
       <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
@@ -122,7 +124,7 @@ export function BettingControls({
   const isDisabled = betAmount > balance || betAmount <= 0 || isPending;
 
   return (
-    <div className="w-1/4 bg-secondary-light flex flex-col gap-4 p-3">
+    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
       <BetAmountInput
         betAmount={betAmount}
         onBetAmountChange={onBetAmountChange}

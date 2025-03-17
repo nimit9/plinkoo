@@ -18,24 +18,24 @@ enum Game {
 }
 
 model User {
-  id                String             @id @default(cuid())
-  googleId          String?            @unique
-  email             String             @unique
-  name              String?
-  password          String?
-  picture           String?
-  balance           Float              @default(10000)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  provablyFairState ProvablyFairState?
-  bets              Bet[]
+  id                 String              @id @default(cuid())
+  googleId           String?             @unique
+  email              String              @unique
+  name               String?
+  password           String?
+  picture            String?
+  balance            Float               @default(10000)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  provablyFairStates ProvablyFairState[]
+  bets               Bet[]
 
   @@map("users")
 }
 
 model ProvablyFairState {
   id         String   @id @default(cuid())
-  userId     String   @unique
+  userId     String
   user       User     @relation(fields: [userId], references: [id])
   serverSeed String
   clientSeed String

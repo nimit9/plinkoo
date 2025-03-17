@@ -4,18 +4,16 @@ import {
   calculateTargetFromChance,
   calculateTargetWithMultiplier,
   calculateWinningChance,
-  type DiceCondition,
-  type DiceResultState,
+} from '@repo/common/game-utils/dice/index.js';
+import type {
+  DicePlaceBetResponseState,
+  DiceCondition,
+  DicePlaceBetResponse,
 } from '@repo/common/game-utils/dice/index.js';
 import { create } from 'zustand';
 
 const initalTarget = 50.5;
 const initialCondition: DiceCondition = 'above';
-
-export interface DiceResult {
-  id: string;
-  result: DiceResultState;
-}
 
 export interface DiceStore {
   betAmount: number;
@@ -24,13 +22,13 @@ export interface DiceStore {
   target: number;
   winChance: number;
   condition: DiceCondition;
-  results: DiceResult[];
+  results: DicePlaceBetResponse[];
   setTarget: (target: number) => void;
   toggleCondition: () => void;
   setMultiplier: (multiplier: number) => void;
   setWinningChance: (winChance: number) => void;
   setBetAmount: (betAmount: number) => void;
-  setResult: (result: DiceResultState) => void;
+  setResult: (result: DicePlaceBetResponse) => void;
 }
 
 const useDiceStore = create<DiceStore>((set) => ({
@@ -115,12 +113,9 @@ const useDiceStore = create<DiceStore>((set) => ({
     });
   },
 
-  setResult: (result: DiceResultState) => {
+  setResult: (result: DicePlaceBetResponse) => {
     set((state) => {
-      const newResults = [
-        ...state.results,
-        { id: Date.now().toString(), result },
-      ];
+      const newResults = [...state.results, result];
       if (newResults.length > 6) {
         newResults.shift();
       }

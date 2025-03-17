@@ -1,33 +1,35 @@
-import { createHash, createHmac } from 'node:crypto';
-import type { ProvablyFairState, User } from '@prisma/client';
-import chunk from 'lodash/chunk';
+import type { Prisma, ProvablyFairState, User } from '@prisma/client';
 import db from '@repo/db';
+import type { ProvablyFairStateResponse } from '@repo/common/types';
+import {
+  getGeneratedFloats,
+  getHashedSeed,
+  getHmacSeed,
+} from '@repo/common/game-utils/provably-fair/utils.js';
 import { BadRequestError } from '../../errors';
 import { generateClientSeed, generateServerSeed } from './user.utils';
 
 export class UserInstance {
   constructor(
-    public user: User,
+    private user: User,
     private provablyFairState: ProvablyFairState,
   ) {}
 
-  async updateBalance(amount: number) {
-    // amount is in dollars, convert to cents for storage
-    const amountInCents = Math.round(amount * 100);
-    this.user.balance += amountInCents;
-    await db.user.update({
-      where: { id: this.user.id },
-      data: { balance: this.user.balance },
-    });
+  setBalance(amount: number) {
+    this.user.balance = amount;
   }
 
-  async rotateSeed(clientSeed: string) {
-    const newServerSeed = generateServerSeed();
+  getUser() {
+    return this.user;
+  }
+
+  async rotateSeed(clientSeed: string): Promise<ProvablyFairStateResponse> {
+    const newServerSeed = this.generateNextServerSeed();
 
     const result = await db.$transaction(async (tx) => {
       // Mark current seed as revealed
       await tx.provablyFairState.update({
-        where: { userId: this.user.id, revealed: false },
+        where: { id: this.provablyFairState.id },
         data: { revealed: true },
       });
 
@@ -48,7 +50,7 @@ export class UserInstance {
       return {
         clientSeed,
         hashedServerSeed: this.getHashedServerSeed(),
-        nextHashedServerSeed: this.getHashedNextServerSeed(),
+        hashedNextServerSeed: this.getHashedNextServerSeed(),
         nonce: updated.nonce,
       };
     });
@@ -57,16 +59,19 @@ export class UserInstance {
   }
 
   getBalance(): number {
-    // Convert cents to dollars for display
-    return this.user.balance / 100;
+    return this.user.balance;
   }
 
-  private async updateNonce() {
-    this.provablyFairState.nonce += 1;
-    await db.provablyFairState.update({
-      where: { userId: this.user.id },
+  async updateNonce(tx: Prisma.TransactionClient) {
+    await tx.provablyFairState.update({
+      where: { id: this.provablyFairState.id },
       data: { nonce: this.provablyFairState.nonce },
     });
+    this.provablyFairState.nonce += 1;
+  }
+
+  getProvablyFairStateId() {
+    return this.provablyFairState.id;
   }
 
   getServerSeed() {
@@ -84,72 +89,38 @@ export class UserInstance {
   async updateClientSeed(newClientSeed: string) {
     this.provablyFairState.clientSeed = newClientSeed;
     await db.provablyFairState.update({
-      where: { userId: this.user.id },
+      where: { id: this.provablyFairState.id },
       data: { clientSeed: newClientSeed },
     });
   }
 
   getHashedServerSeed() {
-    return createHash('sha256')
-      .update(this.provablyFairState.serverSeed)
-      .digest('hex');
+    return getHashedSeed(this.provablyFairState.serverSeed);
   }
 
   getHashedNextServerSeed() {
     const nextServerSeed = this.generateNextServerSeed();
-    return createHash('sha256').update(nextServerSeed).digest('hex');
+    return getHashedSeed(nextServerSeed);
   }
 
   async updateServerSeed() {
     this.provablyFairState.serverSeed = this.generateNextServerSeed();
     await db.provablyFairState.update({
-      where: { userId: this.user.id },
+      where: { id: this.provablyFairState.id },
       data: { serverSeed: this.provablyFairState.serverSeed },
     });
   }
 
   private generateNextServerSeed(): string {
-    const hmac = createHmac('sha256', this.provablyFairState.serverSeed);
-    hmac.update('next-seed');
-    return hmac.digest('hex');
+    return getHmacSeed(this.provablyFairState.serverSeed, 'next-seed');
   }
 
-  private *byteGenerator() {
-    let currentRound = 0;
-    let currentRoundCursor = 0;
-    for (;;) {
-      const hmac = createHmac('sha256', this.provablyFairState.serverSeed);
-      hmac.update(
-        `${this.provablyFairState.clientSeed}:${this.provablyFairState.nonce}:${currentRound}`,
-      );
-      const buffer = hmac.digest();
-
-      while (currentRoundCursor < 32) {
-        yield Number(buffer[currentRoundCursor]);
-        currentRoundCursor += 1;
-      }
-      currentRoundCursor = 0;
-      currentRound += 1;
-    }
-  }
-
-  async generateFloats(count: number): Promise<number[]> {
-    const rng = this.byteGenerator();
-    await this.updateNonce();
-
-    const bytes: number[] = [];
-
-    while (bytes.length < count * 4) {
-      bytes.push(rng.next().value as number);
-    }
-
-    return chunk(bytes, 4).map((bytesChunk) =>
-      bytesChunk.reduce((result, value, i) => {
-        const divider = 256 ** (i + 1);
-        const partialResult = value / divider;
-        return result + partialResult;
-      }, 0),
-    );
+  generateFloats(count: number): number[] {
+    return getGeneratedFloats({
+      count,
+      seed: this.provablyFairState.serverSeed,
+      message: `${this.provablyFairState.clientSeed}:${this.provablyFairState.nonce}`,
+    });
   }
 }
 
@@ -169,17 +140,21 @@ class UserManager {
       const user = await db.user.findUnique({
         where: { id: userId },
         include: {
-          provablyFairState: {
+          provablyFairStates: {
             where: {
               revealed: false,
             },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            take: 1,
           },
         },
       });
       if (!user) {
         throw new BadRequestError('User not found');
       }
-      if (!user.provablyFairState) {
+      if (!user.provablyFairStates[0]) {
         // Create initial provably fair state if it doesn't exist
         const provablyFairState = await db.provablyFairState.create({
           data: {
@@ -190,9 +165,12 @@ class UserManager {
             revealed: false,
           },
         });
-        user.provablyFairState = provablyFairState;
+        user.provablyFairStates = [provablyFairState];
       }
-      this.users.set(userId, new UserInstance(user, user.provablyFairState));
+      this.users.set(
+        userId,
+        new UserInstance(user, user.provablyFairStates[0]),
+      );
     }
     const user = this.users.get(userId);
     if (!user) {

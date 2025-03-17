@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import bet from '@/assets/audio/bet.mp3';
 import rolling from '@/assets/audio/rolling.mp3';
-import tick from '@/assets/audio/tick.mp3';
 import { useAudio } from '@/common/hooks/useAudio';
 
 export function useDiceAudio(isPending: boolean): {

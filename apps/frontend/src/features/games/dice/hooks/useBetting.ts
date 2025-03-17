@@ -1,28 +1,32 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import type {
-  DiceResultState,
-  PlaceBetRequest,
+  DicePlaceBetRequestBody,
+  DicePlaceBetResponse,
 } from '@repo/common/game-utils/dice/types.js';
+import type { ApiResponse } from '@repo/common/types';
 import { placeBet } from '@/api/games/dice';
 import { useAudio } from '@/common/hooks/useAudio';
 import win from '@/assets/audio/win.mp3';
 
 interface UseDiceBettingProps {
   betAmount: number;
-  updateBalance: (amount: number) => void;
-  setResult: (result: DiceResultState) => void;
+  setBalance: (amount: number) => void;
+  setResult: (result: DicePlaceBetResponse) => void;
   setLastResultId: (id: string) => void;
 }
 
 interface UseDiceBettingResult {
-  mutate: UseMutateFunction<DiceResultState, Error, PlaceBetRequest>;
+  mutate: UseMutateFunction<
+    ApiResponse<DicePlaceBetResponse>,
+    Error,
+    DicePlaceBetRequestBody
+  >;
   isPending: boolean;
 }
 
 export function useDiceBetting({
-  betAmount,
-  updateBalance,
+  setBalance,
   setResult,
   setLastResultId,
 }: UseDiceBettingProps): UseDiceBettingResult {
@@ -30,15 +34,11 @@ export function useDiceBetting({
 
   const { mutate, isPending } = useMutation({
     mutationFn: placeBet,
-    onSuccess: (result) => {
-      setResult(result);
+    onSuccess: (response: ApiResponse<DicePlaceBetResponse>) => {
       setLastResultId(Date.now().toString());
-      const balanceChange =
-        result.payoutMultiplier > 0
-          ? betAmount * result.payoutMultiplier - betAmount
-          : -betAmount;
-      updateBalance(balanceChange);
-      if (result.payoutMultiplier > 0) {
+      setResult(response.data);
+      setBalance(response.data.balance);
+      if (response.data.payoutMultiplier > 0) {
         void playWinSound();
       }
     },

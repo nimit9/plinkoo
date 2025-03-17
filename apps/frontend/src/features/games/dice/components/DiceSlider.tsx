@@ -21,22 +21,22 @@ function DiceSlider({
           </div>
         ))}
       </div>
-      <div className="border-input-disabled border-[12px] p-2 rounded-full relative">
+      <div className="border-input-disabled border-[10px] p-2 rounded-full relative">
         <Slider
           condition={condition}
           onValueChange={handleValueChange}
           step={1}
           value={[target]}
         />
-        {showResultSlider && results.at(-1)?.result.state.result ? (
+        {showResultSlider && results.at(-1)?.state.result ? (
           <div className="absolute w-full -top-6 transition-transform animate-slideInLeft">
             {(() => {
               const lastResult = results.at(-1);
               if (!lastResult) return null;
               return (
                 <ResultSlider
-                  success={lastResult.result.payoutMultiplier > 0}
-                  value={[lastResult.result.state.result]}
+                  success={lastResult.payoutMultiplier > 0}
+                  value={[lastResult.state.result]}
                 />
               );
             })()}

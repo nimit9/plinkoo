@@ -1,6 +1,6 @@
-const Dice = () => {
+function Dice() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45.55 51.32">
+    <svg viewBox="0 0 45.55 51.32" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <style>
           {`
@@ -27,6 +27,6 @@ const Dice = () => {
       </g>
     </svg>
   );
-};
+}
 
 export default Dice;

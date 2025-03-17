@@ -26,6 +26,7 @@ function RootLayout(): JSX.Element {
       void navigate({ to: '/login' });
     },
   });
+
   return (
     <>
       <Outlet />

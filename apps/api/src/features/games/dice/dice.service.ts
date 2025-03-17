@@ -2,7 +2,7 @@ import {
   calculateMultiplier,
   type DiceCondition,
 } from '@repo/common/game-utils/dice/index.js';
-import { userManager } from '../../user/user.service';
+import type { UserInstance } from '../../user/user.service';
 
 const getPayoutMultiplier = ({
   condition,
@@ -24,17 +24,16 @@ const getPayoutMultiplier = ({
   }
 };
 
-export const getResult = async ({
+export const getResult = ({
   target,
   condition,
-  userId,
+  userInstance,
 }: {
   target: number;
   condition: DiceCondition;
-  userId: string;
+  userInstance: UserInstance;
 }) => {
-  const user = await userManager.getUser(userId);
-  const [float] = await user.generateFloats(1);
+  const [float] = userInstance.generateFloats(1);
   const result = (float * 10001) / 100; // 0.00 to 100.00
 
   const payoutMultiplier = getPayoutMultiplier({

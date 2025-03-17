@@ -1,3 +1,15 @@
+const plugin = require('tailwindcss/plugin');
+
+const iconTokens = {
+  'neutral-weak': '#557086',
+  'neutral-weaker': '#2f4553',
+  'neutral-weak': '#b1b4d3',
+  'neutral-default': '#fff',
+  'neutral-strong': '#1a2c38',
+  'neutral-stronger': '#0f212e',
+  'neutral-strongest': '#071824',
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['selector', 'class'],
@@ -67,10 +79,16 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
       },
+      borderWidth: {
+        3: '3px',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      gridTemplateColumns: {
+        14: 'repeat(14, minmax(0, 1fr))',
       },
       keyframes: {
         'accordion-down': {
@@ -109,35 +127,68 @@ module.exports = {
       },
     },
     backgroundColor: ({ theme }) => ({
+      ...theme('colors'),
+      'neutral-weak': '#557086',
+      'neutral-weaker': '#2f4553',
+      'neutral-weak': '#b1b4d3',
+      'neutral-default': '#fff',
+      'neutral-strong': '#1a2c38',
+      'neutral-stronger': '#0f212e',
+      'neutral-strongest': '#1a2c38',
       'brand-weakest': '#557086',
       'brand-weaker': '#2f4553',
       'brand-weak': '#213743',
       'brand-default': '#1a2c38',
       'brand-strong': '#1a2c38',
       'brand-stronger': '#0f212e',
-      'brand-strongest': '#1a2c38',
-      ...theme('colors'),
+      'brand-strongest': '#071824',
     }),
     textColor: ({ theme }) => ({
+      'neutral-weak': '#557086',
+      'neutral-weaker': '#2f4553',
+      'neutral-weak': '#b1b4d3',
+      'neutral-default': '#fff',
+      'neutral-strong': '#1a2c38',
+      'neutral-stronger': '#0f212e',
+      'neutral-strongest': '#1a2c38',
       'brand-weakest': '#1a2c38',
       'brand-weaker': '#1a2c38',
       'brand-weak': '#1a2c38',
       'brand-default': '#1a2c38',
       'brand-strong': '#1a2c38',
       'brand-stronger': '#1a2c38',
-      'brand-strongest': '#1a2c38',
+      'brand-strongest': '#071824',
       ...theme('colors'),
     }),
     borderColor: ({ theme }) => ({
+      'neutral-weak': '#557086',
+      'neutral-weaker': '#2f4553',
+      'neutral-weak': '#b1b4d3',
+      'neutral-default': '#fff',
+      'neutral-strong': '#1a2c38',
+      'neutral-stronger': '#0f212e',
+      'neutral-strongest': '#1a2c38',
       'brand-weakest': '#557086',
       'brand-weaker': '#2f4553',
       'brand-weak': '#213743',
       'brand-default': '#1a2c38',
       'brand-strong': '#1a2c38',
       'brand-stronger': '#0f212e',
-      'brand-strongest': '#1a2c38',
+      'brand-strongest': '#071824',
       ...theme('colors'),
     }),
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    plugin(({ matchUtilities }) => {
+      matchUtilities(
+        {
+          icon: (value) => ({ color: value }),
+        },
+        {
+          values: { ...iconTokens },
+        },
+      );
+    }),
+  ],
 };

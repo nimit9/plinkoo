@@ -11,6 +11,7 @@ export function Balance(): JSX.Element {
     queryKey: ['balance'],
     queryFn: async () => {
       const { balance: balanceResponse } = await getBalance();
+
       setBalance(balanceResponse);
       return balanceResponse;
     },
@@ -23,7 +24,7 @@ export function Balance(): JSX.Element {
       disabled
       icon={<BadgeDollarSign className="text-gray-500" />}
       value={balance.toFixed(2)}
-      wrapperClassName="shadow-md w-40"
+      wrapperClassName="shadow-md w-60"
     />
   );
 }

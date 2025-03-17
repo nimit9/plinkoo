@@ -27,7 +27,7 @@ function InputWithIcon({
       <Input
         {...inputProps}
         className={cn(
-          'focus-visible:ring-0 border-0 bg-transparent',
+          'focus-visible:ring-0 border-0 bg-transparent pl-2',
           inputProps.className,
         )}
       />

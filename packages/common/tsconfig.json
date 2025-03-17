@@ -5,6 +5,6 @@
     "rootDir": ".",
     "baseUrl": "."
   },
-  "include": ["."],
+  "include": [".", "../../apps/frontend/src/lib/crypto-browserify.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
