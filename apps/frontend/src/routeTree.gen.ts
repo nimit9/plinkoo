@@ -16,6 +16,7 @@ import { Route as ProtectedImport } from './routes/_protected'
 import { Route as PublicProvablyFairImport } from './routes/_public/provably-fair'
 import { Route as PublicLoginImport } from './routes/_public/login'
 import { Route as ProtectedCasinoImport } from './routes/_protected/casino'
+import { Route as PublicProvablyFairUnhashServerSeedImport } from './routes/_public/provably-fair/unhash-server-seed'
 import { Route as PublicProvablyFairCalculationImport } from './routes/_public/provably-fair/calculation'
 import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino/home'
 import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino/games'
@@ -50,6 +51,13 @@ const ProtectedCasinoRoute = ProtectedCasinoImport.update({
   path: '/casino',
   getParentRoute: () => ProtectedRoute,
 } as any)
+
+const PublicProvablyFairUnhashServerSeedRoute =
+  PublicProvablyFairUnhashServerSeedImport.update({
+    id: '/unhash-server-seed',
+    path: '/unhash-server-seed',
+    getParentRoute: () => PublicProvablyFairRoute,
+  } as any)
 
 const PublicProvablyFairCalculationRoute =
   PublicProvablyFairCalculationImport.update({
@@ -138,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicProvablyFairCalculationImport
       parentRoute: typeof PublicProvablyFairImport
     }
+    '/_public/provably-fair/unhash-server-seed': {
+      id: '/_public/provably-fair/unhash-server-seed'
+      path: '/unhash-server-seed'
+      fullPath: '/provably-fair/unhash-server-seed'
+      preLoaderRoute: typeof PublicProvablyFairUnhashServerSeedImport
+      parentRoute: typeof PublicProvablyFairImport
+    }
     '/_protected/casino/games/$gameId': {
       id: '/_protected/casino/games/$gameId'
       path: '/$gameId'
@@ -189,10 +204,13 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 
 interface PublicProvablyFairRouteChildren {
   PublicProvablyFairCalculationRoute: typeof PublicProvablyFairCalculationRoute
+  PublicProvablyFairUnhashServerSeedRoute: typeof PublicProvablyFairUnhashServerSeedRoute
 }
 
 const PublicProvablyFairRouteChildren: PublicProvablyFairRouteChildren = {
   PublicProvablyFairCalculationRoute: PublicProvablyFairCalculationRoute,
+  PublicProvablyFairUnhashServerSeedRoute:
+    PublicProvablyFairUnhashServerSeedRoute,
 }
 
 const PublicProvablyFairRouteWithChildren =
@@ -219,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
   '/casino/home': typeof ProtectedCasinoHomeRoute
   '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
+  '/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute
   '/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute
 }
 
@@ -230,6 +249,7 @@ export interface FileRoutesByTo {
   '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
   '/casino/home': typeof ProtectedCasinoHomeRoute
   '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
+  '/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute
   '/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute
 }
 
@@ -243,6 +263,7 @@ export interface FileRoutesById {
   '/_protected/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
   '/_protected/casino/home': typeof ProtectedCasinoHomeRoute
   '/_public/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
+  '/_public/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute
   '/_protected/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute
 }
 
@@ -256,6 +277,7 @@ export interface FileRouteTypes {
     | '/casino/games'
     | '/casino/home'
     | '/provably-fair/calculation'
+    | '/provably-fair/unhash-server-seed'
     | '/casino/games/$gameId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -266,6 +288,7 @@ export interface FileRouteTypes {
     | '/casino/games'
     | '/casino/home'
     | '/provably-fair/calculation'
+    | '/provably-fair/unhash-server-seed'
     | '/casino/games/$gameId'
   id:
     | '__root__'
@@ -277,6 +300,7 @@ export interface FileRouteTypes {
     | '/_protected/casino/games'
     | '/_protected/casino/home'
     | '/_public/provably-fair/calculation'
+    | '/_public/provably-fair/unhash-server-seed'
     | '/_protected/casino/games/$gameId'
   fileRoutesById: FileRoutesById
 }
@@ -334,7 +358,8 @@ export const routeTree = rootRoute
       "filePath": "_public/provably-fair.tsx",
       "parent": "/_public",
       "children": [
-        "/_public/provably-fair/calculation"
+        "/_public/provably-fair/calculation",
+        "/_public/provably-fair/unhash-server-seed"
       ]
     },
     "/_protected/casino/games": {
@@ -350,6 +375,10 @@ export const routeTree = rootRoute
     },
     "/_public/provably-fair/calculation": {
       "filePath": "_public/provably-fair/calculation.tsx",
+      "parent": "/_public/provably-fair"
+    },
+    "/_public/provably-fair/unhash-server-seed": {
+      "filePath": "_public/provably-fair/unhash-server-seed.tsx",
       "parent": "/_public/provably-fair"
     },
     "/_protected/casino/games/$gameId": {

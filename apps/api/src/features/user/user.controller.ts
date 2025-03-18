@@ -1,8 +1,8 @@
-import { StatusCodes } from 'http-status-codes';
 import type { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import type { User } from '@prisma/client';
-import type { ProvablyFairStateResponse } from '@repo/common/types';
 import { ApiResponse } from '@repo/common/types';
+import type { ProvablyFairStateResponse } from '@repo/common/types';
 import { BadRequestError } from '../../errors';
 import { userManager } from './user.service';
 
@@ -38,4 +38,23 @@ export const getProvablyFairState = async (
       nonce: userInstance.getNonce(),
     }),
   );
+};
+
+export const getRevealedServerSeed = async (
+  req: Request,
+  res: Response<ApiResponse<{ serverSeed: string | null }>>,
+) => {
+  const { hashedServerSeed } = req.params;
+
+  if (!hashedServerSeed) {
+    throw new BadRequestError('Hashed server seed is required');
+  }
+
+  const userInstance = await userManager.getUser((req.user as User).id);
+  const serverSeed =
+    await userInstance.getRevealedServerSeedByHash(hashedServerSeed);
+
+  return res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, { serverSeed }));
 };

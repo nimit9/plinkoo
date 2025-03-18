@@ -25,6 +25,7 @@ export class UserInstance {
 
   async rotateSeed(clientSeed: string): Promise<ProvablyFairStateResponse> {
     const newServerSeed = this.generateNextServerSeed();
+    const hashedServerSeed = getHashedSeed(newServerSeed);
 
     const result = await db.$transaction(async (tx) => {
       // Mark current seed as revealed
@@ -37,6 +38,7 @@ export class UserInstance {
       const updated = await tx.provablyFairState.create({
         data: {
           serverSeed: newServerSeed,
+          hashedServerSeed,
           clientSeed,
           revealed: false,
           nonce: 0,
@@ -86,14 +88,6 @@ export class UserInstance {
     return this.provablyFairState.nonce;
   }
 
-  async updateClientSeed(newClientSeed: string) {
-    this.provablyFairState.clientSeed = newClientSeed;
-    await db.provablyFairState.update({
-      where: { id: this.provablyFairState.id },
-      data: { clientSeed: newClientSeed },
-    });
-  }
-
   getHashedServerSeed() {
     return getHashedSeed(this.provablyFairState.serverSeed);
   }
@@ -101,14 +95,6 @@ export class UserInstance {
   getHashedNextServerSeed() {
     const nextServerSeed = this.generateNextServerSeed();
     return getHashedSeed(nextServerSeed);
-  }
-
-  async updateServerSeed() {
-    this.provablyFairState.serverSeed = this.generateNextServerSeed();
-    await db.provablyFairState.update({
-      where: { id: this.provablyFairState.id },
-      data: { serverSeed: this.provablyFairState.serverSeed },
-    });
   }
 
   private generateNextServerSeed(): string {
@@ -121,6 +107,25 @@ export class UserInstance {
       seed: this.provablyFairState.serverSeed,
       message: `${this.provablyFairState.clientSeed}:${this.provablyFairState.nonce}`,
     });
+  }
+
+  // Function to get a revealed server seed by its hash
+  async getRevealedServerSeedByHash(
+    hashedServerSeed: string,
+  ): Promise<string | null> {
+    const revealedState = await db.provablyFairState.findFirst({
+      where: {
+        hashedServerSeed,
+        revealed: true,
+        userId: this.user.id,
+      },
+    });
+
+    if (!revealedState) {
+      return null;
+    }
+
+    return revealedState.serverSeed;
   }
 }
 

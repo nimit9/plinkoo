@@ -4,6 +4,7 @@ import {
   getBalance,
   rotateSeed,
   getProvablyFairState,
+  getRevealedServerSeed,
 } from './user.controller';
 
 const router: Router = Router();
@@ -11,5 +12,10 @@ const router: Router = Router();
 router.get('/balance', isAuthenticated, getBalance);
 router.post('/rotate-seeds', isAuthenticated, rotateSeed);
 router.get('/provably-fair-state', isAuthenticated, getProvablyFairState);
+router.get(
+  '/unhash-server-seed/:hashedServerSeed',
+  isAuthenticated,
+  getRevealedServerSeed,
+);
 
 export default router;

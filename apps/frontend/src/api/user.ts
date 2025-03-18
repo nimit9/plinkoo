@@ -21,3 +21,10 @@ export const fetchRotateSeedPair = async (
       withCredentials: true,
     },
   );
+
+export const fetchRevealedServerSeed = async (
+  hashedServerSeed: string,
+): Promise<ApiResponse<{ serverSeed: string | null }>> =>
+  fetchGet(`/api/v1/user/unhash-server-seed/${hashedServerSeed}`, {
+    withCredentials: true,
+  });

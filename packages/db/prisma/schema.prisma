@@ -34,16 +34,18 @@ model User {
 }
 
 model ProvablyFairState {
-  id         String   @id @default(cuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  serverSeed String
-  clientSeed String
-  nonce      Int
-  revealed   Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  bets       Bet[]
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  serverSeed       String
+  clientSeed       String
+  hashedServerSeed String   @default("")
+  nonce            Int
+  revealed         Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+  bets      Bet[]
 
   @@map("provably_fair_states")
 }
