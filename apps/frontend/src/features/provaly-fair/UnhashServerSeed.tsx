@@ -59,7 +59,7 @@ function UnhashServerSeed(): JSX.Element {
           </div>
 
           <Button
-            className="text-xs rounded-none h-8 hover:bg-opacity-80 bg-[#00e600] hover:bg-[#1fff20] shadow-none"
+            className="text-xs rounded-none h-8 hover:bg-opacity-80 bg-[#00e600] hover:bg-[#1fff20] shadow-none px-6 font-medium"
             disabled={isRevealing}
             onClick={() => {
               revealServerSeed();
