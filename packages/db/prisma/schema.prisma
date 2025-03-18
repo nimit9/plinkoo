@@ -47,6 +47,7 @@ model ProvablyFairState {
   updatedAt DateTime @updatedAt
   bets      Bet[]
 
+  @@index([userId, revealed, hashedServerSeed])
   @@map("provably_fair_states")
 }
 
