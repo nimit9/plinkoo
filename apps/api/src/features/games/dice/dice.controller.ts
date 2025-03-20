@@ -36,9 +36,8 @@ export const placeBet = async (
 
   const result = getResult({ userInstance, target, condition });
 
-  // Calculate payout
-  const payout =
-    result.payoutMultiplier > 0 ? betAmount * result.payoutMultiplier : 0;
+  const { payoutMultiplier } = result;
+  const payout = payoutMultiplier > 0 ? betAmount * payoutMultiplier : 0;
   const balanceChange = payout - betAmount;
 
   // Update balance and create bet in a single transaction

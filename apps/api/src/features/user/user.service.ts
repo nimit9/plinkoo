@@ -190,3 +190,70 @@ class UserManager {
 }
 
 export const userManager = UserManager.getInstance();
+
+export const getUserBets = async ({
+  userId,
+  page = 1,
+  pageSize = 10,
+}: {
+  userId: string;
+  page?: number;
+  pageSize?: number;
+}) => {
+  // Ensure valid pagination parameters
+  const validPage = Math.max(1, page);
+  const validPageSize = Math.min(100, Math.max(1, pageSize));
+
+  // Get total count for pagination
+  const totalCount = await db.bet.count({
+    where: {
+      userId,
+    },
+  });
+
+  // Get paginated bets
+  const bets = await db.bet.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    skip: (validPage - 1) * validPageSize,
+    take: validPageSize,
+  });
+
+  // Calculate pagination metadata
+  const totalPages = Math.ceil(totalCount / validPageSize);
+  const hasNextPage = validPage < totalPages;
+  const hasPreviousPage = validPage > 1;
+
+  return {
+    bets: bets.map((bet) => ({
+      // Format betId as a 12-digit string with leading zeros
+      betId: bet.betId.toString().padStart(12, '0'),
+      game: bet.game,
+      date: bet.createdAt,
+      betAmount: bet.betAmount,
+      payoutMultiplier: bet.payoutAmount / bet.betAmount,
+      payout: bet.payoutAmount,
+      id: bet.id,
+    })),
+    pagination: {
+      page: validPage,
+      pageSize: validPageSize,
+      totalCount,
+      totalPages,
+      hasNextPage,
+      hasPreviousPage,
+    },
+  };
+};

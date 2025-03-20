@@ -2,9 +2,12 @@ import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import type { User } from '@prisma/client';
 import { ApiResponse } from '@repo/common/types';
-import type { ProvablyFairStateResponse } from '@repo/common/types';
+import type {
+  PaginatedBets,
+  ProvablyFairStateResponse,
+} from '@repo/common/types';
 import { BadRequestError } from '../../errors';
-import { userManager } from './user.service';
+import { userManager, getUserBets } from './user.service';
 
 export const getBalance = async (req: Request, res: Response) => {
   const userInstance = await userManager.getUser((req.user as User).id);
@@ -57,4 +60,22 @@ export const getRevealedServerSeed = async (
   return res
     .status(StatusCodes.OK)
     .json(new ApiResponse(StatusCodes.OK, { serverSeed }));
+};
+
+export const getUserBetHistory = async (
+  req: Request,
+  res: Response<ApiResponse<PaginatedBets>>,
+) => {
+  const userId = (req.user as User).id;
+
+  // Parse pagination parameters from query
+  const page = parseInt(req.query.page as string) || 1;
+  const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+  // Get paginated bets
+  const paginatedBets = await getUserBets({ userId, page, pageSize });
+
+  res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, paginatedBets));
 };

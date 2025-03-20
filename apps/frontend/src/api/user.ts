@@ -1,6 +1,7 @@
 import type {
   ProvablyFairStateResponse,
   ApiResponse,
+  PaginatedBetsResponse,
 } from '@repo/common/types';
 import { fetchGet, fetchPost } from './_utils/fetch';
 
@@ -27,4 +28,19 @@ export const fetchRevealedServerSeed = async (
 ): Promise<ApiResponse<{ serverSeed: string | null }>> =>
   fetchGet(`/api/v1/user/unhash-server-seed/${hashedServerSeed}`, {
     withCredentials: true,
+  });
+
+export const fetchUserBetHistory = async ({
+  page = 1,
+  pageSize = 10,
+}: {
+  page?: number;
+  pageSize?: number;
+}): Promise<ApiResponse<PaginatedBetsResponse>> =>
+  fetchGet('/api/v1/user/bets', {
+    withCredentials: true,
+    params: {
+      page,
+      pageSize,
+    },
   });

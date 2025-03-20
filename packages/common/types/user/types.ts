@@ -14,3 +14,25 @@ export interface ProvablyFairStateResponse {
   hashedNextServerSeed: string;
   nonce: number;
 }
+
+export interface PaginatedBetData {
+  betId: string;
+  game: string;
+  date: Date;
+  betAmount: number;
+  payoutMultiplier: number;
+  payout: number;
+  id: string;
+}
+
+export interface PaginatedBetsResponse {
+  bets: PaginatedBetData[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}

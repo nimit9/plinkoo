@@ -5,6 +5,7 @@ import {
   rotateSeed,
   getProvablyFairState,
   getRevealedServerSeed,
+  getUserBetHistory,
 } from './user.controller';
 
 const router: Router = Router();
@@ -17,5 +18,6 @@ router.get(
   isAuthenticated,
   getRevealedServerSeed,
 );
+router.get('/bets', isAuthenticated, getUserBetHistory);
 
 export default router;

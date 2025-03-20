@@ -53,6 +53,7 @@ model ProvablyFairState {
 
 model Bet {
   id                  String            @id @default(cuid())
+  betId               BigInt            @unique @default(autoincrement())
   userId              String
   game                Game // The game this bet belongs to
   type                String
