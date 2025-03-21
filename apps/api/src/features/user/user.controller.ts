@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import type { User } from '@prisma/client';
 import { ApiResponse } from '@repo/common/types';
 import type {
-  PaginatedBets,
+  PaginatedBetsResponse,
   ProvablyFairStateResponse,
 } from '@repo/common/types';
 import { BadRequestError } from '../../errors';
@@ -11,8 +11,11 @@ import { userManager, getUserBets } from './user.service';
 
 export const getBalance = async (req: Request, res: Response) => {
   const userInstance = await userManager.getUser((req.user as User).id);
-  const balance = userInstance.getBalance() / 100;
-  return res.status(StatusCodes.OK).json({ balance });
+  const balanceInCents = userInstance.getBalance();
+  const balance = balanceInCents / 100; // Convert from cents to dollars
+  return res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, { balance }));
 };
 
 export const rotateSeed = async (
@@ -64,7 +67,7 @@ export const getRevealedServerSeed = async (
 
 export const getUserBetHistory = async (
   req: Request,
-  res: Response<ApiResponse<PaginatedBets>>,
+  res: Response<ApiResponse<PaginatedBetsResponse>>,
 ) => {
   const userId = (req.user as User).id;
 

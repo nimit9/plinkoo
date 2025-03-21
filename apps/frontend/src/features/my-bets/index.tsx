@@ -1,13 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 import { NotepadTextIcon } from 'lucide-react';
+import { useState } from 'react';
 import { fetchUserBetHistory } from '@/api/user';
 import { CommonDataTable } from '@/components/ui/common-data-table';
 import { columns } from './columns';
 
 function MyBets(): JSX.Element {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
   const { data } = useQuery({
-    queryKey: ['my-bets'],
-    queryFn: () => fetchUserBetHistory({ page: 2, pageSize: 10 }),
+    queryKey: ['my-bets', pagination],
+    queryFn: () =>
+      fetchUserBetHistory({
+        page: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
+      }),
   });
 
   return (
@@ -20,7 +30,9 @@ function MyBets(): JSX.Element {
         columns={columns}
         data={data?.data.bets || []}
         pageCount={data?.data.pagination.totalPages || 0}
-        setPageIndex={() => {}}
+        pagination={pagination}
+        rowCount={data?.data.pagination.totalCount || 0}
+        setPagination={setPagination}
       />
     </div>
   );

@@ -10,12 +10,12 @@ export function Balance(): JSX.Element {
   useQuery({
     queryKey: ['balance'],
     queryFn: async () => {
-      const { balance: balanceResponse } = await getBalance();
-
-      setBalance(balanceResponse);
-      return balanceResponse;
+      const { data } = await getBalance();
+      setBalance(data.balance);
+      return data.balance;
     },
-    refetchInterval: 60000, // Refetch every 1 minute
+    refetchInterval: 60000,
+    // Refetch every 1 minute
   });
 
   return (

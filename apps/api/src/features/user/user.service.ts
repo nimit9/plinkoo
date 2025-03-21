@@ -242,9 +242,9 @@ export const getUserBets = async ({
       betId: bet.betId.toString().padStart(12, '0'),
       game: bet.game,
       date: bet.createdAt,
-      betAmount: bet.betAmount,
-      payoutMultiplier: bet.payoutAmount / bet.betAmount,
-      payout: bet.payoutAmount,
+      betAmount: bet.betAmount / 100, // Convert from cents to dollars
+      payoutMultiplier: bet.payoutAmount / bet.betAmount, // Multiplier stays the same
+      payout: bet.payoutAmount / 100, // Convert from cents to dollars
       id: bet.id,
     })),
     pagination: {

@@ -1,10 +1,10 @@
 import React, { Fragment, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { HashLoader } from 'react-spinners';
+import { calculateFinalOutcome } from '@repo/common/game-utils/dice/utils.js';
 import { getGeneratedFloats, byteGenerator } from '@/lib/crypto';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-
 // Simple function to generate a stable unique ID without using array indices
 const generateUniqueId = (
   prefix: string,
@@ -70,9 +70,7 @@ function DiceResultBreakdown({
     return <HashLoader className="mx-auto my-16" color="#b1b4d3" size={16} />;
   }
 
-  const finalOutcome = (
-    Number(String(outcome * 10001).split('.')[0]) / 100
-  ).toFixed(2);
+  const finalOutcome = calculateFinalOutcome(outcome);
 
   return (
     <div className="flex flex-col gap-3">

@@ -24,7 +24,7 @@ model User {
   name               String?
   password           String?
   picture            String?
-  balance            Float               @default(10000)
+  balance            Int                 @default(1000000) // Amount in cents (multiply by 100, default 10000.00)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   provablyFairStates ProvablyFairState[]
@@ -57,8 +57,8 @@ model Bet {
   userId              String
   game                Game // The game this bet belongs to
   type                String
-  betAmount           Float
-  payoutAmount        Float
+  betAmount           Int // Amount in cents (multiply by 100)
+  payoutAmount        Int // Amount in cents (multiply by 100)
   active              Boolean           @default(true)
   betNonce            Int // Unique nonce for this specific bet
   provablyFairState   ProvablyFairState @relation(fields: [provablyFairStateId], references: [id])

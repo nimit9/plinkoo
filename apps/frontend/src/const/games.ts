@@ -13,7 +13,7 @@ export const GAME_VALUES_MAPPING = {
 
 export const GAMES_DROPDOWN_OPTIONS = [
   {
-    label: GAME_VALUES_MAPPING[Games.DICE],
+    label: GAME_VALUES_MAPPING[Games.DICE].label,
     value: Games.DICE,
   },
 ];

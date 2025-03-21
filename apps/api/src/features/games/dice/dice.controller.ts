@@ -30,26 +30,31 @@ export const placeBet = async (
   const userInstance = await userManager.getUser((req.user as User).id);
   const user = userInstance.getUser();
 
-  if (user.balance < betAmount) {
+  // Convert betAmount to cents for comparison with balance (which is stored in cents)
+  const betAmountInCents = Math.round(betAmount * 100);
+
+  if (user.balance < betAmountInCents) {
     throw new BadRequestError('Insufficient balance');
   }
 
   const result = getResult({ userInstance, target, condition });
 
   const { payoutMultiplier } = result;
-  const payout = payoutMultiplier > 0 ? betAmount * payoutMultiplier : 0;
-  const balanceChange = payout - betAmount;
+  // Calculate payout in cents
+  const payoutInCents =
+    payoutMultiplier > 0 ? Math.round(betAmountInCents * payoutMultiplier) : 0;
+  const balanceChangeInCents = payoutInCents - betAmountInCents;
 
   // Update balance and create bet in a single transaction
   const { balance, id } = await db.$transaction(async (tx) => {
-    // Create bet record
+    // Create bet record with amounts in cents
     const bet = await tx.bet.create({
       data: {
         active: false,
-        betAmount,
+        betAmount: betAmountInCents,
         betNonce: userInstance.getNonce(),
         game: 'dice',
-        payoutAmount: payout,
+        payoutAmount: payoutInCents,
         provablyFairStateId: userInstance.getProvablyFairStateId(),
         state: result.state,
         type: condition,
@@ -59,12 +64,12 @@ export const placeBet = async (
 
     await userInstance.updateNonce(tx);
 
-    // Update user balance
+    // Update user balance with the balance change in cents
     const userWithNewBalance = await tx.user.update({
       where: { id: user.id },
       data: {
         balance: {
-          increment: balanceChange * 100,
+          increment: balanceChangeInCents,
         },
       },
     });
@@ -78,9 +83,9 @@ export const placeBet = async (
   res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       ...result,
-      balance: userInstance.getBalance() / 100,
+      balance: userInstance.getBalance() / 100, // Convert back to dollars for the response
       id,
-      payout,
+      payout: payoutInCents / 100, // Convert back to dollars for the response
     }),
   );
 };

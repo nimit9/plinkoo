@@ -66,3 +66,9 @@ export const calculateTargetFromChance = (
   }
   return parseFloat(target.toFixed(2));
 };
+
+export const calculateFinalOutcome = (outcome: number) => {
+  return parseFloat(
+    (Number(String(outcome * 10001).split('.')[0]) / 100).toFixed(2),
+  );
+};
