@@ -123,6 +123,7 @@ const equalPayoutBets = z.object({
     RouletteBetTypes.LOW,
   ]),
   amount: amountSchema,
+  selection: z.null(),
 });
 
 const validateBets = (bets: RouletteBet[]) => {

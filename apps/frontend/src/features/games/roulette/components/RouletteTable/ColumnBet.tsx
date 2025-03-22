@@ -1,8 +1,17 @@
+import { useDroppable } from '@dnd-kit/core';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 
 function ColumnBet({ column }: { column: number }): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();
+  const { setNodeRef } = useDroppable({
+    id: `${RouletteBetTypes.COLUMN}-${column}`,
+    data: {
+      betType: RouletteBetTypes.COLUMN,
+      selection: column,
+    },
+  });
   return (
     <div
       className={cn(
@@ -14,6 +23,7 @@ function ColumnBet({ column }: { column: number }): JSX.Element {
       onMouseLeave={() => {
         setHoverId(null);
       }}
+      ref={setNodeRef}
     >
       2:1
     </div>

@@ -1,8 +1,17 @@
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
+import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 
 function DozenBet({ dozen }: { dozen: number }): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();
+  const { setNodeRef } = useDroppable({
+    id: `${RouletteBetTypes.DOZEN}-${dozen}`,
+    data: {
+      betType: RouletteBetTypes.DOZEN,
+      selection: dozen,
+    },
+  });
   return (
     <div
       className={cn(
@@ -14,6 +23,7 @@ function DozenBet({ dozen }: { dozen: number }): JSX.Element {
       onMouseLeave={() => {
         setHoverId(null);
       }}
+      ref={setNodeRef}
     >
       {12 * (dozen - 1) + 1} to {12 * (dozen - 1) + 12}
     </div>
