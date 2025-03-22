@@ -1,4 +1,3 @@
-import React from 'react';
 import ZeroBet from './ZeroBet';
 import NumberBet from './NumberBet';
 import ColumnBet from './ColumnBet';

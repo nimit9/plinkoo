@@ -1,5 +1,5 @@
 import type { ProvablyFairStateResponse } from '@repo/common/types';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CopyIcon } from 'lucide-react';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
 import { Label } from '@/components/ui/label';

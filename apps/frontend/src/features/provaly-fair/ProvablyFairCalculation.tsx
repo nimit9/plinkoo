@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
 import CommonSelect from '@/components/ui/common-select';
 import type { VerificationInputsState } from '../games/common/components/fairness-modal/VerificationInputs';

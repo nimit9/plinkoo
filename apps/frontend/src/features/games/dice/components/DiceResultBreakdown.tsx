@@ -1,11 +1,12 @@
-import React, { Fragment, useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { HashLoader } from 'react-spinners';
 import { calculateFinalOutcome } from '@repo/common/game-utils/dice/utils.js';
 import { getGeneratedFloats, byteGenerator } from '@/lib/crypto';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-// Simple function to generate a stable unique ID without using array indices
+// Simple function to
+//  generate a stable unique ID without using array indices
 const generateUniqueId = (
   prefix: string,
   ...parts: (string | number)[]
