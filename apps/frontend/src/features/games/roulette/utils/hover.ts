@@ -12,7 +12,7 @@ const getIsColumnHover = ({
   hoverId: string;
 }): boolean => {
   const column = parseInt(hoverId.split('-')[1]);
-  return number % 3 === column % 3;
+  return number !== 0 && number % 3 === column % 3;
 };
 
 const getIsDozenHover = ({
@@ -24,6 +24,27 @@ const getIsDozenHover = ({
 }): boolean => {
   const dozen = parseInt(hoverId.split('-')[1]);
   return number > (dozen - 1) * 12 && number <= dozen * 12;
+};
+
+const checkIsChipHover = ({
+  number,
+  hoverId,
+}: {
+  number: number;
+  hoverId: string;
+}): boolean => {
+  const [betType, ...selection] = hoverId.split('-');
+
+  switch (betType as RouletteBetTypes) {
+    case RouletteBetTypes.STRAIGHT:
+    case RouletteBetTypes.SPLIT:
+    case RouletteBetTypes.SIX_LINE:
+    case RouletteBetTypes.CORNER:
+    case RouletteBetTypes.STREET:
+      return selection.includes(number.toString());
+    default:
+      return false;
+  }
 };
 
 const getIsNumberHover = ({
@@ -55,7 +76,7 @@ const getIsNumberHover = ({
     case RouletteBetTypes.BLACK:
       return blackNumbers.includes(number.toString());
     default:
-      return false;
+      return checkIsChipHover({ number, hoverId });
   }
 };
 

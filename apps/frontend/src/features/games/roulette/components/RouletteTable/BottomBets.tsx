@@ -13,15 +13,11 @@ const bottomBets = [
   },
   {
     action: RouletteBetTypes.RED,
-    label: (
-      <div className="bg-roulette-red hover:bg-roulette-red-hover h-10 w-full rounded-sm" />
-    ),
+    label: null,
   },
   {
     action: RouletteBetTypes.BLACK,
-    label: (
-      <div className="bg-roulette-black hover:bg-roulette-black-hover h-10 w-full rounded-sm" />
-    ),
+    label: null,
   },
   {
     action: RouletteBetTypes.ODD,
@@ -42,7 +38,7 @@ function BottomBets(): JSX.Element {
             <BottomNumberBets action={action} key={action} label={label} />
           );
         }
-        return <BottomColorBets action={action} key={action} label={label} />;
+        return <BottomColorBets action={action} key={action} />;
       })}
     </>
   );

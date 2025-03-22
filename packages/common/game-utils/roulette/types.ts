@@ -1,7 +1,7 @@
 enum RouletteBetTypes {
   STRAIGHT = 'straight',
   SPLIT = 'split',
-  SIX_LINE = 'six-line',
+  SIX_LINE = 'sixline',
   CORNER = 'corner',
   STREET = 'street',
   ODD = 'odd',
