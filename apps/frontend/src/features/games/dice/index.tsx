@@ -48,7 +48,7 @@ export function DiceGame(): JSX.Element {
           onBetAmountChange={setBetAmount}
           profitOnWin={profitOnWin}
         />
-        <div className="flex-1 bg-background p-3">
+        <div className="flex-1 bg-brand-stronger p-3">
           <DiceResultPillsCarousel results={results} />
           <div className="py-40 w-3/4 mx-auto flex flex-col gap-2">
             <DiceSlider

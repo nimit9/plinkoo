@@ -1,33 +1,35 @@
 import { BadgeDollarSign } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
-import { fetchPost } from '@/api/_utils/fetch';
 
-interface BettingControlsProps {
-  betAmount: number;
-  profitOnWin: number;
-  balance: number;
-  isPending: boolean;
-  onBetAmountChange: (amount: number) => void;
-  onBet: () => Promise<void>;
+export interface BettingControlsProps {
+  betAmount?: number;
+  profitOnWin?: number;
+  balance?: number;
+  isPending?: boolean;
+  onBetAmountChange?: (amount: number) => void;
+  onBet?: () => Promise<void>;
 }
 
-function BetAmountInput({
+export function BetAmountInput({
   betAmount,
   onBetAmountChange,
-}: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'>): JSX.Element {
+  isInputDisabled,
+}: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'> & {
+  isInputDisabled?: boolean;
+}): JSX.Element {
   return (
     <div>
       <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
       <div className="flex h-10 rounded-r overflow-hidden shadow-md group">
         <div className="bg-input-disabled rounded-l flex items-center gap-1">
           <InputWithIcon
+            disabled={isInputDisabled}
             icon={<BadgeDollarSign className="text-gray-500" />}
             min={0}
             onChange={(e) => {
-              onBetAmountChange(Number(e.target.value));
+              onBetAmountChange?.(Number(e.target.value));
             }}
             step={1}
             type="number"
@@ -38,13 +40,13 @@ function BetAmountInput({
         <BetAmountButton
           label="½"
           onClick={() => {
-            onBetAmountChange(betAmount / 2);
+            onBetAmountChange?.(betAmount ?? 0 / 2);
           }}
         />
         <BetAmountButton
           label="2×"
           onClick={() => {
-            onBetAmountChange(betAmount * 2);
+            onBetAmountChange?.(betAmount ?? 0 * 2);
           }}
         />
       </div>
@@ -58,7 +60,7 @@ function BetAmountButton({
 }: {
   label: string;
   onClick: () => void;
-}) {
+}): JSX.Element {
   return (
     <Button
       className="bg-input-disabled text-white rounded-none h-full hover:bg-opacity-80 hover:bg-[#557086]"
@@ -71,7 +73,7 @@ function BetAmountButton({
 
 function ProfitDisplay({
   profitOnWin,
-}: Pick<BettingControlsProps, 'profitOnWin'>) {
+}: Pick<BettingControlsProps, 'profitOnWin'>): JSX.Element {
   return (
     <div>
       <Label className="pl-px text-xs font-semibold">Profit on Win</Label>
@@ -86,14 +88,17 @@ function ProfitDisplay({
   );
 }
 
-function BetButton({
+export function BetButton({
   isPending,
   disabled,
   onClick,
+  loadingImage,
 }: Pick<BettingControlsProps, 'isPending'> & {
   disabled: boolean;
   onClick: () => void;
-}) {
+} & {
+  loadingImage: string;
+}): JSX.Element {
   return (
     <Button
       className="w-full bg-[#00e600] hover:bg-[#1fff20] text-black font-semibold h-12 text-base"
@@ -104,7 +109,7 @@ function BetButton({
         <img
           alt="Result Dice"
           className="animate-spin h-4 w-4"
-          src="/games/dice/loading-dice.png"
+          src={loadingImage}
         />
       ) : (
         'Bet'
@@ -121,7 +126,8 @@ export function BettingControls({
   onBetAmountChange,
   onBet,
 }: BettingControlsProps): JSX.Element {
-  const isDisabled = betAmount > balance || betAmount <= 0 || isPending;
+  const isDisabled =
+    (betAmount ?? 0) > (balance ?? 0) || (betAmount ?? 0) <= 0 || isPending;
 
   return (
     <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
@@ -131,9 +137,10 @@ export function BettingControls({
       />
       <ProfitDisplay profitOnWin={profitOnWin} />
       <BetButton
-        disabled={isDisabled}
+        disabled={Boolean(isDisabled)}
         isPending={isPending}
-        onClick={() => void onBet()}
+        loadingImage="/games/dice/loading-dice.png"
+        onClick={() => void onBet?.()}
       />
     </div>
   );

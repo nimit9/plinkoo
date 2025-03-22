@@ -90,6 +90,9 @@ module.exports = {
       gridTemplateColumns: {
         14: 'repeat(14, minmax(0, 1fr))',
       },
+      gridColumn: {
+        span14: 'span 14 / span 14',
+      },
       keyframes: {
         'accordion-down': {
           from: {
@@ -142,6 +145,12 @@ module.exports = {
       'brand-strong': '#1a2c38',
       'brand-stronger': '#0f212e',
       'brand-strongest': '#071824',
+      'roulette-red': '#fe2247',
+      'roulette-red-hover': '#fe6e86',
+      'roulette-black': '#2f4553',
+      'roulette-black-hover': '#4b6e84',
+      'roulette-green': '#419e3f',
+      'roulette-green-hover': '#69c267',
     }),
     textColor: ({ theme }) => ({
       'neutral-weak': '#557086',
