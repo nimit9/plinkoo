@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useDraggable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { formatCompactNumber, getYellowToRedColor } from '@/lib/formatters';
+import CommonTooltip from '@/components/ui/common-tooltip';
 
 interface ChipProps {
   size?: number;
@@ -10,6 +10,7 @@ interface ChipProps {
   disabled?: boolean;
   onClick?: () => void;
   isSelected?: boolean;
+  id?: string;
 }
 
 function Chip({
@@ -19,15 +20,8 @@ function Chip({
   disabled,
   onClick,
   isSelected,
+  id,
 }: ChipProps): JSX.Element {
-  const { attributes, listeners, setNodeRef } = useDraggable({
-    id: `chip-${value}`,
-    data: {
-      value,
-    },
-    disabled,
-  });
-
   // Calculate color based on value
   // Scale with logarithmic values to better handle a wide range of chip values
   // Example ranges:
@@ -59,7 +53,7 @@ function Chip({
   }, [chipColor]);
 
   // Get formatted value text
-  const formattedValue = formatCompactNumber(value, 0);
+  const formattedValue = formatCompactNumber(value);
 
   // Generate box shadow based on disabled state
   const boxShadowStyle = isSelected
@@ -67,40 +61,46 @@ function Chip({
     : `${shadowColor} 0px 0.125rem 0px 0px`;
 
   return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      className={cn(
-        "bg-[url('/games/roulette/chip-bg-img.svg')] bg-contain bg-no-repeat bg-center rounded-full flex items-center justify-center shrink-0",
-        { 'opacity-40': disabled },
-        { 'cursor-default': disabled },
-      )}
-      onClick={() => {
-        if (!disabled) {
-          onClick?.();
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+    <CommonTooltip content={value} forceHide={formattedValue.length <= 4}>
+      <div
+        className={cn(
+          "bg-[url('/games/roulette/chip-bg-img.svg')] bg-contain bg-no-repeat bg-center rounded-full flex items-center justify-center shrink-0",
+          { 'opacity-40': disabled },
+          { 'cursor-default': disabled },
+        )}
+        onClick={() => {
           if (!disabled) {
             onClick?.();
           }
-        }
-      }}
-      role="button"
-      style={{
-        backgroundColor: chipColor,
-        width: `${size * 4}px`,
-        height: `${size * 4}px`,
-        boxShadow: boxShadowStyle,
-      }}
-      tabIndex={0}
-    >
-      <span className="text-black text-[9px] font-bold drop-shadow-sm">
-        {formattedValue}
-      </span>
-    </div>
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            if (!disabled) {
+              onClick?.();
+            }
+          }
+        }}
+        role="button"
+        style={{
+          backgroundColor: chipColor,
+          width: `${size * 4}px`,
+          height: `${size * 4}px`,
+          boxShadow: boxShadowStyle,
+        }}
+        tabIndex={0}
+      >
+        <span
+          className={cn(
+            'select-none text-black text-[9px] font-bold drop-shadow-sm truncate',
+            {
+              'text-[8px]': id,
+            },
+          )}
+        >
+          {formattedValue}
+        </span>
+      </div>
+    </CommonTooltip>
   );
 }
 

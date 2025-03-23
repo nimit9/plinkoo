@@ -18,6 +18,7 @@ function MyBets(): JSX.Element {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
       }),
+    placeholderData: (prev) => prev,
   });
 
   return (

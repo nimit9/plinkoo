@@ -2,6 +2,8 @@ import { BadgeDollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
+import { useBalanceStore } from '@/store';
+import useRouletteStore from '../../roulette/store/rouletteStore';
 
 export interface BettingControlsProps {
   betAmount?: number;
@@ -19,6 +21,7 @@ export function BetAmountInput({
 }: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'> & {
   isInputDisabled?: boolean;
 }): JSX.Element {
+  const { balance } = useBalanceStore();
   return (
     <div>
       <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
@@ -38,15 +41,19 @@ export function BetAmountInput({
           />
         </div>
         <BetAmountButton
+          disabled={betAmount ? betAmount === 0 || betAmount / 2 < 0.01 : true}
           label="½"
           onClick={() => {
-            onBetAmountChange?.(betAmount ?? 0 / 2);
+            onBetAmountChange?.((betAmount ?? 0) / 2);
           }}
         />
         <BetAmountButton
+          disabled={
+            betAmount ? betAmount === 0 || 2 * betAmount > balance : true
+          }
           label="2×"
           onClick={() => {
-            onBetAmountChange?.(betAmount ?? 0 * 2);
+            onBetAmountChange?.((betAmount ?? 0) * 2);
           }}
         />
       </div>
@@ -57,13 +64,16 @@ export function BetAmountInput({
 function BetAmountButton({
   label,
   onClick,
+  disabled,
 }: {
   label: string;
   onClick: () => void;
+  disabled?: boolean;
 }): JSX.Element {
   return (
     <Button
       className="bg-input-disabled text-white rounded-none h-full hover:bg-opacity-80 hover:bg-[#557086]"
+      disabled={disabled}
       onClick={onClick}
     >
       {label}

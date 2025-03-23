@@ -1,4 +1,4 @@
-export function formatCompactNumber(value: number, decimalPlaces = 1): string {
+export function formatCompactNumber(value: number, decimalPlaces = 10) {
   if (value === 0) return '0';
 
   const absValue = Math.abs(value);
@@ -14,23 +14,22 @@ export function formatCompactNumber(value: number, decimalPlaces = 1): string {
   ];
 
   // Find the appropriate tier
-  const tier = tiers.find((t) => absValue >= t.threshold);
+  const tier =
+    tiers.find((t) => absValue >= t.threshold) ?? tiers[tiers.length - 1];
 
-  if (!tier) return '0';
-
-  // Calculate the value in the appropriate unit
+  // Calculate the scaled value
   const scaledValue = absValue / tier.threshold;
 
-  // Handle the case where we don't need decimals (e.g., 1K instead of 1.0K)
-  if (Number.isInteger(scaledValue)) {
-    return `${sign}${scaledValue}${tier.suffix}`;
-  }
+  // Dynamically determine decimal places based on actual value
+  const formattedValue =
+    scaledValue % 1 === 0
+      ? scaledValue.toFixed(0)
+      : scaledValue.toPrecision(decimalPlaces);
 
-  // Format with the specified number of decimal places
-  const formattedValue = scaledValue.toFixed(decimalPlaces);
-
-  // Remove trailing zeros and decimal point if not needed
-  const trimmedValue = formattedValue.replace(/\.0+$/, '');
+  // Remove trailing zeros while keeping at least one decimal if applicable
+  const trimmedValue = formattedValue
+    .replace(/(\.\d*?[1-9])0+$/, '$1')
+    .replace(/\.0+$/, '');
 
   return `${sign}${trimmedValue}${tier.suffix}`;
 }

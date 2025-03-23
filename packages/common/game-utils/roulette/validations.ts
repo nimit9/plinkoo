@@ -8,7 +8,7 @@ import {
 } from './constants';
 import { log } from 'console';
 
-const amountSchema = z.number().min(1, 'Bet amount must be at least 1');
+const amountSchema = z.number().min(0.01, 'Bet amount must be at least 0.01');
 
 const straightBetSchema = z.object({
   betType: z.literal(RouletteBetTypes.STRAIGHT),
@@ -99,20 +99,6 @@ const columnBetSchema = z.object({
   amount: amountSchema,
 });
 
-export type RouletteBet =
-  | z.infer<typeof straightBetSchema>
-  | z.infer<typeof splitBetSchema>
-  | z.infer<typeof cornerBetSchema>
-  | z.infer<typeof streetBetSchema>
-  | z.infer<typeof sixLineBetSchema>
-  | z.infer<typeof dozenBetSchema>
-  | z.infer<typeof columnBetSchema>
-  | z.infer<typeof equalPayoutBets>;
-
-const BetsSchema = z.object({
-  bets: z.array(z.unknown()), // Only checking for existence, not structure
-});
-
 const equalPayoutBets = z.object({
   betType: z.enum([
     RouletteBetTypes.BLACK,
@@ -124,6 +110,26 @@ const equalPayoutBets = z.object({
   ]),
   amount: amountSchema,
   selection: z.null(),
+});
+
+// Define the union schema
+const RouletteBetSchema = z.union([
+  straightBetSchema,
+  splitBetSchema,
+  cornerBetSchema,
+  streetBetSchema,
+  sixLineBetSchema,
+  dozenBetSchema,
+  columnBetSchema,
+  equalPayoutBets,
+]);
+
+// Export the type
+export type RouletteBet = z.infer<typeof RouletteBetSchema>;
+
+// Then use the schema in your object schema
+const BetsSchema = z.object({
+  bets: z.array(RouletteBetSchema), // Using the schema value, not the type
 });
 
 const validateBets = (bets: RouletteBet[]) => {

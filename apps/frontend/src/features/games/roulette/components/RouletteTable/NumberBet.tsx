@@ -1,7 +1,7 @@
 import { redNumbers } from '@repo/common/game-utils/roulette/constants.js';
-import { useDroppable } from '@dnd-kit/core';
 import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { useRef } from 'react';
+import { sum } from 'lodash';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import { getIsNumberHover } from '../../utils/hover';
@@ -12,6 +12,8 @@ import {
   shouldRenderSixLineBet,
   shouldRenderTop,
 } from '../../utils/shouldRender';
+import useRouletteStore from '../../store/rouletteStore';
+import Chip from '../Chip';
 import DroppableArea from './DroppableArea';
 
 function NumberBet({ number }: { number: number }): JSX.Element {
@@ -22,13 +24,12 @@ function NumberBet({ number }: { number: number }): JSX.Element {
   const isRedNumber = redNumbers.includes(number.toString());
   const isNumberHover = getIsNumberHover({ number, hoverId });
 
-  const { setNodeRef } = useDroppable({
-    id: `${RouletteBetTypes.STRAIGHT}-${number}`,
-    data: {
-      betType: RouletteBetTypes.STRAIGHT,
-      selection: number,
-    },
-  });
+  const betId = `${RouletteBetTypes.STRAIGHT}-${number}`;
+
+  const { bets, addBet } = useRouletteStore();
+
+  const isBet = bets[betId] && bets[betId].length > 0;
+  const betAmount = sum(bets[betId]);
 
   return (
     <div
@@ -42,12 +43,25 @@ function NumberBet({ number }: { number: number }): JSX.Element {
           'bg-roulette-black-hover': !isRedNumber && isNumberHover,
         },
       )}
+      onClick={(e) => {
+        e.stopPropagation();
+        addBet(betId);
+      }}
+      onKeyDown={(event) => {
+        return event;
+      }}
       ref={(el) => {
-        setNodeRef(el);
         referenceDiv.current = el;
       }}
+      role="button"
+      tabIndex={0}
     >
       {number}
+      {isBet ? (
+        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+          <Chip id={betId} size={6} value={betAmount} />
+        </div>
+      ) : null}
       {shouldRenderCornerBet(number) && (
         <DroppableArea
           betTypeData={{

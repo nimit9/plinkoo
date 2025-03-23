@@ -1,7 +1,10 @@
-import { useDroppable } from '@dnd-kit/core';
 import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
 import { useEffect, useState } from 'react';
+import { sum, uniqueId } from 'lodash';
 import { getBetTypeSelectionId } from '../../utils/helpers';
+import useRouletteStore from '../../store/rouletteStore';
+import Chip from '../Chip';
+import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 
 interface PositionValues {
   top: string | number;
@@ -46,18 +49,23 @@ function DroppableArea({
   position,
   reference,
   betTypeData,
+  width,
+  height,
 }: {
   position: keyof typeof POSITIONS;
   reference: React.RefObject<HTMLDivElement>;
   betTypeData: Pick<RouletteBet, 'betType' | 'selection'>;
+  width?: string;
+  height?: string;
 }): JSX.Element {
-  const { setNodeRef } = useDroppable({
-    id: `${betTypeData.betType}-${getBetTypeSelectionId(betTypeData.selection)}`,
-    data: {
-      betType: betTypeData.betType,
-      selection: betTypeData.selection,
-    },
-  });
+  const betId = `${betTypeData.betType}-${getBetTypeSelectionId(
+    betTypeData.selection,
+  )}`;
+
+  const { setHoverId } = useRouletteBoardHoverStore();
+
+  const { bets, addBet } = useRouletteStore();
+
   const [style, setStyle] = useState({});
 
   useEffect(() => {
@@ -71,17 +79,43 @@ function DroppableArea({
         top: typeof top === 'number' ? rect.top + top : top,
         left: typeof left === 'number' ? rect.left + left : left,
         transform: transform || undefined,
-        width: '20px',
-        height: '20px',
+        width: width || '20px',
+        height: height || '20px',
         zIndex: 10,
       });
     }
-  }, [position, reference]);
+  }, [position, reference, width, height]);
+
+  const isBet = bets[betId] && bets[betId].length > 0;
+  const betAmount = sum(bets[betId]);
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+        addBet(betId);
+      }}
+      onKeyDown={(event) => {
+        return event;
+      }}
+      onMouseEnter={() => {
+        setHoverId(betId);
+      }}
+      onMouseLeave={() => {
+        setHoverId(null);
+      }}
+      role="button"
+      style={style}
+      tabIndex={0}
+    >
       {/* Use a transparent div with the full size for the hit area */}
-      <div className="w-full h-full" />
+      <div className="w-full h-full relative">
+        {isBet ? (
+          <div className="absolute w-full h-full -translate-y-[20%] -translate-x-[10%]">
+            <Chip id={betId} size={6} value={betAmount} />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

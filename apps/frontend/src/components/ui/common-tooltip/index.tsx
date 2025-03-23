@@ -10,6 +10,7 @@ interface CommonTooltipProps {
   content: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  forceHide?: boolean;
 }
 
 function CommonTooltip({
@@ -19,7 +20,11 @@ function CommonTooltip({
   onOpenChange = () => {
     void 0;
   },
+  forceHide = false,
 }: CommonTooltipProps): JSX.Element {
+  if (forceHide) {
+    return <>{children}</>;
+  }
   return (
     <TooltipProvider>
       <Tooltip

@@ -57,7 +57,6 @@ export const placeBet = async (
         payoutAmount: payoutInCents,
         provablyFairStateId: userInstance.getProvablyFairStateId(),
         state: result.state,
-        type: condition,
         userId: user.id,
       },
     });

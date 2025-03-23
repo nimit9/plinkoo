@@ -21,10 +21,12 @@ function BettingControls({
     <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
       <ChipCarousel />
       <BetAmountInput
-        betAmount={betAmount}
+        betAmount={betAmount / 100}
         isInputDisabled
         onBetAmountChange={(amount) => {
-          setBetAmount(amount);
+          console.log('amount', amount);
+
+          setBetAmount(amount * 100);
         }}
       />
       <BetButton
