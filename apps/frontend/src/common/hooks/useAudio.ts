@@ -30,7 +30,7 @@ const useAudio = (
           };
         })
         .catch((error: Error) => {
-          console.error('Error playing audio:', error);
+          return error;
         });
     }, 2),
   );
@@ -64,8 +64,8 @@ const useAudio = (
       .then(() => {
         setIsPlaying(true);
       })
-      .catch((error) => {
-        console.error('Error playing audio:', error);
+      .catch((error: Error) => {
+        return error;
       });
   }, [volume]);
 

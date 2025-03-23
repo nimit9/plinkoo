@@ -1,18 +1,17 @@
 import { ApiResponse } from '@repo/common/types';
-import { NextFunction, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-type CustomError = {
+interface CustomError {
   statusCode: number;
   message: string;
-  data?: any;
-};
+  data?: unknown;
+}
 
 export const errorHandlerMiddleware = (
   err: Error | CustomError,
   _: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   const defaultError: CustomError = {
     statusCode:

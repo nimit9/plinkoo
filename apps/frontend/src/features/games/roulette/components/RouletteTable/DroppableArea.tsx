@@ -1,6 +1,5 @@
-import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
 import { useEffect, useState } from 'react';
-import { sum, uniqueId } from 'lodash';
+import { sum } from 'lodash';
 import { getBetTypeSelectionId } from '../../utils/helpers';
 import useRouletteStore from '../../store/rouletteStore';
 import Chip from '../Chip';
@@ -54,12 +53,15 @@ function DroppableArea({
 }: {
   position: keyof typeof POSITIONS;
   reference: React.RefObject<HTMLDivElement>;
-  betTypeData: Pick<RouletteBet, 'betType' | 'selection'>;
+  betTypeData: {
+    betType: string;
+    selection: number | number[] | null;
+  };
   width?: string;
   height?: string;
 }): JSX.Element {
   const betId = `${betTypeData.betType}-${getBetTypeSelectionId(
-    betTypeData.selection,
+    betTypeData.selection || null,
   )}`;
 
   const { setHoverId } = useRouletteBoardHoverStore();

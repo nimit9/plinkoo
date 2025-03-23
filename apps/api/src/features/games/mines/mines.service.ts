@@ -1,5 +1,5 @@
+import { randomUUID } from 'node:crypto';
 import range from 'lodash/range';
-import { randomUUID } from 'crypto';
 import { payouts } from './mines.constant';
 // import { rng } from '../../user/user.service';
 
@@ -14,7 +14,7 @@ class MinesManager {
   }
 
   static getInstance() {
-    if (!MinesManager.instance) {
+    if (!MinesManager.instance as boolean) {
       MinesManager.instance = new MinesManager();
     }
     return MinesManager.instance;
@@ -48,7 +48,7 @@ class Mines {
     this.gameId = randomUUID();
   }
 
-  startGame(clientSeed: string) {
+  startGame() {
     // const floats = rng.generateFloats({
     //   clientSeed,
     //   count: NO_OF_TILES - 1,
@@ -73,21 +73,20 @@ class Mines {
     if (this.mines.includes(selectedTileIndex)) {
       this.rounds.push({ selectedTileIndex, payoutMultiplier: 0 });
       return this.getGameOverState();
-    } else {
-      const gemsCount = this.rounds.length + 1;
-
-      const payoutMultiplier = payouts[gemsCount][this.minesCount];
-
-      this.rounds.push({ selectedTileIndex, payoutMultiplier });
-      return {
-        active: true,
-        state: {
-          rounds: this.rounds,
-          mines: null,
-          minesCount: this.minesCount,
-        },
-      };
     }
+    const gemsCount = this.rounds.length + 1;
+
+    const payoutMultiplier = payouts[gemsCount][this.minesCount];
+
+    this.rounds.push({ selectedTileIndex, payoutMultiplier });
+    return {
+      active: true,
+      state: {
+        rounds: this.rounds,
+        mines: null,
+        minesCount: this.minesCount,
+      },
+    };
   }
 
   cashOut() {

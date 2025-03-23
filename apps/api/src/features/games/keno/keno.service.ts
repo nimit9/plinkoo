@@ -1,15 +1,14 @@
 import range from 'lodash/range';
 // import { rng } from '../../user/user.service';
 import { PAYOUT_MULTIPLIERS } from './keno.constant';
-import { KenoRisk } from './keno.types';
+import type { KenoRisk } from './keno.types';
 
 const NO_OF_TILES = 40;
-const NO_OF_DRAWS = 10;
 
 const drawNumbers = (randomFloats: number[]) => {
   let tiles = range(NO_OF_TILES);
 
-  const draw = randomFloats.map((float, index) => {
+  const draw = randomFloats.map((float) => {
     const tile = tiles[Math.floor(float * tiles.length)];
     tiles = [...tiles.slice(0, tile), ...tiles.slice(tile + 1)];
     return tile;

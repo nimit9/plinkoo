@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
 import { useBalanceStore } from '@/store';
-import useRouletteStore from '../../roulette/store/rouletteStore';
 
 export interface BettingControlsProps {
   betAmount?: number;

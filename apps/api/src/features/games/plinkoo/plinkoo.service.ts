@@ -1,11 +1,11 @@
 // import { rng } from '../../user/user.service';
-import { OUTCOMES, TOTAL_DROPS, MULTIPLIERS } from './plinkoo.constants';
+import { OUTCOMES, MULTIPLIERS } from './plinkoo.constants';
 
 type TPattern = ('L' | 'R')[];
 
 const DIRECTIONS: TPattern = ['L', 'R'];
 
-export const calculateOutcome = (clientSeed: string) => {
+export const calculateOutcome = () => {
   let outcome = 0;
   const pattern: TPattern = [];
   // const floats = rng.generateFloats({ clientSeed, count: TOTAL_DROPS });

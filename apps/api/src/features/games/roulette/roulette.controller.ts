@@ -51,8 +51,6 @@ export const placeBetAndSpin = async (
     winningNumber,
   };
 
-  console.log('payout', winningNumber);
-
   const payoutInCents = Math.round(payout * 100);
 
   const balanceChangeInCents = payoutInCents - totalBetAmountInCents;

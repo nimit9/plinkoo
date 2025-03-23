@@ -1,4 +1,4 @@
-export function formatCompactNumber(value: number, decimalPlaces = 10) {
+export function formatCompactNumber(value: number, decimalPlaces = 10): string {
   if (value === 0) return '0';
 
   const absValue = Math.abs(value);
@@ -28,7 +28,7 @@ export function formatCompactNumber(value: number, decimalPlaces = 10) {
 
   // Remove trailing zeros while keeping at least one decimal if applicable
   const trimmedValue = formattedValue
-    .replace(/(\.\d*?[1-9])0+$/, '$1')
+    .replace(/(?<decimal>\.\d*?[1-9])0+$/, '$<decimal>')
     .replace(/\.0+$/, '');
 
   return `${sign}${trimmedValue}${tier.suffix}`;

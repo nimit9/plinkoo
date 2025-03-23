@@ -6,7 +6,6 @@ import {
   calculateWinningChance,
 } from '@repo/common/game-utils/dice/index.js';
 import type {
-  DicePlaceBetResponseState,
   DiceCondition,
   DicePlaceBetResponse,
 } from '@repo/common/game-utils/dice/index.js';

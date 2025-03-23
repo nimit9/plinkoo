@@ -1,5 +1,4 @@
 import React from 'react';
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { sum } from 'lodash';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';

@@ -10,80 +10,80 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PublicImport } from './routes/_public'
-import { Route as ProtectedImport } from './routes/_protected'
-import { Route as PublicProvablyFairImport } from './routes/_public/provably-fair'
-import { Route as PublicLoginImport } from './routes/_public/login'
-import { Route as ProtectedCasinoImport } from './routes/_protected/casino'
-import { Route as PublicProvablyFairUnhashServerSeedImport } from './routes/_public/provably-fair/unhash-server-seed'
-import { Route as PublicProvablyFairCalculationImport } from './routes/_public/provably-fair/calculation'
-import { Route as ProtectedCasinoMyBetsImport } from './routes/_protected/casino/my-bets'
-import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino/home'
-import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino/games'
-import { Route as ProtectedCasinoGamesGameIdImport } from './routes/_protected/casino/games/$gameId'
+import { Route as rootRoute } from './routes/__root';
+import { Route as PublicImport } from './routes/_public';
+import { Route as ProtectedImport } from './routes/_protected';
+import { Route as PublicProvablyFairImport } from './routes/_public/provably-fair';
+import { Route as PublicLoginImport } from './routes/_public/login';
+import { Route as ProtectedCasinoImport } from './routes/_protected/casino';
+import { Route as PublicProvablyFairUnhashServerSeedImport } from './routes/_public/provably-fair/unhash-server-seed';
+import { Route as PublicProvablyFairCalculationImport } from './routes/_public/provably-fair/calculation';
+import { Route as ProtectedCasinoMyBetsImport } from './routes/_protected/casino/my-bets';
+import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino/home';
+import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino/games';
+import { Route as ProtectedCasinoGamesGameIdImport } from './routes/_protected/casino/games/$gameId';
 
 // Create/Update Routes
 
 const PublicRoute = PublicImport.update({
   id: '/_public',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const ProtectedRoute = ProtectedImport.update({
   id: '/_protected',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PublicProvablyFairRoute = PublicProvablyFairImport.update({
   id: '/provably-fair',
   path: '/provably-fair',
   getParentRoute: () => PublicRoute,
-} as any)
+} as any);
 
 const PublicLoginRoute = PublicLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoRoute = ProtectedCasinoImport.update({
   id: '/casino',
   path: '/casino',
   getParentRoute: () => ProtectedRoute,
-} as any)
+} as any);
 
 const PublicProvablyFairUnhashServerSeedRoute =
   PublicProvablyFairUnhashServerSeedImport.update({
     id: '/unhash-server-seed',
     path: '/unhash-server-seed',
     getParentRoute: () => PublicProvablyFairRoute,
-  } as any)
+  } as any);
 
 const PublicProvablyFairCalculationRoute =
   PublicProvablyFairCalculationImport.update({
     id: '/calculation',
     path: '/calculation',
     getParentRoute: () => PublicProvablyFairRoute,
-  } as any)
+  } as any);
 
 const ProtectedCasinoMyBetsRoute = ProtectedCasinoMyBetsImport.update({
   id: '/my-bets',
   path: '/my-bets',
   getParentRoute: () => ProtectedCasinoRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoHomeRoute = ProtectedCasinoHomeImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => ProtectedCasinoRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoGamesRoute = ProtectedCasinoGamesImport.update({
   id: '/games',
   path: '/games',
   getParentRoute: () => ProtectedCasinoRoute,
-} as any)
+} as any);
 
 const ProtectedCasinoGamesGameIdRoute = ProtectedCasinoGamesGameIdImport.update(
   {
@@ -91,203 +91,203 @@ const ProtectedCasinoGamesGameIdRoute = ProtectedCasinoGamesGameIdImport.update(
     path: '/$gameId',
     getParentRoute: () => ProtectedCasinoGamesRoute,
   } as any,
-)
+);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof ProtectedImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_protected';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof ProtectedImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_public': {
-      id: '/_public'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PublicImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_public';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PublicImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_protected/casino': {
-      id: '/_protected/casino'
-      path: '/casino'
-      fullPath: '/casino'
-      preLoaderRoute: typeof ProtectedCasinoImport
-      parentRoute: typeof ProtectedImport
-    }
+      id: '/_protected/casino';
+      path: '/casino';
+      fullPath: '/casino';
+      preLoaderRoute: typeof ProtectedCasinoImport;
+      parentRoute: typeof ProtectedImport;
+    };
     '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginImport
-      parentRoute: typeof PublicImport
-    }
+      id: '/_public/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof PublicLoginImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_public/provably-fair': {
-      id: '/_public/provably-fair'
-      path: '/provably-fair'
-      fullPath: '/provably-fair'
-      preLoaderRoute: typeof PublicProvablyFairImport
-      parentRoute: typeof PublicImport
-    }
+      id: '/_public/provably-fair';
+      path: '/provably-fair';
+      fullPath: '/provably-fair';
+      preLoaderRoute: typeof PublicProvablyFairImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_protected/casino/games': {
-      id: '/_protected/casino/games'
-      path: '/games'
-      fullPath: '/casino/games'
-      preLoaderRoute: typeof ProtectedCasinoGamesImport
-      parentRoute: typeof ProtectedCasinoImport
-    }
+      id: '/_protected/casino/games';
+      path: '/games';
+      fullPath: '/casino/games';
+      preLoaderRoute: typeof ProtectedCasinoGamesImport;
+      parentRoute: typeof ProtectedCasinoImport;
+    };
     '/_protected/casino/home': {
-      id: '/_protected/casino/home'
-      path: '/home'
-      fullPath: '/casino/home'
-      preLoaderRoute: typeof ProtectedCasinoHomeImport
-      parentRoute: typeof ProtectedCasinoImport
-    }
+      id: '/_protected/casino/home';
+      path: '/home';
+      fullPath: '/casino/home';
+      preLoaderRoute: typeof ProtectedCasinoHomeImport;
+      parentRoute: typeof ProtectedCasinoImport;
+    };
     '/_protected/casino/my-bets': {
-      id: '/_protected/casino/my-bets'
-      path: '/my-bets'
-      fullPath: '/casino/my-bets'
-      preLoaderRoute: typeof ProtectedCasinoMyBetsImport
-      parentRoute: typeof ProtectedCasinoImport
-    }
+      id: '/_protected/casino/my-bets';
+      path: '/my-bets';
+      fullPath: '/casino/my-bets';
+      preLoaderRoute: typeof ProtectedCasinoMyBetsImport;
+      parentRoute: typeof ProtectedCasinoImport;
+    };
     '/_public/provably-fair/calculation': {
-      id: '/_public/provably-fair/calculation'
-      path: '/calculation'
-      fullPath: '/provably-fair/calculation'
-      preLoaderRoute: typeof PublicProvablyFairCalculationImport
-      parentRoute: typeof PublicProvablyFairImport
-    }
+      id: '/_public/provably-fair/calculation';
+      path: '/calculation';
+      fullPath: '/provably-fair/calculation';
+      preLoaderRoute: typeof PublicProvablyFairCalculationImport;
+      parentRoute: typeof PublicProvablyFairImport;
+    };
     '/_public/provably-fair/unhash-server-seed': {
-      id: '/_public/provably-fair/unhash-server-seed'
-      path: '/unhash-server-seed'
-      fullPath: '/provably-fair/unhash-server-seed'
-      preLoaderRoute: typeof PublicProvablyFairUnhashServerSeedImport
-      parentRoute: typeof PublicProvablyFairImport
-    }
+      id: '/_public/provably-fair/unhash-server-seed';
+      path: '/unhash-server-seed';
+      fullPath: '/provably-fair/unhash-server-seed';
+      preLoaderRoute: typeof PublicProvablyFairUnhashServerSeedImport;
+      parentRoute: typeof PublicProvablyFairImport;
+    };
     '/_protected/casino/games/$gameId': {
-      id: '/_protected/casino/games/$gameId'
-      path: '/$gameId'
-      fullPath: '/casino/games/$gameId'
-      preLoaderRoute: typeof ProtectedCasinoGamesGameIdImport
-      parentRoute: typeof ProtectedCasinoGamesImport
-    }
+      id: '/_protected/casino/games/$gameId';
+      path: '/$gameId';
+      fullPath: '/casino/games/$gameId';
+      preLoaderRoute: typeof ProtectedCasinoGamesGameIdImport;
+      parentRoute: typeof ProtectedCasinoGamesImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 interface ProtectedCasinoGamesRouteChildren {
-  ProtectedCasinoGamesGameIdRoute: typeof ProtectedCasinoGamesGameIdRoute
+  ProtectedCasinoGamesGameIdRoute: typeof ProtectedCasinoGamesGameIdRoute;
 }
 
 const ProtectedCasinoGamesRouteChildren: ProtectedCasinoGamesRouteChildren = {
   ProtectedCasinoGamesGameIdRoute: ProtectedCasinoGamesGameIdRoute,
-}
+};
 
 const ProtectedCasinoGamesRouteWithChildren =
-  ProtectedCasinoGamesRoute._addFileChildren(ProtectedCasinoGamesRouteChildren)
+  ProtectedCasinoGamesRoute._addFileChildren(ProtectedCasinoGamesRouteChildren);
 
 interface ProtectedCasinoRouteChildren {
-  ProtectedCasinoGamesRoute: typeof ProtectedCasinoGamesRouteWithChildren
-  ProtectedCasinoHomeRoute: typeof ProtectedCasinoHomeRoute
-  ProtectedCasinoMyBetsRoute: typeof ProtectedCasinoMyBetsRoute
+  ProtectedCasinoGamesRoute: typeof ProtectedCasinoGamesRouteWithChildren;
+  ProtectedCasinoHomeRoute: typeof ProtectedCasinoHomeRoute;
+  ProtectedCasinoMyBetsRoute: typeof ProtectedCasinoMyBetsRoute;
 }
 
 const ProtectedCasinoRouteChildren: ProtectedCasinoRouteChildren = {
   ProtectedCasinoGamesRoute: ProtectedCasinoGamesRouteWithChildren,
   ProtectedCasinoHomeRoute: ProtectedCasinoHomeRoute,
   ProtectedCasinoMyBetsRoute: ProtectedCasinoMyBetsRoute,
-}
+};
 
 const ProtectedCasinoRouteWithChildren = ProtectedCasinoRoute._addFileChildren(
   ProtectedCasinoRouteChildren,
-)
+);
 
 interface ProtectedRouteChildren {
-  ProtectedCasinoRoute: typeof ProtectedCasinoRouteWithChildren
+  ProtectedCasinoRoute: typeof ProtectedCasinoRouteWithChildren;
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedCasinoRoute: ProtectedCasinoRouteWithChildren,
-}
+};
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
   ProtectedRouteChildren,
-)
+);
 
 interface PublicProvablyFairRouteChildren {
-  PublicProvablyFairCalculationRoute: typeof PublicProvablyFairCalculationRoute
-  PublicProvablyFairUnhashServerSeedRoute: typeof PublicProvablyFairUnhashServerSeedRoute
+  PublicProvablyFairCalculationRoute: typeof PublicProvablyFairCalculationRoute;
+  PublicProvablyFairUnhashServerSeedRoute: typeof PublicProvablyFairUnhashServerSeedRoute;
 }
 
 const PublicProvablyFairRouteChildren: PublicProvablyFairRouteChildren = {
   PublicProvablyFairCalculationRoute: PublicProvablyFairCalculationRoute,
   PublicProvablyFairUnhashServerSeedRoute:
     PublicProvablyFairUnhashServerSeedRoute,
-}
+};
 
 const PublicProvablyFairRouteWithChildren =
-  PublicProvablyFairRoute._addFileChildren(PublicProvablyFairRouteChildren)
+  PublicProvablyFairRoute._addFileChildren(PublicProvablyFairRouteChildren);
 
 interface PublicRouteChildren {
-  PublicLoginRoute: typeof PublicLoginRoute
-  PublicProvablyFairRoute: typeof PublicProvablyFairRouteWithChildren
+  PublicLoginRoute: typeof PublicLoginRoute;
+  PublicProvablyFairRoute: typeof PublicProvablyFairRouteWithChildren;
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicLoginRoute: PublicLoginRoute,
   PublicProvablyFairRoute: PublicProvablyFairRouteWithChildren,
-}
+};
 
 const PublicRouteWithChildren =
-  PublicRoute._addFileChildren(PublicRouteChildren)
+  PublicRoute._addFileChildren(PublicRouteChildren);
 
 export interface FileRoutesByFullPath {
-  '': typeof PublicRouteWithChildren
-  '/casino': typeof ProtectedCasinoRouteWithChildren
-  '/login': typeof PublicLoginRoute
-  '/provably-fair': typeof PublicProvablyFairRouteWithChildren
-  '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
-  '/casino/home': typeof ProtectedCasinoHomeRoute
-  '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute
-  '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
-  '/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute
-  '/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute
+  '': typeof PublicRouteWithChildren;
+  '/casino': typeof ProtectedCasinoRouteWithChildren;
+  '/login': typeof PublicLoginRoute;
+  '/provably-fair': typeof PublicProvablyFairRouteWithChildren;
+  '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren;
+  '/casino/home': typeof ProtectedCasinoHomeRoute;
+  '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute;
+  '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute;
+  '/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute;
+  '/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute;
 }
 
 export interface FileRoutesByTo {
-  '': typeof PublicRouteWithChildren
-  '/casino': typeof ProtectedCasinoRouteWithChildren
-  '/login': typeof PublicLoginRoute
-  '/provably-fair': typeof PublicProvablyFairRouteWithChildren
-  '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
-  '/casino/home': typeof ProtectedCasinoHomeRoute
-  '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute
-  '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
-  '/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute
-  '/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute
+  '': typeof PublicRouteWithChildren;
+  '/casino': typeof ProtectedCasinoRouteWithChildren;
+  '/login': typeof PublicLoginRoute;
+  '/provably-fair': typeof PublicProvablyFairRouteWithChildren;
+  '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren;
+  '/casino/home': typeof ProtectedCasinoHomeRoute;
+  '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute;
+  '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute;
+  '/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute;
+  '/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_protected': typeof ProtectedRouteWithChildren
-  '/_public': typeof PublicRouteWithChildren
-  '/_protected/casino': typeof ProtectedCasinoRouteWithChildren
-  '/_public/login': typeof PublicLoginRoute
-  '/_public/provably-fair': typeof PublicProvablyFairRouteWithChildren
-  '/_protected/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
-  '/_protected/casino/home': typeof ProtectedCasinoHomeRoute
-  '/_protected/casino/my-bets': typeof ProtectedCasinoMyBetsRoute
-  '/_public/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
-  '/_public/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute
-  '/_protected/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute
+  __root__: typeof rootRoute;
+  '/_protected': typeof ProtectedRouteWithChildren;
+  '/_public': typeof PublicRouteWithChildren;
+  '/_protected/casino': typeof ProtectedCasinoRouteWithChildren;
+  '/_public/login': typeof PublicLoginRoute;
+  '/_public/provably-fair': typeof PublicProvablyFairRouteWithChildren;
+  '/_protected/casino/games': typeof ProtectedCasinoGamesRouteWithChildren;
+  '/_protected/casino/home': typeof ProtectedCasinoHomeRoute;
+  '/_protected/casino/my-bets': typeof ProtectedCasinoMyBetsRoute;
+  '/_public/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute;
+  '/_public/provably-fair/unhash-server-seed': typeof PublicProvablyFairUnhashServerSeedRoute;
+  '/_protected/casino/games/$gameId': typeof ProtectedCasinoGamesGameIdRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | ''
     | '/casino'
@@ -298,8 +298,8 @@ export interface FileRouteTypes {
     | '/casino/my-bets'
     | '/provably-fair/calculation'
     | '/provably-fair/unhash-server-seed'
-    | '/casino/games/$gameId'
-  fileRoutesByTo: FileRoutesByTo
+    | '/casino/games/$gameId';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | ''
     | '/casino'
@@ -310,7 +310,7 @@ export interface FileRouteTypes {
     | '/casino/my-bets'
     | '/provably-fair/calculation'
     | '/provably-fair/unhash-server-seed'
-    | '/casino/games/$gameId'
+    | '/casino/games/$gameId';
   id:
     | '__root__'
     | '/_protected'
@@ -323,23 +323,23 @@ export interface FileRouteTypes {
     | '/_protected/casino/my-bets'
     | '/_public/provably-fair/calculation'
     | '/_public/provably-fair/unhash-server-seed'
-    | '/_protected/casino/games/$gameId'
-  fileRoutesById: FileRoutesById
+    | '/_protected/casino/games/$gameId';
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  ProtectedRoute: typeof ProtectedRouteWithChildren
-  PublicRoute: typeof PublicRouteWithChildren
+  ProtectedRoute: typeof ProtectedRouteWithChildren;
+  PublicRoute: typeof PublicRouteWithChildren;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
-}
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {

@@ -1,4 +1,4 @@
-import { KenoPayout, KenoPayoutMultiplier, KenoRisk } from './keno.types';
+import type { KenoPayout, KenoPayoutMultiplier } from './keno.types';
 
 const CLASSIC_PAYOUTS: KenoPayout = {
   10: {

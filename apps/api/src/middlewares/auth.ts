@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import type { AuthenticatedRequest } from '../types';
 
 export const isAuthenticated = (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {

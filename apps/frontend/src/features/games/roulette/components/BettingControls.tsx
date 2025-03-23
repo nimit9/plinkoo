@@ -24,8 +24,6 @@ function BettingControls({
         betAmount={betAmount / 100}
         isInputDisabled
         onBetAmountChange={(amount) => {
-          console.log('amount', amount);
-
           setBetAmount(amount * 100);
         }}
       />

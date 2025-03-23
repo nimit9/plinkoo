@@ -1,6 +1,6 @@
 const HOUSE_EDGE = 0.99;
 
-export const getResult = (clientSeed: string) => {
+export const getResult = () => {
   // const floats = rng.generateFloats({
   //   clientSeed,
   //   count: 1,

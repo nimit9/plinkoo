@@ -10,8 +10,7 @@ function ChipCarousel(): JSX.Element {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { balance } = useBalanceStore();
-  const { betAmount, updateBetAmount, selectedChip, setSelectedChip } =
-    useRouletteStore();
+  const { betAmount, selectedChip, setSelectedChip } = useRouletteStore();
   const scrollLeft = (): void => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({
@@ -31,8 +30,6 @@ function ChipCarousel(): JSX.Element {
   };
 
   useEffect(() => {
-    console.log('selectedChip', selectedChip);
-
     if (selectedChip && balance && betAmount + selectedChip > balance * 100) {
       if (selectedChip < 1) {
         setSelectedChip(null);
@@ -62,9 +59,6 @@ function ChipCarousel(): JSX.Element {
             }).map((_, index) => {
               const chipValue = 10 ** index;
               const isDisabled = balance * 100 - betAmount < chipValue;
-              const isSelected = !isDisabled && selectedChip === chipValue;
-
-              console.log('isDisabled', chipValue, isDisabled, isSelected);
 
               return (
                 <Chip

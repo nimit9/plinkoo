@@ -1,6 +1,11 @@
-import axios, { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
+import axios from 'axios';
 
-export const setupInterceptors = ({ authErrCb }: { authErrCb: () => void }) => {
+export const setupInterceptors = ({
+  authErrCb,
+}: {
+  authErrCb: () => void;
+}): void => {
   axios.interceptors.request.use((config) => {
     return {
       ...config,

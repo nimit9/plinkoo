@@ -1,11 +1,10 @@
+import { SiGoogle } from '@icons-pack/react-simple-icons';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { SiGoogle } from '@icons-pack/react-simple-icons';
-import { Link } from '@tanstack/react-router';
 
-export default function Login() {
-  const handleGoogleLogin = () => {
+export default function Login(): JSX.Element {
+  const handleGoogleLogin = (): void => {
     window.location.href = 'http://localhost:5000/api/v1/auth/google';
   };
 
@@ -19,9 +18,9 @@ export default function Login() {
       </div>
       <div className="space-y-4">
         <Button
-          variant="outline"
           className="w-full"
           onClick={handleGoogleLogin}
+          variant="outline"
         >
           <SiGoogle className="mr-2 h-4 w-4" />
           Sign in with Google
@@ -42,25 +41,25 @@ export default function Login() {
         </div> */}
         <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" />
+          <Input id="email" placeholder="m@example.com" type="email" />
         </div>
         <div className="space-y-1">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" placeholder="Enter password" />
+          <Input id="password" placeholder="Enter password" type="password" />
         </div>
-        <Button type="submit" className="w-full">
+        <Button className="w-full" type="submit">
           Sign In
         </Button>
         <div className="flex justify-between text-sm">
           <Button
-            variant="link"
             className="underline underline-offset-4 p-0 h-min font-normal"
+            variant="link"
           >
             Forgot Password?
           </Button>
           <Button
-            variant="link"
             className="underline underline-offset-4 p-0 h-min font-normal"
+            variant="link"
           >
             Sign Up
           </Button>

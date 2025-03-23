@@ -1,7 +1,6 @@
 import { sum } from 'lodash';
 import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
 import { validateBets } from '@repo/common/game-utils/roulette/validations.js';
-import type { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { placeBet } from '@/api/games/roulette';
@@ -15,16 +14,16 @@ export function Roulette(): JSX.Element {
   const { undoBet, clearBets, bets, betHistory } = useRouletteStore();
 
   const { mutate } = useMutation({
-    mutationFn: (bets: RouletteBet[]) => placeBet(bets),
+    mutationFn: (rouletteBets: RouletteBet[]) => placeBet(rouletteBets),
     onSuccess: (data) => {
-      console.log('data', data);
+      return data;
     },
     onError: (error) => {
-      console.log('error', error);
+      return error;
     },
   });
 
-  const onBet = () => {
+  const onBet = (): void => {
     const rouletteBet = Object.entries(bets).map(([betId, betAmount]) => {
       const { betType, selection } = parseBetId(betId);
       const totalBetAmount = sum(betAmount) / 100;
@@ -34,7 +33,6 @@ export function Roulette(): JSX.Element {
         amount: totalBetAmount,
       } as RouletteBet;
     });
-    console.log('rouletteBet', rouletteBet);
 
     const rouletteBets = validateBets(rouletteBet);
     mutate(rouletteBets);
