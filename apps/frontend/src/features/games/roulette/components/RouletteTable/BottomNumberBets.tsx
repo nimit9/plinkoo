@@ -14,7 +14,7 @@ function BottomNumberBets({
   label: string;
 }): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();
-  const betId = label;
+  const betId = action;
   const { bets, addBet } = useRouletteStore();
   const isBet = bets[betId] && bets[betId].length > 0;
   const betAmount = sum(bets[betId]);

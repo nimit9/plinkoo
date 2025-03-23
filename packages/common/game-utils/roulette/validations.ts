@@ -109,7 +109,6 @@ const equalPayoutBets = z.object({
     RouletteBetTypes.LOW,
   ]),
   amount: amountSchema,
-  selection: z.null(),
 });
 
 // Define the union schema
