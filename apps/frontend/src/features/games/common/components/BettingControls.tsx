@@ -1,13 +1,12 @@
 import { BadgeDollarSign } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
-import { useBalanceStore } from '@/store';
 
 export interface BettingControlsProps {
   betAmount?: number;
   profitOnWin?: number;
-  balance?: number;
   isPending?: boolean;
   onBetAmountChange?: (amount: number) => void;
   onBet?: () => Promise<void>;
@@ -20,7 +19,8 @@ export function BetAmountInput({
 }: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'> & {
   isInputDisabled?: boolean;
 }): JSX.Element {
-  const { balance } = useBalanceStore();
+  const queryClient = useQueryClient();
+  const balance = queryClient.getQueryData<number>(['balance']) || 0;
   return (
     <div>
       <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
@@ -130,11 +130,12 @@ export function BetButton({
 export function BettingControls({
   betAmount,
   profitOnWin,
-  balance,
   isPending,
   onBetAmountChange,
   onBet,
 }: BettingControlsProps): JSX.Element {
+  const queryClient = useQueryClient();
+  const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled =
     (betAmount ?? 0) > (balance ?? 0) || (betAmount ?? 0) <= 0 || isPending;
 

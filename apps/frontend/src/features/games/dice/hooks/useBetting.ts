@@ -1,5 +1,5 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
   DicePlaceBetRequestBody,
   DicePlaceBetResponse,
@@ -10,8 +10,6 @@ import { useAudio } from '@/common/hooks/useAudio';
 import win from '@/assets/audio/win.mp3';
 
 interface UseDiceBettingProps {
-  betAmount: number;
-  setBalance: (amount: number) => void;
   setResult: (result: DicePlaceBetResponse) => void;
   setLastResultId: (id: string) => void;
 }
@@ -26,18 +24,18 @@ interface UseDiceBettingResult {
 }
 
 export function useDiceBetting({
-  setBalance,
   setResult,
   setLastResultId,
 }: UseDiceBettingProps): UseDiceBettingResult {
   const { play: playWinSound } = useAudio(win);
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: placeBet,
     onSuccess: (response: ApiResponse<DicePlaceBetResponse>) => {
       setLastResultId(Date.now().toString());
       setResult(response.data);
-      setBalance(response.data.balance);
+      queryClient.setQueryData(['balance'], () => response.data.balance);
       if (response.data.payoutMultiplier > 0) {
         void playWinSound();
       }

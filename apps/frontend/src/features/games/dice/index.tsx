@@ -1,5 +1,4 @@
 import useDiceStore from '@/features/games/dice/store/diceStore';
-import { useBalanceStore } from '@/store/balance';
 import { Games } from '@/const/games';
 import { BettingControls } from '../common/components/BettingControls';
 import GameSettingsBar from '../common/components/game-settings';
@@ -16,14 +15,10 @@ export function DiceGame(): JSX.Element {
   const diceState = useDiceStore();
   const { betAmount, profitOnWin, results, setBetAmount, setResult } =
     diceState;
-
-  const { balance, setBalance } = useBalanceStore();
   const { playBetSound } = useDiceAudio(false);
   const { showResultSlider, setLastResultId } = useResultSlider();
   const { handleValueChange } = useSliderValue();
   const { mutate, isPending } = useDiceBetting({
-    betAmount,
-    setBalance,
     setResult,
     setLastResultId,
   });
@@ -41,7 +36,6 @@ export function DiceGame(): JSX.Element {
     <>
       <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <BettingControls
-          balance={balance}
           betAmount={betAmount}
           isPending={isPending}
           onBet={handleBet}
