@@ -6,6 +6,7 @@ import InputWithIcon from '@/common/forms/components/InputWithIcon';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { getVerificationOutcome } from '@/lib/verificationOutcomes';
+import { type Game } from '@/const/games';
 
 export interface VerificationInputsState {
   clientSeed: string;
@@ -16,9 +17,11 @@ export interface VerificationInputsState {
 function VerificationInputs({
   setOutcome,
   onSetVerificationInputs,
+  game,
 }: {
   setOutcome: (outcome: string | null) => void;
   onSetVerificationInputs?: (inputs: VerificationInputsState | null) => void;
+  game: Game;
 }): JSX.Element {
   const { pathname } = useLocation();
   const [verificationInputs, setVerificationInputs] =
@@ -60,7 +63,7 @@ function VerificationInputs({
     void (async () => {
       try {
         const outcome = await getVerificationOutcome({
-          game: 'dice',
+          game,
           clientSeed,
           serverSeed,
           nonce,
@@ -71,7 +74,7 @@ function VerificationInputs({
         return error;
       }
     })();
-  }, [verificationInputs, setOutcome, onSetVerificationInputs]);
+  }, [verificationInputs, setOutcome, onSetVerificationInputs, game]);
 
   return (
     <div className="flex flex-col gap-2">

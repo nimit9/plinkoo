@@ -8,8 +8,10 @@ export interface BettingControlsProps {
   betAmount?: number;
   profitOnWin?: number;
   isPending?: boolean;
-  onBetAmountChange?: (amount: number) => void;
+  onBetAmountChange?: (amount: number, multiplier?: number) => void;
   onBet?: () => Promise<void>;
+  betButtonText?: string;
+  icon?: React.ReactNode;
 }
 
 export function BetAmountInput({
@@ -36,14 +38,14 @@ export function BetAmountInput({
             step={1}
             type="number"
             value={betAmount}
-            wrapperClassName="rounded-r-none rounded-none rounded-l"
+            wrapperClassName="h-10 rounded-r-none rounded-none rounded-l"
           />
         </div>
         <BetAmountButton
           disabled={betAmount ? betAmount === 0 || betAmount / 2 < 0.01 : true}
           label="½"
           onClick={() => {
-            onBetAmountChange?.((betAmount ?? 0) / 2);
+            onBetAmountChange?.(betAmount ?? 0, 0.5);
           }}
         />
         <BetAmountButton
@@ -52,7 +54,7 @@ export function BetAmountInput({
           }
           label="2×"
           onClick={() => {
-            onBetAmountChange?.((betAmount ?? 0) * 2);
+            onBetAmountChange?.(betAmount ?? 0, 2);
           }}
         />
       </div>
@@ -102,15 +104,19 @@ export function BetButton({
   disabled,
   onClick,
   loadingImage,
+  betButtonText,
+  icon,
 }: Pick<BettingControlsProps, 'isPending'> & {
   disabled: boolean;
   onClick: () => void;
 } & {
   loadingImage: string;
+  betButtonText?: string;
+  icon?: React.ReactNode;
 }): JSX.Element {
   return (
     <Button
-      className="w-full bg-[#00e600] hover:bg-[#1fff20] text-black font-semibold h-12 text-base"
+      className="w-full bg-[#00e600] hover:bg-[#1fff20] text-black font-semibold h-12 text-sm"
       disabled={disabled}
       onClick={onClick}
     >
@@ -121,7 +127,10 @@ export function BetButton({
           src={loadingImage}
         />
       ) : (
-        'Bet'
+        <div className="flex items-center gap-2">
+          {icon}
+          {betButtonText ?? 'Bet'}
+        </div>
       )}
     </Button>
   );
@@ -133,6 +142,8 @@ export function BettingControls({
   isPending,
   onBetAmountChange,
   onBet,
+  betButtonText,
+  icon,
 }: BettingControlsProps): JSX.Element {
   const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']);
@@ -147,7 +158,9 @@ export function BettingControls({
       />
       <ProfitDisplay profitOnWin={profitOnWin} />
       <BetButton
+        betButtonText={betButtonText}
         disabled={Boolean(isDisabled)}
+        icon={icon}
         isPending={isPending}
         loadingImage="/games/dice/loading-dice.png"
         onClick={() => void onBet?.()}

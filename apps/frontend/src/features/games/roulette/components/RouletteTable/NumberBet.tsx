@@ -2,6 +2,7 @@ import { redNumbers } from '@repo/common/game-utils/roulette/constants.js';
 import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { useRef } from 'react';
 import { sum } from 'lodash';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import { getIsNumberHover } from '../../utils/hover';
@@ -14,25 +15,41 @@ import {
 } from '../../utils/shouldRender';
 import useRouletteStore from '../../store/rouletteStore';
 import Chip from '../Chip';
+import {
+  useWinningNumber,
+  useBetKey,
+} from '../../store/rouletteStoreSelectors';
+import { useRouletteContext } from '../../context/RouletteContext';
 import DroppableArea from './DroppableArea';
 
 function NumberBet({ number }: { number: number }): JSX.Element {
   const { hoverId } = useRouletteBoardHoverStore();
-
+  const winningNumber = useWinningNumber();
+  const betKey = useBetKey();
+  const { isPreview } = useRouletteContext();
   const referenceDiv = useRef<HTMLDivElement | null>(null);
 
   const isRedNumber = redNumbers.includes(number.toString());
-  const isNumberHover = getIsNumberHover({ number, hoverId });
+  const isNumberHover = !isPreview && getIsNumberHover({ number, hoverId });
 
   const betId = `${RouletteBetTypes.STRAIGHT}-${number}`;
 
-  const { bets, addBet } = useRouletteStore();
+  const { bets, addBet, isRouletteWheelStopped } = useRouletteStore();
 
   const isBet = bets[betId] && bets[betId].length > 0;
   const betAmount = sum(bets[betId]);
 
   return (
-    <div
+    <motion.div
+      animate={
+        isRouletteWheelStopped && Number(winningNumber) === number
+          ? {
+              backgroundColor: isRedNumber
+                ? ['#fe2247', '#fe6e86', '#fe2247']
+                : ['#2f4553', '#4b6e84', '#2f4553'],
+            }
+          : {}
+      }
       className={cn(
         'cursor-pointer rounded-sm flex items-center justify-center size-10 text-sm font-semibold relative',
         isRedNumber
@@ -43,9 +60,12 @@ function NumberBet({ number }: { number: number }): JSX.Element {
           'bg-roulette-black-hover': !isRedNumber && isNumberHover,
         },
       )}
+      key={betKey}
       onClick={(e) => {
         e.stopPropagation();
-        addBet(betId);
+        if (!isPreview) {
+          addBet(betId);
+        }
       }}
       onKeyDown={(event) => {
         return event;
@@ -55,6 +75,17 @@ function NumberBet({ number }: { number: number }): JSX.Element {
       }}
       role="button"
       tabIndex={0}
+      transition={
+        isRouletteWheelStopped && Number(winningNumber) === number
+          ? {
+              duration: 1,
+              repeat: Infinity,
+            }
+          : {
+              duration: 0,
+              repeat: 0,
+            }
+      }
     >
       {number}
       {isBet ? (
@@ -62,6 +93,7 @@ function NumberBet({ number }: { number: number }): JSX.Element {
           <Chip id={betId} size={6} value={betAmount} />
         </div>
       ) : null}
+
       {shouldRenderCornerBet(number) && (
         <DroppableArea
           betTypeData={{
@@ -139,7 +171,7 @@ function NumberBet({ number }: { number: number }): JSX.Element {
           reference={referenceDiv}
         />
       )}
-    </div>
+    </motion.div>
   );
 }
 

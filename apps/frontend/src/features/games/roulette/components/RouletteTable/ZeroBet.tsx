@@ -1,36 +1,57 @@
 import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { useRef } from 'react';
 import { sum } from 'lodash';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import { getIsNumberHover } from '../../utils/hover';
 import useRouletteStore from '../../store/rouletteStore';
 import Chip from '../Chip';
+import {
+  useWinningNumber,
+  useBetKey,
+} from '../../store/rouletteStoreSelectors';
+import { useRouletteContext } from '../../context/RouletteContext';
 import DroppableArea from './DroppableArea';
 
 function ZeroBet(): JSX.Element {
   const { hoverId } = useRouletteBoardHoverStore();
   const referenceDiv = useRef<HTMLDivElement | null>(null);
 
-  const isNumberHover = getIsNumberHover({ number: 0, hoverId });
+  const { isPreview } = useRouletteContext();
+
+  const isNumberHover = !isPreview && getIsNumberHover({ number: 0, hoverId });
+  const winningNumber = useWinningNumber();
 
   const betId = `${RouletteBetTypes.STRAIGHT}-0`;
-  const { bets, addBet } = useRouletteStore();
+  const { bets, addBet, isRouletteWheelStopped } = useRouletteStore();
 
   const isBet = bets[betId] && bets[betId].length > 0;
   const betAmount = sum(bets[betId]);
 
+  const isWinning = isRouletteWheelStopped && Number(winningNumber) === 0;
+  const betKey = useBetKey();
   return (
-    <div
+    <motion.div
+      animate={
+        isWinning
+          ? {
+              backgroundColor: ['#419e3f', '#69c267', '#419e3f'],
+            }
+          : {}
+      }
       className={cn(
         'cursor-pointer select-none relative rounded-sm flex items-center justify-center w-10 text-sm font-semibold bg-roulette-green hover:bg-roulette-green-hover',
         {
           'bg-roulette-green-hover': isNumberHover,
         },
       )}
+      key={betKey}
       onClick={(e) => {
         e.stopPropagation();
-        addBet(betId);
+        if (!isPreview) {
+          addBet(betId);
+        }
       }}
       onKeyDown={(event) => {
         return event;
@@ -40,6 +61,17 @@ function ZeroBet(): JSX.Element {
       }}
       role="button"
       tabIndex={0}
+      transition={
+        isWinning
+          ? {
+              duration: 1,
+              repeat: Infinity,
+            }
+          : {
+              duration: 0,
+              repeat: 0,
+            }
+      }
     >
       0
       {isBet ? (
@@ -79,7 +111,7 @@ function ZeroBet(): JSX.Element {
         position="BR"
         reference={referenceDiv}
       />
-    </div>
+    </motion.div>
   );
 }
 

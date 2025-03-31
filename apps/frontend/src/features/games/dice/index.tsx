@@ -39,7 +39,9 @@ export function DiceGame(): JSX.Element {
           betAmount={betAmount}
           isPending={isPending}
           onBet={handleBet}
-          onBetAmountChange={setBetAmount}
+          onBetAmountChange={(amount, multiplier = 1) => {
+            setBetAmount(amount * multiplier);
+          }}
           profitOnWin={profitOnWin}
         />
         <div className="flex-1 bg-brand-stronger p-3">

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { BadgeDollarSignIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatCompactNumber, getYellowToRedColor } from '@/lib/formatters';
 import CommonTooltip from '@/components/ui/common-tooltip';
@@ -61,7 +62,16 @@ function Chip({
     : `${shadowColor} 0px 0.125rem 0px 0px`;
 
   return (
-    <CommonTooltip content={value} forceHide={formattedValue.length <= 4}>
+    <CommonTooltip
+      content={
+        <div className="flex items-center gap-1 x">
+          <span>{value / 100}</span>
+          <span>
+            <BadgeDollarSignIcon className="size-4" />
+          </span>
+        </div>
+      }
+    >
       <div
         className={cn(
           "bg-[url('/games/roulette/chip-bg-img.svg')] bg-contain bg-no-repeat bg-center rounded-full flex items-center justify-center shrink-0",

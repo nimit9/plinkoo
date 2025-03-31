@@ -1,3 +1,4 @@
+import type { RoulettePlaceBetResponse } from '@repo/common/game-utils/roulette/types.js';
 import { create } from 'zustand';
 
 interface RouletteStoreActions {
@@ -8,6 +9,9 @@ interface RouletteStoreActions {
   undoBet: () => void;
   addBet: (betId: string) => void;
   updateBetAmount: (betAmount: number) => void;
+  multiplyBets: (multiplier: number) => void;
+  setLatestResult: (result: RoulettePlaceBetResponse | null) => void;
+  setIsRouletteWheelStopped: (isStopped: boolean) => void;
 }
 
 interface RouletteStoreState {
@@ -15,6 +19,8 @@ interface RouletteStoreState {
   betAmount: number;
   betHistory: string[];
   bets: Record<string, number[] | undefined>;
+  latestResult: RoulettePlaceBetResponse | null;
+  isRouletteWheelStopped: boolean;
 }
 
 const initialState: RouletteStoreState = {
@@ -22,6 +28,8 @@ const initialState: RouletteStoreState = {
   betHistory: [],
   bets: {},
   selectedChip: 1,
+  latestResult: null,
+  isRouletteWheelStopped: true,
 };
 
 const useRouletteStore = create<RouletteStoreState & RouletteStoreActions>(
@@ -44,6 +52,16 @@ const useRouletteStore = create<RouletteStoreState & RouletteStoreActions>(
     },
     clearBets: () => {
       set(initialState);
+    },
+    multiplyBets: (multiplier: number) => {
+      set((state) => ({
+        bets: Object.fromEntries(
+          Object.entries(state.bets).map(([key, betAmountArray]) => [
+            key,
+            betAmountArray?.map((betAmount) => betAmount * multiplier),
+          ]),
+        ),
+      }));
     },
     undoBet: () => {
       set((state) => {
@@ -91,6 +109,12 @@ const useRouletteStore = create<RouletteStoreState & RouletteStoreActions>(
           betHistory: [...state.betHistory, betId],
         };
       });
+    },
+    setLatestResult: (result) => {
+      set({ latestResult: result });
+    },
+    setIsRouletteWheelStopped: (isStopped) => {
+      set({ isRouletteWheelStopped: isStopped });
     },
   }),
 );

@@ -33,7 +33,9 @@ function CommonTooltip({
         }}
       >
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className="font-medium">{content}</TooltipContent>
+        <TooltipContent className="font-medium bg-brand-weak text-neutral-default">
+          {content}
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

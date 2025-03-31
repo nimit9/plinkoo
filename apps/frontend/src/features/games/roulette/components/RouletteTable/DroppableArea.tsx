@@ -4,6 +4,7 @@ import { getBetTypeSelectionId } from '../../utils/helpers';
 import useRouletteStore from '../../store/rouletteStore';
 import Chip from '../Chip';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
+import { useRouletteContext } from '../../context/RouletteContext';
 
 interface PositionValues {
   top: string | number;
@@ -66,6 +67,8 @@ function DroppableArea({
 
   const { setHoverId } = useRouletteBoardHoverStore();
 
+  const { isPreview } = useRouletteContext();
+
   const { bets, addBet } = useRouletteStore();
 
   const [style, setStyle] = useState({});
@@ -95,6 +98,7 @@ function DroppableArea({
     <div
       onClick={(e) => {
         e.stopPropagation();
+        if (isPreview) return;
         addBet(betId);
       }}
       onKeyDown={(event) => {

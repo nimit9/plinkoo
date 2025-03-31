@@ -1,9 +1,16 @@
-import React from 'react';
-import { sum } from 'lodash';
+import { useMemo } from 'react';
+import sum from 'lodash/sum';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import useRouletteStore from '../../store/rouletteStore';
 import Chip from '../Chip';
+import {
+  useWinningNumber,
+  useBetKey,
+} from '../../store/rouletteStoreSelectors';
+import { useRouletteContext } from '../../context/RouletteContext';
 
 function BottomNumberBets({
   action,
@@ -14,19 +21,47 @@ function BottomNumberBets({
 }): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();
   const betId = action;
-  const { bets, addBet } = useRouletteStore();
+  const { bets, addBet, isRouletteWheelStopped } = useRouletteStore();
   const isBet = bets[betId] && bets[betId].length > 0;
   const betAmount = sum(bets[betId]);
+  const winningNumber = useWinningNumber();
+  const betKey = useBetKey();
+  const { isPreview } = useRouletteContext();
+  const isWinning = useMemo(() => {
+    if (!winningNumber || !isRouletteWheelStopped || winningNumber === '0')
+      return false;
+    switch (action as RouletteBetTypes) {
+      case RouletteBetTypes.LOW:
+        return Number(winningNumber) >= 1 && Number(winningNumber) <= 18;
+      case RouletteBetTypes.HIGH:
+        return Number(winningNumber) >= 19 && Number(winningNumber) <= 36;
+      case RouletteBetTypes.EVEN:
+        return Number(winningNumber) % 2 === 0;
+      case RouletteBetTypes.ODD:
+        return Number(winningNumber) % 2 !== 0;
+      default:
+        return false;
+    }
+  }, [action, isRouletteWheelStopped, winningNumber]);
 
   return (
-    <div
+    <motion.div
+      animate={
+        isWinning
+          ? {
+              backgroundColor: ['#0f212e', '#4b6e84', '#0f212e'],
+            }
+          : {}
+      }
       className={cn(
         'col-span-2 relative cursor-pointer rounded-sm flex items-center justify-center h-10 w-full text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]',
       )}
-      key={action}
+      key={betKey}
       onClick={(e) => {
         e.stopPropagation();
-        addBet(betId);
+        if (!isPreview) {
+          addBet(betId);
+        }
       }}
       onKeyDown={(event) => {
         return event;
@@ -39,6 +74,17 @@ function BottomNumberBets({
       }}
       role="button"
       tabIndex={0}
+      transition={
+        isWinning
+          ? {
+              duration: 1,
+              repeat: Infinity,
+            }
+          : {
+              duration: 0,
+              repeat: 0,
+            }
+      }
     >
       {label}
       {isBet ? (
@@ -46,7 +92,7 @@ function BottomNumberBets({
           <Chip id={betId} size={6} value={betAmount} />
         </div>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
 

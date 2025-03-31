@@ -18,12 +18,16 @@ interface RegisterRequestBody {
 const router: Router = Router();
 
 // Google authentication routes
-router.get(
-  '/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  }) as RequestHandler,
-);
+router.get('/google', (req, res, next) => {
+  const state = JSON.stringify({ redirect: req.query.redirect_to });
+  // Store the redirect URL in session if provided
+  (
+    passport.authenticate('google', {
+      scope: ['profile', 'email'],
+      state: encodeURIComponent(state),
+    }) as RequestHandler
+  )(req, res, next);
+});
 
 router.get(
   '/google/callback',
@@ -31,7 +35,12 @@ router.get(
     failureRedirect: `${process.env.CLIENT_URL}/login`,
   }) as RequestHandler,
   (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}`);
+    const state = req.query.state
+      ? (JSON.parse(decodeURIComponent(req.query.state as string)) as {
+          redirect?: string;
+        })
+      : {};
+    res.redirect(state.redirect || `${process.env.CLIENT_URL}`);
   },
 );
 

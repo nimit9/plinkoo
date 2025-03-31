@@ -42,12 +42,14 @@ function ChipCarousel(): JSX.Element {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-xs font-semibold">
-        Chip Value:{' '}
-        <span className="font-bold">
-          {selectedChip ? (selectedChip / 100).toFixed(2) : 0}
-        </span>
-      </Label>
+      {balance ? (
+        <Label className="text-xs font-semibold">
+          Chip Value:{' '}
+          <span className="font-bold">
+            {selectedChip ? (selectedChip / 100).toFixed(2) : 0}
+          </span>
+        </Label>
+      ) : null}
       <div className="flex items-stretch rounded-sm shadow-sm h-12">
         <ScrollPrevButton onClick={scrollLeft} />
         <div
@@ -56,7 +58,7 @@ function ChipCarousel(): JSX.Element {
         >
           <div className="flex items-center h-full justify-stretch w-full gap-2 px-2">
             {Array.from({
-              length: Math.floor(Math.log10(balance * 100)) + 1,
+              length: 10,
             }).map((_, index) => {
               const chipValue = 10 ** index;
               const isDisabled = balance * 100 - betAmount < chipValue;

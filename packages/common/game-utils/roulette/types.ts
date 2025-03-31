@@ -18,7 +18,7 @@ enum RouletteBetTypes {
 
 export interface RouletterPlaceBetState {
   bets: RouletteBet[];
-  winningNumber: number;
+  winningNumber: string;
 }
 
 export interface RoulettePlaceBetResponse {

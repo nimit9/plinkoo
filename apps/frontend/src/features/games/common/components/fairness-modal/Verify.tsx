@@ -22,7 +22,7 @@ function Verify({ game }: { game: Game }): JSX.Element {
           options={GAMES_DROPDOWN_OPTIONS}
           value={selectedGame}
         />
-        <VerificationInputs setOutcome={setOutcome} />
+        <VerificationInputs game={selectedGame} setOutcome={setOutcome} />
       </div>
     </>
   );

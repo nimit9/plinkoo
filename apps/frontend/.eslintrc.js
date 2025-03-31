@@ -18,5 +18,6 @@ module.exports = {
         ignore: ['FeaturedGames.tsx'],
       },
     ],
+    'eslint-comments/require-description': 'off',
   },
 };

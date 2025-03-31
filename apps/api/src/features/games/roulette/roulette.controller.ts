@@ -48,7 +48,7 @@ export const placeBetAndSpin = async (
 
   const gameState = {
     bets: validBets,
-    winningNumber,
+    winningNumber: String(winningNumber),
   };
 
   const payoutInCents = Math.round(payout * 100);
