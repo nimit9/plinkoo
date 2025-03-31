@@ -16,6 +16,7 @@ datasource db {
 enum Game {
   dice
   roulette
+  mines
 }
 
 model User {
