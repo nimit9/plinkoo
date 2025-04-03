@@ -1,3 +1,4 @@
+import { range } from 'lodash';
 import chunk from 'lodash/chunk';
 import { createHash, createHmac, getRandomValues } from 'node:crypto';
 

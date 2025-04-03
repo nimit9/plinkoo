@@ -1,15 +1,17 @@
 import { HashLoader } from 'react-spinners';
+import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
 import DiceResultPreview from '@/features/games/dice/components/DiceResultPreview';
 import { Games, type Game } from '@/const/games';
 import RouletteWheel from '@/features/games/roulette/components/RouletteWheel';
+import InactiveGameTile from '@/features/games/mines/components/InactiveGameTile';
 
 function VerificationResult({
   game,
   outcome,
 }: {
   game: Game | null;
-  outcome: string | null;
-}): JSX.Element {
+  outcome: string | number[] | null;
+}): JSX.Element | null {
   const getResult = (): JSX.Element => {
     switch (game) {
       case Games.DICE:
@@ -29,13 +31,33 @@ function VerificationResult({
             </div>
           </div>
         );
+      case Games.MINES: {
+        if (typeof outcome === 'string' || !outcome) return <>{null}</>;
+        return (
+          <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5 -my-12 py-2">
+            {Array.from({ length: NO_OF_TILES }, (_, i) => i).map((number) => (
+              <InactiveGameTile
+                index={number}
+                key={number}
+                {...{
+                  isPreview: true,
+                  isGameLost: false,
+                  mines: new Set(outcome),
+                }}
+                className="size-16"
+              />
+            ))}
+          </div>
+        );
+      }
+
       default:
         return <div>Unknown game</div>;
     }
   };
 
   return (
-    <div className="border border-brand-weaker border-dashed rounded-lg p-3 py-12 relative overflow-hidden">
+    <div className="border border-brand-weaker border-dashed rounded-lg p-3 py-12 relative overflow-hidden flex justify-center">
       {outcome ? (
         getResult()
       ) : (

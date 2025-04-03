@@ -5,7 +5,7 @@ import VerificationResult from './VerificationResult';
 import VerificationInputs from './VerificationInputs';
 
 function Verify({ game }: { game: Game }): JSX.Element {
-  const [outcome, setOutcome] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<string | number[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<Game>(game);
 
   return (

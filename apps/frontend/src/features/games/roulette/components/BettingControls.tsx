@@ -1,7 +1,5 @@
-import {
-  BetAmountInput,
-  BetButton,
-} from '../../common/components/BettingControls';
+import { BetAmountInput } from '../../common/components/BetAmountInput';
+import { BetButton } from '../../common/components/BettingControls';
 import useRouletteStore from '../store/rouletteStore';
 import ChipCarousel from './ChipCarousel';
 

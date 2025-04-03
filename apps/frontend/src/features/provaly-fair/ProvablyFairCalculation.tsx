@@ -6,9 +6,10 @@ import VerificationInputs from '../games/common/components/fairness-modal/Verifi
 import VerificationResult from '../games/common/components/fairness-modal/VerificationResult';
 import DiceResultBreakdown from '../games/dice/components/DiceResultBreakdown';
 import RouletteResultBreakdown from '../games/roulette/components/RouletteResultBreakdown';
+import MinesResultBreakdown from '../games/mines/components/MinesResultBreakdown';
 
 function ProvablyFairCalculation(): JSX.Element {
-  const [outcome, setOutcome] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<string | number[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<Game>(
     GAMES_DROPDOWN_OPTIONS[0].value,
   );
@@ -30,6 +31,15 @@ function ProvablyFairCalculation(): JSX.Element {
         return (
           <RouletteResultBreakdown
             clientSeed={verificationInputs?.clientSeed}
+            nonce={verificationInputs?.nonce}
+            serverSeed={verificationInputs?.serverSeed}
+          />
+        );
+      case Games.MINES:
+        return (
+          <MinesResultBreakdown
+            clientSeed={verificationInputs?.clientSeed}
+            minesCount={verificationInputs?.meta?.minesCount}
             nonce={verificationInputs?.nonce}
             serverSeed={verificationInputs?.serverSeed}
           />

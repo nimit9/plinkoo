@@ -5,13 +5,16 @@ import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import type { GameMeta } from '@/lib/verificationOutcomes';
 import { getVerificationOutcome } from '@/lib/verificationOutcomes';
-import { type Game } from '@/const/games';
+import { Games, type Game } from '@/const/games';
+import CommonSelect from '@/components/ui/common-select';
 
 export interface VerificationInputsState {
   clientSeed: string;
   serverSeed: string;
   nonce: string;
+  meta?: GameMeta;
 }
 
 function VerificationInputs({
@@ -19,11 +22,14 @@ function VerificationInputs({
   onSetVerificationInputs,
   game,
 }: {
-  setOutcome: (outcome: string | null) => void;
+  setOutcome: (outcome: string | number[] | null) => void;
   onSetVerificationInputs?: (inputs: VerificationInputsState | null) => void;
   game: Game;
 }): JSX.Element {
   const { pathname } = useLocation();
+
+  const [meta, setMeta] = useState<GameMeta | null>(null);
+
   const [verificationInputs, setVerificationInputs] =
     useState<VerificationInputsState>({
       clientSeed: '',
@@ -52,6 +58,31 @@ function VerificationInputs({
     }));
   };
 
+  const getGameMeta = (): JSX.Element | null => {
+    switch (game) {
+      case Games.MINES:
+        return (
+          <CommonSelect
+            label="Mines"
+            onValueChange={(value: string) => {
+              setMeta({ minesCount: Number(value) });
+              setVerificationInputs((prev) => ({
+                ...prev,
+                meta: { minesCount: Number(value) },
+              }));
+            }}
+            options={Array.from({ length: 24 }, (_, i) => ({
+              label: (i + 1).toString(),
+              value: (i + 1).toString(),
+            }))}
+            value={meta?.minesCount.toString() ?? '3'}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   useEffect(() => {
     const { clientSeed, serverSeed, nonce } = verificationInputs;
     if (!clientSeed || !serverSeed) {
@@ -67,6 +98,7 @@ function VerificationInputs({
           clientSeed,
           serverSeed,
           nonce,
+          ...(meta ? { meta } : {}),
         });
         setOutcome(outcome);
         onSetVerificationInputs?.(verificationInputs);
@@ -74,7 +106,7 @@ function VerificationInputs({
         return error;
       }
     })();
-  }, [verificationInputs, setOutcome, onSetVerificationInputs, game]);
+  }, [verificationInputs, setOutcome, onSetVerificationInputs, game, meta]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -150,6 +182,7 @@ function VerificationInputs({
           </Button>
         </div>
       </div>
+      <div>{getGameMeta()}</div>
       {!pathname.includes('/provably-fair/calculation') && (
         <Link target="_blank" to="/provably-fair/calculation">
           <p className="text-xs text-center font-medium my-2">

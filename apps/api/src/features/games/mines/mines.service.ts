@@ -1,47 +1,22 @@
-import range from 'lodash/range';
-import type { MinesBet } from '@repo/common/game-utils/mines/types.js';
+import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
+import type {
+  MinesBet,
+  MinesGameOverResponse,
+  MinesHiddenState,
+  MinesPlayRoundResponse,
+  MinesRevealedState,
+} from '@repo/common/game-utils/mines/types.js';
 import db from '@repo/db';
 import type { Bet } from '@prisma/client';
+import {
+  convertFloatsToGameEvents,
+  calculateMines,
+} from '@repo/common/game-utils/mines/utils.js';
 import { userManager } from '../../user/user.service';
 import { payouts } from './mines.constant';
 
-const NO_OF_TILES = 25;
-
-const convertFloatsToGameEvents = (
-  floats: number[],
-  totalEvents: number,
-): number[] => {
-  let remainingEvents = totalEvents;
-  return floats.map((float) => {
-    const event = Math.floor(float * remainingEvents);
-    remainingEvents -= 1;
-    return event;
-  });
-};
-
-const calculateMines = (gameEvents: number[], minesCount: number): number[] => {
-  let tileNumbers = range(NO_OF_TILES);
-
-  let eventIndex = 0;
-  const minePositions = [];
-  for (let i = 0; i < NO_OF_TILES; i++) {
-    const chosenIndex = gameEvents[eventIndex];
-
-    minePositions.push(tileNumbers[chosenIndex]);
-    if (minePositions.length === minesCount) {
-      break;
-    }
-    tileNumbers = [
-      ...tileNumbers.slice(0, chosenIndex),
-      ...tileNumbers.slice(chosenIndex + 1),
-    ];
-    eventIndex += 1;
-  }
-
-  return minePositions;
-};
 class MinesManager {
-  private static instance: MinesManager;
+  private static instance: MinesManager | undefined;
   private games: Map<string, Mines>;
 
   private constructor() {
@@ -49,22 +24,25 @@ class MinesManager {
   }
 
   static getInstance() {
-    if (!MinesManager.instance as boolean) {
+    if (!MinesManager.instance) {
       MinesManager.instance = new MinesManager();
     }
     return MinesManager.instance;
   }
 
-  async getGame(gameId: string) {
-    if (!this.games.has(gameId)) {
-      const bet = await db.bet.findUnique({
-        where: { id: gameId },
+  async getGame(userId: string) {
+    if (!this.games.has(userId)) {
+      const bet = await db.bet.findFirst({
+        where: { userId, active: true },
       });
+
       if (!bet) {
-        throw new Error('Game not found');
+        return null;
       }
+      const game = new Mines(bet);
+      this.games.set(userId, game);
     }
-    return this.games.get(gameId);
+    return this.games.get(userId);
   }
 
   async createGame({
@@ -96,25 +74,22 @@ class MinesManager {
       await userInstance.updateNonce(tx);
       return bet;
     });
-    const game = new Mines(minesCount, createdBet);
-    this.games.set(createdBet.id, game);
+    const game = new Mines(createdBet);
+    this.games.set(createdBet.userId, game);
     return game;
   }
 
-  deleteGame(gameId: string) {
-    this.games.delete(gameId);
+  deleteGame(userId: string) {
+    this.games.delete(userId);
   }
 }
 
 class Mines {
-  private minesCount;
   private bet: Bet;
   private rounds: { selectedTileIndex: number; payoutMultiplier: number }[] =
     [];
   private selectedTiles: number[] = [];
-
-  constructor(minesCount: number, bet: Bet) {
-    this.minesCount = minesCount;
+  constructor(bet: Bet) {
     this.bet = bet;
   }
 
@@ -122,7 +97,13 @@ class Mines {
     return this.bet;
   }
 
-  async playRound(selectedTileIndex: number) {
+  getRounds() {
+    return this.rounds;
+  }
+
+  async playRound(
+    selectedTileIndex: number,
+  ): Promise<MinesPlayRoundResponse | MinesGameOverResponse> {
     if (this.selectedTiles.includes(selectedTileIndex)) {
       throw new Error('Tile already selected');
     } else {
@@ -131,24 +112,28 @@ class Mines {
     if (this.rounds.length === NO_OF_TILES - 1) {
       throw new Error('Game over');
     }
-    if (!(this.bet.state as { mines?: number[] }).mines) {
+    if (!this.bet.state) {
+      throw new Error('Game state not found');
+    }
+    const { mines, minesCount } = this.bet.state as
+      | MinesHiddenState
+      | MinesRevealedState;
+    if (!mines) {
       throw new Error('Game not started');
     }
-    if (
-      (this.bet.state as { mines: number[] }).mines.includes(selectedTileIndex)
-    ) {
+    if (mines.includes(selectedTileIndex)) {
       this.rounds.push({ selectedTileIndex, payoutMultiplier: 0 });
       return this.getGameOverState(this.bet.userId);
     }
     const gemsCount = this.rounds.length + 1;
 
-    const payoutMultiplier = payouts[gemsCount][this.minesCount];
+    const payoutMultiplier = payouts[gemsCount][minesCount];
 
     this.rounds.push({ selectedTileIndex, payoutMultiplier });
     await db.bet.update({
       where: { id: this.bet.id, active: true },
       data: {
-        state: this.bet.state || {},
+        state: { ...(this.bet.state as MinesHiddenState), rounds: this.rounds },
       },
     });
     return {
@@ -157,8 +142,9 @@ class Mines {
       state: {
         rounds: this.rounds,
         mines: null,
-        minesCount: this.minesCount,
+        minesCount,
       },
+      betAmount: this.bet.betAmount / 100,
     };
   }
 
@@ -169,7 +155,9 @@ class Mines {
     return this.getGameOverState(userId);
   }
 
-  private async getGameOverState(userId: string) {
+  private async getGameOverState(
+    userId: string,
+  ): Promise<MinesGameOverResponse> {
     const userInstance = await userManager.getUser(userId);
     const payoutMultiplier = this.rounds.at(-1)?.payoutMultiplier || 0;
     const payoutAmount = payoutMultiplier * this.bet.betAmount;
@@ -197,10 +185,10 @@ class Mines {
     userInstance.setBalance(balance);
     return {
       id: this.bet.id,
-      state: this.bet.state,
+      state: { ...(this.bet.state as MinesRevealedState), rounds: this.rounds },
       payoutMultiplier,
-      payout: payoutAmount / 100,
-      balance: balance / 100,
+      payout: Number((payoutAmount / 100).toFixed(2)),
+      balance: Number((balance / 100).toFixed(2)),
       active: false,
     };
   }

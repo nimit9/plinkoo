@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -16,6 +17,8 @@ interface CommonSelectProps {
   }[];
   onValueChange: (value: string) => void;
   value: string | null;
+  triggerClassName?: string;
+  labelClassName?: string;
 }
 
 function CommonSelect({
@@ -23,14 +26,23 @@ function CommonSelect({
   options,
   onValueChange,
   value,
+  triggerClassName,
+  labelClassName,
 }: CommonSelectProps): JSX.Element {
   return (
     <div>
-      <Label className="pl-px text-xs text-neutral-weak font-medium">
+      <Label
+        className={cn(
+          'pl-px text-xs text-neutral-weak font-medium',
+          labelClassName,
+        )}
+      >
         {label}
       </Label>
       <Select onValueChange={onValueChange} value={value ?? ''}>
-        <SelectTrigger className="h-8 pl-2 text-xs font-medium">
+        <SelectTrigger
+          className={cn('h-8 pl-2 text-xs font-medium', triggerClassName)}
+        >
           <SelectValue className="text-neutral-default" />
         </SelectTrigger>
         <SelectContent>

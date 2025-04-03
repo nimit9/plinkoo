@@ -1,3 +1,4 @@
+import { range } from 'lodash';
 import chunk from 'lodash/chunk';
 
 export const generateRandomString = (length = 10): string => {
@@ -84,4 +85,40 @@ export const getGeneratedFloats = async ({
       return result + value / divider;
     }, 0),
   );
+};
+
+export const getFisherYatesShuffle = ({
+  gameEvents,
+  stopCount,
+  totalEventsPossible,
+}: {
+  gameEvents: number[];
+  stopCount: number;
+  totalEventsPossible: number;
+}): { array: number[]; chosenIndex: number }[] => {
+  if (gameEvents.length === 0) {
+    return [];
+  }
+  let eventNumbers = range(totalEventsPossible);
+  const outcomes = [];
+  const result: { array: number[]; chosenIndex: number }[] = [
+    { array: [...eventNumbers], chosenIndex: gameEvents[0] },
+  ];
+  for (let i = 0; i < totalEventsPossible; i++) {
+    const chosenIndex = gameEvents[i];
+    outcomes.push(eventNumbers[chosenIndex]);
+    if (outcomes.length === stopCount) {
+      break;
+    }
+
+    eventNumbers = [
+      ...eventNumbers.slice(0, chosenIndex),
+      ...eventNumbers.slice(chosenIndex + 1),
+    ];
+    result.push({
+      array: [...outcomes, ...eventNumbers],
+      chosenIndex: outcomes.length + gameEvents[i + 1],
+    });
+  }
+  return result;
 };

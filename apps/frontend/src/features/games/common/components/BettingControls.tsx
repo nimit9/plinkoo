@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import InputWithIcon from '@/common/forms/components/InputWithIcon';
+import { BetAmountInput } from './BetAmountInput';
 
 export interface BettingControlsProps {
   betAmount?: number;
@@ -12,74 +13,6 @@ export interface BettingControlsProps {
   onBet?: () => Promise<void>;
   betButtonText?: string;
   icon?: React.ReactNode;
-}
-
-export function BetAmountInput({
-  betAmount,
-  onBetAmountChange,
-  isInputDisabled,
-}: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'> & {
-  isInputDisabled?: boolean;
-}): JSX.Element {
-  const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']) || 0;
-  return (
-    <div>
-      <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
-      <div className="flex h-10 rounded-r overflow-hidden shadow-md group">
-        <div className="bg-input-disabled rounded-l flex items-center gap-1">
-          <InputWithIcon
-            disabled={isInputDisabled}
-            icon={<BadgeDollarSign className="text-gray-500" />}
-            min={0}
-            onChange={(e) => {
-              onBetAmountChange?.(Number(e.target.value));
-            }}
-            step={1}
-            type="number"
-            value={betAmount}
-            wrapperClassName="h-10 rounded-r-none rounded-none rounded-l"
-          />
-        </div>
-        <BetAmountButton
-          disabled={betAmount ? betAmount === 0 || betAmount / 2 < 0.01 : true}
-          label="½"
-          onClick={() => {
-            onBetAmountChange?.(betAmount ?? 0, 0.5);
-          }}
-        />
-        <BetAmountButton
-          disabled={
-            betAmount ? betAmount === 0 || 2 * betAmount > balance : true
-          }
-          label="2×"
-          onClick={() => {
-            onBetAmountChange?.(betAmount ?? 0, 2);
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function BetAmountButton({
-  label,
-  onClick,
-  disabled,
-}: {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-}): JSX.Element {
-  return (
-    <Button
-      className="bg-input-disabled text-white rounded-none h-full hover:bg-opacity-80 hover:bg-[#557086]"
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {label}
-    </Button>
-  );
 }
 
 function ProfitDisplay({
@@ -106,6 +39,7 @@ export function BetButton({
   loadingImage,
   betButtonText,
   icon,
+  animate = 'animate-spin',
 }: Pick<BettingControlsProps, 'isPending'> & {
   disabled: boolean;
   onClick: () => void;
@@ -113,6 +47,7 @@ export function BetButton({
   loadingImage: string;
   betButtonText?: string;
   icon?: React.ReactNode;
+  animate?: string;
 }): JSX.Element {
   return (
     <Button
@@ -123,7 +58,7 @@ export function BetButton({
       {isPending ? (
         <img
           alt="Result Dice"
-          className="animate-spin h-4 w-4"
+          className={`h-4 w-4 ${animate}`}
           src={loadingImage}
         />
       ) : (
