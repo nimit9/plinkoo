@@ -54,7 +54,7 @@ class MinesManager {
     const floats = userInstance.generateFloats(NO_OF_TILES - 1);
     const gameEvents = convertFloatsToGameEvents(floats, NO_OF_TILES);
     const mines = calculateMines(gameEvents, minesCount);
-    const createdBet = await db.$transaction(async (tx) => {
+    const createdBet = await db.$transaction(async tx => {
       const bet = await tx.bet.create({
         data: {
           active: true,
@@ -102,7 +102,7 @@ class Mines {
   }
 
   async playRound(
-    selectedTileIndex: number,
+    selectedTileIndex: number
   ): Promise<MinesPlayRoundResponse | MinesGameOverResponse> {
     if (this.selectedTiles.includes(selectedTileIndex)) {
       throw new Error('Tile already selected');
@@ -156,13 +156,17 @@ class Mines {
   }
 
   private async getGameOverState(
-    userId: string,
+    userId: string
   ): Promise<MinesGameOverResponse> {
     const userInstance = await userManager.getUser(userId);
     const payoutMultiplier = this.rounds.at(-1)?.payoutMultiplier || 0;
     const payoutAmount = payoutMultiplier * this.bet.betAmount;
     const balanceChangeInCents = payoutAmount - this.bet.betAmount;
-    const balance = await db.$transaction(async (tx) => {
+
+    const userBalanceInCents = userInstance.getBalanceAsNumber();
+    const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+
+    const balance = await db.$transaction(async tx => {
       await tx.bet.update({
         where: { id: this.bet.id },
         data: {
@@ -175,9 +179,7 @@ class Mines {
       const userWithNewBalance = await tx.user.update({
         where: { id: userId },
         data: {
-          balance: {
-            increment: balanceChangeInCents,
-          },
+          balance: newBalance,
         },
       });
       return userWithNewBalance.balance;
@@ -188,7 +190,7 @@ class Mines {
       state: { ...(this.bet.state as MinesRevealedState), rounds: this.rounds },
       payoutMultiplier,
       payout: Number((payoutAmount / 100).toFixed(2)),
-      balance: Number((balance / 100).toFixed(2)),
+      balance: Number((parseInt(balance, 10) / 100).toFixed(2)),
       active: false,
     };
   }

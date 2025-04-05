@@ -15,7 +15,7 @@ import { calculatePayout, spinWheel } from './roulette.service';
 
 export const placeBetAndSpin = async (
   request: Request,
-  response: Response<ApiResponse<RoulettePlaceBetResponse>>,
+  response: Response<ApiResponse<RoulettePlaceBetResponse>>
 ): Promise<void> => {
   const validationResult = BetsSchema.safeParse(request.body);
 
@@ -35,10 +35,12 @@ export const placeBetAndSpin = async (
   const user = userInstance.getUser();
 
   const totalBetAmountInCents = Math.round(
-    sum(validBets.map((bet) => bet.amount)) * 100,
+    sum(validBets.map(bet => bet.amount)) * 100
   );
 
-  if (user.balance < totalBetAmountInCents) {
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
+
+  if (userBalanceInCents < totalBetAmountInCents) {
     throw new BadRequestError('Insufficient balance');
   }
 
@@ -55,7 +57,9 @@ export const placeBetAndSpin = async (
 
   const balanceChangeInCents = payoutInCents - totalBetAmountInCents;
 
-  const { balance, id } = await db.$transaction(async (tx) => {
+  const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+
+  const { balance, id } = await db.$transaction(async tx => {
     const bet = await tx.bet.create({
       data: {
         active: false,
@@ -74,9 +78,7 @@ export const placeBetAndSpin = async (
     const userWithNewBalance = await tx.user.update({
       where: { id: user.id },
       data: {
-        balance: {
-          increment: balanceChangeInCents,
-        },
+        balance: newBalance,
       },
     });
 
@@ -94,7 +96,7 @@ export const placeBetAndSpin = async (
       state: gameState,
       payoutMultiplier: payoutInCents / totalBetAmountInCents,
       payout: payoutInCents / 100,
-      balance: userInstance.getBalance() / 100,
-    }),
+      balance: userInstance.getBalanceAsNumber() / 100,
+    })
   );
 };

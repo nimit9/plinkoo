@@ -12,10 +12,11 @@ import { generateClientSeed, generateServerSeed } from './user.utils';
 export class UserInstance {
   constructor(
     private user: User,
-    private provablyFairState: ProvablyFairState,
+    private provablyFairState: ProvablyFairState
   ) {}
 
-  setBalance(amount: number) {
+  setBalance(amount: string) {
+    // Ensure the balance is stored as a string
     this.user.balance = amount;
   }
 
@@ -27,7 +28,7 @@ export class UserInstance {
     const newServerSeed = this.generateNextServerSeed();
     const hashedServerSeed = getHashedSeed(newServerSeed);
 
-    const result = await db.$transaction(async (tx) => {
+    const result = await db.$transaction(async tx => {
       // Mark current seed as revealed
       await tx.provablyFairState.update({
         where: { id: this.provablyFairState.id },
@@ -60,8 +61,13 @@ export class UserInstance {
     return result;
   }
 
-  getBalance(): number {
+  getBalance(): string {
     return this.user.balance;
+  }
+
+  // Convert balance to number for calculations when needed
+  getBalanceAsNumber(): number {
+    return parseInt(this.user.balance, 10);
   }
 
   async updateNonce(tx: Prisma.TransactionClient) {
@@ -111,7 +117,7 @@ export class UserInstance {
 
   // Function to get a revealed server seed by its hash
   async getRevealedServerSeedByHash(
-    hashedServerSeed: string,
+    hashedServerSeed: string
   ): Promise<string | null> {
     const revealedState = await db.provablyFairState.findFirst({
       where: {
@@ -174,7 +180,7 @@ class UserManager {
       }
       this.users.set(
         userId,
-        new UserInstance(user, user.provablyFairStates[0]),
+        new UserInstance(user, user.provablyFairStates[0])
       );
     }
     const user = this.users.get(userId);
@@ -237,7 +243,7 @@ export const getUserBets = async ({
   const hasPreviousPage = validPage > 1;
 
   return {
-    bets: bets.map((bet) => ({
+    bets: bets.map(bet => ({
       // Format betId as a 12-digit string with leading zeros
       betId: bet.betId.toString().padStart(12, '0'),
       game: bet.game,

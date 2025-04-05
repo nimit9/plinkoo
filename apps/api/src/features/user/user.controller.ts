@@ -11,7 +11,7 @@ import { userManager, getUserBets } from './user.service';
 
 export const getBalance = async (req: Request, res: Response) => {
   const userInstance = await userManager.getUser((req.user as User).id);
-  const balanceInCents = userInstance.getBalance();
+  const balanceInCents = userInstance.getBalanceAsNumber();
   const balance = balanceInCents / 100; // Convert from cents to dollars
   return res
     .status(StatusCodes.OK)
@@ -20,7 +20,7 @@ export const getBalance = async (req: Request, res: Response) => {
 
 export const rotateSeed = async (
   req: Request,
-  res: Response<ApiResponse<ProvablyFairStateResponse>>,
+  res: Response<ApiResponse<ProvablyFairStateResponse>>
 ) => {
   const { clientSeed } = req.body as { clientSeed: string };
   if (!clientSeed) {
@@ -33,7 +33,7 @@ export const rotateSeed = async (
 
 export const getProvablyFairState = async (
   req: Request,
-  res: Response<ApiResponse<ProvablyFairStateResponse>>,
+  res: Response<ApiResponse<ProvablyFairStateResponse>>
 ) => {
   const userInstance = await userManager.getUser((req.user as User).id);
   return res.status(StatusCodes.OK).json(
@@ -42,13 +42,13 @@ export const getProvablyFairState = async (
       hashedServerSeed: userInstance.getHashedServerSeed(),
       hashedNextServerSeed: userInstance.getHashedNextServerSeed(),
       nonce: userInstance.getNonce(),
-    }),
+    })
   );
 };
 
 export const getRevealedServerSeed = async (
   req: Request,
-  res: Response<ApiResponse<{ serverSeed: string | null }>>,
+  res: Response<ApiResponse<{ serverSeed: string | null }>>
 ) => {
   const { hashedServerSeed } = req.params;
 
@@ -67,7 +67,7 @@ export const getRevealedServerSeed = async (
 
 export const getUserBetHistory = async (
   req: Request,
-  res: Response<ApiResponse<PaginatedBetsResponse>>,
+  res: Response<ApiResponse<PaginatedBetsResponse>>
 ) => {
   const userId = (req.user as User).id;
 

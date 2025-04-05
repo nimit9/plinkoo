@@ -18,7 +18,7 @@ interface PlayRoundRequestBody {
 
 export const startGame = async (
   req: Request,
-  res: Response<ApiResponse<MinesPlayRoundResponse> | { message: string }>,
+  res: Response<ApiResponse<MinesPlayRoundResponse> | { message: string }>
 ) => {
   const validationResult = MinesBetSchema.safeParse(req.body);
 
@@ -29,8 +29,8 @@ export const startGame = async (
         new ApiResponse(
           StatusCodes.BAD_REQUEST,
           {},
-          validationResult.error.message,
-        ),
+          validationResult.error.message
+        )
       );
   }
 
@@ -40,12 +40,13 @@ export const startGame = async (
   const user = userInstance.getUser();
 
   const betAmountInCents = Math.round(betAmount * 100);
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
 
-  if (user.balance < betAmountInCents) {
+  if (userBalanceInCents < betAmountInCents) {
     return res
       .status(400)
       .json(
-        new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Insufficient balance'),
+        new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Insufficient balance')
       );
   }
 
@@ -63,7 +64,7 @@ export const startGame = async (
       active: true,
       state: { mines: null, minesCount, rounds: [] },
       betAmount: betAmountInCents,
-    }),
+    })
   );
 };
 
@@ -72,7 +73,7 @@ export const playRound = async (
   res: Response<
     | ApiResponse<MinesPlayRoundResponse | MinesGameOverResponse | undefined>
     | { message: string }
-  >,
+  >
 ) => {
   const userInstance = await userManager.getUser((req.user as User).id);
   const user = userInstance.getUser();
@@ -99,7 +100,7 @@ export const cashOut = async (
   req: Request,
   res: Response<
     ApiResponse<MinesGameOverResponse | undefined> | { message: string }
-  >,
+  >
 ) => {
   const userId = (req.user as User).id;
   const game = await minesManager.getGame(userId);
@@ -120,7 +121,7 @@ export const getActiveGame = async (
   req: Request,
   res: Response<
     ApiResponse<MinesPlayRoundResponse | undefined> | { message: string }
-  >,
+  >
 ) => {
   const userId = (req.user as User).id;
   const game = await minesManager.getGame(userId);
@@ -149,6 +150,6 @@ export const getActiveGame = async (
         minesCount: (activeBet.state as MinesHiddenState).minesCount,
       },
       betAmount: activeBet.betAmount / 100,
-    }),
+    })
   );
 };

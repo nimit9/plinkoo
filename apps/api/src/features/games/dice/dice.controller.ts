@@ -19,7 +19,7 @@ interface DiceRequestBody {
 
 export const placeBet = async (
   req: Request,
-  res: Response<ApiResponse<DicePlaceBetResponse>>,
+  res: Response<ApiResponse<DicePlaceBetResponse>>
 ) => {
   const { target, condition, betAmount } = req.body as DiceRequestBody;
 
@@ -32,8 +32,9 @@ export const placeBet = async (
 
   // Convert betAmount to cents for comparison with balance (which is stored in cents)
   const betAmountInCents = Math.round(betAmount * 100);
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
 
-  if (user.balance < betAmountInCents) {
+  if (userBalanceInCents < betAmountInCents) {
     throw new BadRequestError('Insufficient balance');
   }
 
@@ -46,7 +47,7 @@ export const placeBet = async (
   const balanceChangeInCents = payoutInCents - betAmountInCents;
 
   // Update balance and create bet in a single transaction
-  const { balance, id } = await db.$transaction(async (tx) => {
+  const { balance, id } = await db.$transaction(async tx => {
     // Create bet record with amounts in cents
     const bet = await tx.bet.create({
       data: {
@@ -63,13 +64,14 @@ export const placeBet = async (
 
     await userInstance.updateNonce(tx);
 
+    // Calculate new balance as a string
+    const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+
     // Update user balance with the balance change in cents
     const userWithNewBalance = await tx.user.update({
       where: { id: user.id },
       data: {
-        balance: {
-          increment: balanceChangeInCents,
-        },
+        balance: newBalance,
       },
     });
 
@@ -82,9 +84,9 @@ export const placeBet = async (
   res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       ...result,
-      balance: userInstance.getBalance() / 100, // Convert back to dollars for the response
+      balance: userInstance.getBalanceAsNumber() / 100, // Convert back to dollars for the response
       id,
       payout: payoutInCents / 100, // Convert back to dollars for the response
-    }),
+    })
   );
 };
