@@ -6,13 +6,13 @@ import type {
 import { fetchPost } from '../_utils/fetch';
 
 export const placeBet = async (
-  data: DicePlaceBetRequestBody,
+  data: DicePlaceBetRequestBody
 ): Promise<ApiResponse<DicePlaceBetResponse>> => {
   return fetchPost<DicePlaceBetRequestBody, ApiResponse<DicePlaceBetResponse>>(
     '/api/v1/games/dice/place-bet',
     data,
     {
       withCredentials: true,
-    },
+    }
   );
 };

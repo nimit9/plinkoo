@@ -23,7 +23,7 @@ function Seeds({ isEnabled }: { isEnabled: boolean }): JSX.Element {
       const apiResponse = await fetchRotateSeedPair(clientSeed);
       return apiResponse.data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       setActiveSeeds(data);
     },
   });

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import sum from 'lodash/sum';
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { motion } from 'motion/react';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import useRouletteStore from '../../store/rouletteStore';
@@ -54,16 +54,16 @@ function BottomNumberBets({
           : {}
       }
       className={cn(
-        'col-span-2 relative cursor-pointer rounded-sm flex items-center justify-center h-10 w-full text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]',
+        'col-span-2 relative cursor-pointer rounded-sm flex items-center justify-center h-10 w-full text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]'
       )}
       key={betKey}
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         if (!isPreview) {
           addBet(betId);
         }
       }}
-      onKeyDown={(event) => {
+      onKeyDown={event => {
         return event;
       }}
       onMouseEnter={() => {

@@ -1,9 +1,9 @@
 import { HOUSE_EDGE } from './constants';
-import { DiceCondition } from './types';
+import type { DiceCondition } from './types';
 
 export const calculateMultiplier = (
   target: number,
-  condition: DiceCondition,
+  condition: DiceCondition
 ) => {
   let value = 0;
   switch (condition) {
@@ -25,7 +25,7 @@ export const calculateProfit = (multiplier: number, betAmount: number) => {
 
 export const calculateWinningChance = (
   target: number,
-  condition: DiceCondition,
+  condition: DiceCondition
 ) => {
   const chance = condition === 'above' ? 100 - target : target;
   return parseFloat(chance.toFixed(4));
@@ -33,7 +33,7 @@ export const calculateWinningChance = (
 
 export const calculateTargetWithMultiplier = (
   multiplier: number,
-  condition: DiceCondition,
+  condition: DiceCondition
 ) => {
   let target = 0;
   switch (condition) {
@@ -51,7 +51,7 @@ export const calculateTargetWithMultiplier = (
 
 export const calculateTargetFromChance = (
   winningChance: number,
-  condition: DiceCondition,
+  condition: DiceCondition
 ): number => {
   let target = 0;
   switch (condition) {
@@ -69,6 +69,6 @@ export const calculateTargetFromChance = (
 
 export const calculateFinalOutcome = (outcome: number) => {
   return parseFloat(
-    (Number(String(outcome * 10001).split('.')[0]) / 100).toFixed(2),
+    (Number(String(outcome * 10001).split('.')[0]) / 100).toFixed(2)
   );
 };

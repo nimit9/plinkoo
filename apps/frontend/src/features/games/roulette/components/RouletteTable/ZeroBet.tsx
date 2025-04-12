@@ -1,7 +1,7 @@
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
 import { useRef } from 'react';
 import { sum } from 'lodash';
 import { motion } from 'motion/react';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
 import { cn } from '@/lib/utils';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import { getIsNumberHover } from '../../utils/hover';
@@ -44,19 +44,19 @@ function ZeroBet(): JSX.Element {
         'cursor-pointer select-none relative rounded-sm flex items-center justify-center w-10 text-sm font-semibold bg-roulette-green hover:bg-roulette-green-hover',
         {
           'bg-roulette-green-hover': isNumberHover,
-        },
+        }
       )}
       key={betKey}
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         if (!isPreview) {
           addBet(betId);
         }
       }}
-      onKeyDown={(event) => {
+      onKeyDown={event => {
         return event;
       }}
-      ref={(el) => {
+      ref={el => {
         referenceDiv.current = el;
       }}
       role="button"

@@ -28,9 +28,9 @@ export function Mines(): JSX.Element {
     mutationFn: (selectedTileIndex: number) => playRound(selectedTileIndex),
     onSuccess: ({ data }) => {
       setGameState(data);
-      setLoadingTiles((prev) => {
+      setLoadingTiles(prev => {
         const newSet = new Set(prev);
-        data.state.rounds.forEach((round) => {
+        data.state.rounds.forEach(round => {
           newSet.delete(round.selectedTileIndex);
         });
         return newSet;
@@ -53,7 +53,7 @@ export function Mines(): JSX.Element {
         <BettingControls />
         <div className="flex-1 bg-brand-stronger p-3 px-24 flex justify-center relative">
           <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5">
-            {Array.from({ length: NO_OF_TILES }, (_, i) => i).map((number) =>
+            {Array.from({ length: NO_OF_TILES }, (_, i) => i).map(number =>
               isGameActive || !gameState ? (
                 <ActiveGameTile
                   index={number}
@@ -61,7 +61,7 @@ export function Mines(): JSX.Element {
                   key={number}
                   onClick={() => {
                     if (isGameActive) {
-                      setLoadingTiles((prev) => {
+                      setLoadingTiles(prev => {
                         const newSet = new Set(prev);
                         newSet.add(number);
                         return newSet;
@@ -82,7 +82,7 @@ export function Mines(): JSX.Element {
                     lastRound,
                   }}
                 />
-              ),
+              )
             )}
           </div>
           {isGameWon ? (

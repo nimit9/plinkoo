@@ -11,7 +11,7 @@ interface CustomError {
 export const errorHandlerMiddleware = (
   err: Error | CustomError,
   _: Request,
-  res: Response,
+  res: Response
 ) => {
   const defaultError: CustomError = {
     statusCode:

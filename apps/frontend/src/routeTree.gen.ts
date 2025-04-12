@@ -90,7 +90,7 @@ const ProtectedCasinoGamesGameIdRoute = ProtectedCasinoGamesGameIdImport.update(
     id: '/$gameId',
     path: '/$gameId',
     getParentRoute: () => ProtectedCasinoGamesRoute,
-  } as any,
+  } as any
 );
 
 // Populate the FileRoutesByPath interface
@@ -203,7 +203,7 @@ const ProtectedCasinoRouteChildren: ProtectedCasinoRouteChildren = {
 };
 
 const ProtectedCasinoRouteWithChildren = ProtectedCasinoRoute._addFileChildren(
-  ProtectedCasinoRouteChildren,
+  ProtectedCasinoRouteChildren
 );
 
 interface ProtectedRouteChildren {
@@ -215,7 +215,7 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
 };
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
-  ProtectedRouteChildren,
+  ProtectedRouteChildren
 );
 
 interface PublicProvablyFairRouteChildren {

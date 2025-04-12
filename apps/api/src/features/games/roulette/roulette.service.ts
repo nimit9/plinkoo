@@ -15,7 +15,7 @@ const spinWheel = async (userId: string) => {
 };
 
 const calculatePayout = (bets: RouletteBet[], winningNumber: number) => {
-  const payouts = bets.map((bet) => {
+  const payouts = bets.map(bet => {
     switch (bet.betType) {
       case RouletteBetTypes.STRAIGHT:
         return bet.selection === winningNumber ? bet.amount * 36 : 0;
@@ -25,7 +25,7 @@ const calculatePayout = (bets: RouletteBet[], winningNumber: number) => {
         return bet.selection.includes(winningNumber) ? bet.amount * 12 : 0;
       case RouletteBetTypes.CORNER:
         return bet.selection.includes(winningNumber) ? bet.amount * 9 : 0;
-      case RouletteBetTypes.SIX_LINE:
+      case RouletteBetTypes.SIXLINE:
         return bet.selection.includes(winningNumber) ? bet.amount * 6 : 0;
       case RouletteBetTypes.DOZEN:
         switch (bet.selection) {

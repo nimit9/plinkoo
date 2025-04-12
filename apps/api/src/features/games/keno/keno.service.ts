@@ -8,7 +8,7 @@ const NO_OF_TILES = 40;
 const drawNumbers = (randomFloats: number[]) => {
   let tiles = range(NO_OF_TILES);
 
-  const draw = randomFloats.map((float) => {
+  const draw = randomFloats.map(float => {
     const tile = tiles[Math.floor(float * tiles.length)];
     tiles = [...tiles.slice(0, tile), ...tiles.slice(tile + 1)];
     return tile;
@@ -19,7 +19,7 @@ const drawNumbers = (randomFloats: number[]) => {
 const getPayoutMultiplier = (
   drawnNumbers: number[],
   selectedTiles: number[],
-  risk: KenoRisk,
+  risk: KenoRisk
 ) => {
   const drawnNumbersSet = new Set(drawnNumbers);
   let matches = 0;
@@ -34,7 +34,7 @@ const getPayoutMultiplier = (
 export const getResult = (
   clientSeed: string,
   selectedTiles: number[],
-  risk: KenoRisk,
+  risk: KenoRisk
 ) => {
   const floats = [2];
 
@@ -42,7 +42,7 @@ export const getResult = (
   const payoutMultiplier = getPayoutMultiplier(
     drawnNumbers,
     selectedTiles,
-    risk,
+    risk
   );
 
   return {

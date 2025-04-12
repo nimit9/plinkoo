@@ -17,19 +17,19 @@ export const startGame = async ({
     { betAmount, minesCount },
     {
       withCredentials: true,
-    },
+    }
   );
 };
 
 export const playRound = async (
-  selectedTileIndex: number,
+  selectedTileIndex: number
 ): Promise<ApiResponse<MinesPlayRoundResponse | MinesGameOverResponse>> => {
   return fetchPost(
     '/api/v1/games/mines/play-round',
     { selectedTileIndex },
     {
       withCredentials: true,
-    },
+    }
   );
 };
 

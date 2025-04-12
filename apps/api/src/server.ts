@@ -22,9 +22,9 @@ export const createServer = (): Express => {
     .use(json())
     .use(
       cors({
-        origin: 'http://localhost:3000', // Your frontend URL
+        origin: process.env.CORS_ORIGIN || 'http://localhost:3000', // Use env variable with fallback
         credentials: true, // Allow cookies and other credentials
-      }),
+      })
     )
     .use(
       session({
@@ -36,7 +36,7 @@ export const createServer = (): Express => {
         },
         resave: false,
         saveUninitialized: false,
-      }),
+      })
     )
     .use(passport.initialize())
     .use(passport.session())

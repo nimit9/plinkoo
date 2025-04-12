@@ -35,7 +35,7 @@ function ActiveSeeds({
 
   return (
     <div className="flex flex-col gap-2 p-3">
-      {activeSeedInputs.map((input) => (
+      {activeSeedInputs.map(input => (
         <div key={input.key}>
           <Label className="pl-px text-xs text-neutral-weak font-medium">
             {input.label}
@@ -48,7 +48,7 @@ function ActiveSeeds({
                 icon={null}
                 value={isLoading ? '⏳' : input.value}
                 wrapperClassName={cn(
-                  'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 ',
+                  'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 '
                 )}
               />
             </div>

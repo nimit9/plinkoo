@@ -42,7 +42,7 @@ function Chip({
   const shadowColor = useMemo(() => {
     // Get RGB values from the chipColor
     const rgbMatch = /rgb\((?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)\)/.exec(
-      chipColor,
+      chipColor
     );
     if (rgbMatch?.groups) {
       const r = Math.max(0, parseInt(rgbMatch.groups.red, 10) - 80); // Reduce red by 80
@@ -76,14 +76,14 @@ function Chip({
         className={cn(
           "bg-[url('/games/roulette/chip-bg-img.svg')] bg-contain bg-no-repeat bg-center rounded-full flex items-center justify-center shrink-0",
           { 'opacity-40': disabled },
-          { 'cursor-default': disabled },
+          { 'cursor-default': disabled }
         )}
         onClick={() => {
           if (!disabled) {
             onClick?.();
           }
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
             if (!disabled) {
               onClick?.();
@@ -104,7 +104,7 @@ function Chip({
             'select-none text-black text-[9px] font-bold drop-shadow-sm truncate',
             {
               'text-[8px]': id,
-            },
+            }
           )}
         >
           {formattedValue}

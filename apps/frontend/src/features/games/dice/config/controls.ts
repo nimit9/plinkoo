@@ -37,11 +37,11 @@ export const diceGameControls: GameControl[] = [
     min: 1.0102,
     max: 9900,
     step: 0.0001,
-    getValue: (state) => state.multiplier,
+    getValue: state => state.multiplier,
     setValue: (state, value) => {
       state.setMultiplier(value);
     },
-    getValidationMessage: (value) =>
+    getValidationMessage: value =>
       `${value < 1.0102 ? 'Minimum' : 'Maximum'} is ${
         value < 1.0102 ? '1.0102' : '9900'
       }`,
@@ -51,9 +51,9 @@ export const diceGameControls: GameControl[] = [
     type: 'roll',
     label: 'Roll',
     icon: RefreshCw,
-    getValue: (state) => state.target,
-    getCondition: (state) => state.condition,
-    onToggle: (state) => {
+    getValue: state => state.target,
+    getCondition: state => state.condition,
+    onToggle: state => {
       state.toggleCondition();
     },
   },
@@ -65,11 +65,11 @@ export const diceGameControls: GameControl[] = [
     min: 0.01,
     max: 98,
     step: 0.01,
-    getValue: (state) => state.winChance,
+    getValue: state => state.winChance,
     setValue: (state, value) => {
       state.setWinningChance(value);
     },
-    getValidationMessage: (value) =>
+    getValidationMessage: value =>
       `${value < 0.01 ? 'Minimum' : 'Maximum'} is ${
         value < 0.01 ? '0.01' : '98'
       }`,

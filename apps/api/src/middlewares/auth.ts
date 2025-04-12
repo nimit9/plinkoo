@@ -5,7 +5,7 @@ import type { AuthenticatedRequest } from '../types';
 export const isAuthenticated = (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   if (!req.isAuthenticated()) {
     return res.status(StatusCodes.UNAUTHORIZED).json({

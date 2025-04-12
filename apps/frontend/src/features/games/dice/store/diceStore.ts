@@ -30,7 +30,7 @@ export interface DiceStore {
   setResult: (result: DicePlaceBetResponse) => void;
 }
 
-const useDiceStore = create<DiceStore>((set) => ({
+const useDiceStore = create<DiceStore>(set => ({
   betAmount: 0,
   profitOnWin: 0,
   multiplier: calculateMultiplier(initalTarget, initialCondition),
@@ -41,7 +41,7 @@ const useDiceStore = create<DiceStore>((set) => ({
 
   setTarget: (target: number) => {
     const clampedTarget = Math.min(98, Math.max(2, target));
-    set((state) => {
+    set(state => {
       const multiplier = calculateMultiplier(clampedTarget, state.condition);
       return {
         ...state,
@@ -54,7 +54,7 @@ const useDiceStore = create<DiceStore>((set) => ({
   },
 
   setBetAmount: (betAmount: number) => {
-    set((state) => ({
+    set(state => ({
       ...state,
       betAmount,
       profitOnWin: calculateProfit(state.multiplier, betAmount),
@@ -62,7 +62,7 @@ const useDiceStore = create<DiceStore>((set) => ({
   },
 
   toggleCondition: () => {
-    set((state) => {
+    set(state => {
       const target = 100 - state.target;
       const condition = state.condition === 'above' ? 'below' : 'above';
       const multiplier = calculateMultiplier(target, condition);
@@ -79,10 +79,10 @@ const useDiceStore = create<DiceStore>((set) => ({
 
   setMultiplier: (multiplier: number) => {
     const clampedMultiplier = Math.min(9900, multiplier);
-    set((state) => {
+    set(state => {
       const target = calculateTargetWithMultiplier(
         clampedMultiplier,
-        state.condition,
+        state.condition
       );
       return {
         ...state,
@@ -96,10 +96,10 @@ const useDiceStore = create<DiceStore>((set) => ({
 
   setWinningChance: (winChance: number) => {
     const clampedWinChance = Math.min(99.99, Math.max(0.01, winChance));
-    set((state) => {
+    set(state => {
       const target = calculateTargetFromChance(
         clampedWinChance,
-        state.condition,
+        state.condition
       );
       const multiplier = calculateMultiplier(target, state.condition);
       return {
@@ -113,7 +113,7 @@ const useDiceStore = create<DiceStore>((set) => ({
   },
 
   setResult: (result: DicePlaceBetResponse) => {
-    set((state) => {
+    set(state => {
       const newResults = [...state.results, result];
       if (newResults.length > 6) {
         newResults.shift();

@@ -1,6 +1,6 @@
 // This function converts a bet selection (number, array, or null) to a string ID format
 const getBetTypeSelectionId = (
-  betSelection: number | number[] | null,
+  betSelection: number | number[] | null
 ): string => {
   if (typeof betSelection === 'number') {
     return betSelection.toString();
@@ -13,7 +13,7 @@ const getBetTypeSelectionId = (
 
 // This function parses a bet ID back into its component parts (betType and selection)
 const parseBetId = (
-  betId: string,
+  betId: string
 ): {
   betType: string;
   selection: number | number[] | null;
@@ -34,7 +34,7 @@ const parseBetId = (
   // If we have multiple parts, it's an array of numbers
   return {
     betType,
-    selection: selectionParts.map((part) => parseInt(part, 10)),
+    selection: selectionParts.map(part => parseInt(part, 10)),
   };
 };
 

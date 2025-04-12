@@ -2,7 +2,7 @@ import {
   blackNumbers,
   redNumbers,
 } from '@repo/common/game-utils/roulette/constants.js';
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/index.js';
 
 const getIsColumnHover = ({
   number,
@@ -38,7 +38,7 @@ const checkIsChipHover = ({
   switch (betType as RouletteBetTypes) {
     case RouletteBetTypes.STRAIGHT:
     case RouletteBetTypes.SPLIT:
-    case RouletteBetTypes.SIX_LINE:
+    case RouletteBetTypes.SIXLINE:
     case RouletteBetTypes.CORNER:
     case RouletteBetTypes.STREET:
       return selection.includes(number.toString());

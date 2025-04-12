@@ -13,7 +13,7 @@ const Slider = React.forwardRef<
       <SliderPrimitive.Root
         className={cn(
           'relative flex w-full touch-none select-none items-center',
-          className,
+          className
         )}
         ref={ref}
         {...props}
@@ -27,7 +27,7 @@ const Slider = React.forwardRef<
             <div
               className={cn(
                 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-sm',
-                success ? 'text-green-600' : 'text-red-600',
+                success ? 'text-green-600' : 'text-red-600'
               )}
             >
               {props.value[0]}

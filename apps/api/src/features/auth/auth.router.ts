@@ -41,7 +41,7 @@ router.get(
         })
       : {};
     res.redirect(state.redirect || `${process.env.CLIENT_URL}`);
-  },
+  }
 );
 
 // Local authentication routes
@@ -52,7 +52,7 @@ router.post(
   }) as RequestHandler,
   (req, res) => {
     res.redirect(`${process.env.CLIENT_URL}`);
-  },
+  }
 );
 
 router.post('/register', async (req, res) => {
@@ -72,14 +72,14 @@ router.post('/register', async (req, res) => {
     },
   });
 
-  req.login(user, (err) => {
+  req.login(user, err => {
     if (err) throw new BadRequestError('Error logging in');
     res.redirect(`${process.env.CLIENT_URL}`);
   });
 });
 
 router.get('/logout', (req, res, next) => {
-  req.logout((err) => {
+  req.logout(err => {
     if (err) next(err);
     res.redirect('/auth');
   });

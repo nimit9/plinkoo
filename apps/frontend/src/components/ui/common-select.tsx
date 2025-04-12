@@ -34,7 +34,7 @@ function CommonSelect({
       <Label
         className={cn(
           'pl-px text-xs text-neutral-weak font-medium',
-          labelClassName,
+          labelClassName
         )}
       >
         {label}
@@ -46,7 +46,7 @@ function CommonSelect({
           <SelectValue className="text-neutral-default" />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
+          {options.map(option => (
             <SelectItem
               className="h-7 text-xs font-medium"
               key={option.value}

@@ -6,7 +6,7 @@ interface RouletteContextType {
 }
 
 const RouletteContext = createContext<RouletteContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function RouletteProvider({

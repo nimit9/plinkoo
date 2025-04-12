@@ -26,7 +26,7 @@ function ActiveGameTile({
       className={cn(
         'size-24 bg-brand-weaker rounded-md cursor-pointer flex items-center justify-center ',
         { '!bg-brand-strongest': hasDiamond },
-        { 'hover:bg-brand-weakest hover:-translate-y-0.5': !hasDiamond },
+        { 'hover:bg-brand-weakest hover:-translate-y-0.5': !hasDiamond }
       )}
       key={index}
       onClick={onClick}

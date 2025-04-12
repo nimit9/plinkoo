@@ -1,6 +1,5 @@
-import { range } from 'lodash';
-import chunk from 'lodash/chunk';
 import { createHash, createHmac, getRandomValues } from 'node:crypto';
+import chunk from 'lodash/chunk';
 
 export const generateRandomString = (length = 10) => {
   const array = new Uint8Array(length);
@@ -58,11 +57,11 @@ export const getGeneratedFloats = ({
     bytes.push(rng.next().value as number);
   }
 
-  return chunk(bytes, 4).map((bytesChunk) =>
+  return chunk(bytes, 4).map(bytesChunk =>
     bytesChunk.reduce((result, value, i) => {
       const divider = 256 ** (i + 1);
       const partialResult = value / divider;
       return result + partialResult;
-    }, 0),
+    }, 0)
   );
 };

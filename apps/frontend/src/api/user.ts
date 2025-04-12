@@ -13,18 +13,18 @@ export const fetchActiveSeeds = async (): Promise<
   });
 
 export const fetchRotateSeedPair = async (
-  clientSeed: string,
+  clientSeed: string
 ): Promise<ApiResponse<ProvablyFairStateResponse>> =>
   fetchPost(
     '/api/v1/user/rotate-seeds',
     { clientSeed },
     {
       withCredentials: true,
-    },
+    }
   );
 
 export const fetchRevealedServerSeed = async (
-  hashedServerSeed: string,
+  hashedServerSeed: string
 ): Promise<ApiResponse<{ serverSeed: string | null }>> =>
   fetchGet(`/api/v1/user/unhash-server-seed/${hashedServerSeed}`, {
     withCredentials: true,

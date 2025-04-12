@@ -33,7 +33,7 @@ export function CasinoStats(): JSX.Element {
     <section className="py-8">
       <h2 className="text-2xl font-bold mb-6">Casino Statistics</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
+        {stats.map(stat => (
           <Card className="p-6" key={stat.title}>
             <div className="flex items-center justify-between">
               <div>

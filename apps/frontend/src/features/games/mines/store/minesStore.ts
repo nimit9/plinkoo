@@ -11,21 +11,21 @@ interface MinesStore {
   setMinesCount: (minesCount: number) => void;
   gameState: MinesPlayRoundResponse | MinesGameOverResponse | null;
   setGameState: (
-    gameState: MinesPlayRoundResponse | MinesGameOverResponse | null,
+    gameState: MinesPlayRoundResponse | MinesGameOverResponse | null
   ) => void;
 }
 
-const useMinesStore = create<MinesStore>((set) => ({
+const useMinesStore = create<MinesStore>(set => ({
   betAmount: 0,
-  setBetAmount: (betAmount) => {
+  setBetAmount: betAmount => {
     set({ betAmount });
   },
   minesCount: 3,
-  setMinesCount: (minesCount) => {
+  setMinesCount: minesCount => {
     set({ minesCount });
   },
   gameState: null,
-  setGameState: (gameState) => {
+  setGameState: gameState => {
     set({ gameState });
   },
 }));

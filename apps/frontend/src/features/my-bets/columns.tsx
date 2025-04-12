@@ -96,7 +96,7 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
             'text-neutral-weak font-medium flex items-center gap-1 justify-end',
             {
               'text-green-500': row.original.payout > 0,
-            },
+            }
           )}
         >
           {row.original.payout.toFixed(2)}{' '}

@@ -33,38 +33,38 @@ const initialState: RouletteStoreState = {
 };
 
 const useRouletteStore = create<RouletteStoreState & RouletteStoreActions>(
-  (set) => ({
+  set => ({
     ...initialState,
-    setBetAmount: (betAmount) => {
+    setBetAmount: betAmount => {
       set({ betAmount });
     },
-    updateBetAmount: (betAmount) => {
-      set((state) => ({ betAmount: state.betAmount + betAmount }));
+    updateBetAmount: betAmount => {
+      set(state => ({ betAmount: state.betAmount + betAmount }));
     },
-    setSelectedChip: (chip) => {
+    setSelectedChip: chip => {
       if (chip && chip < 1) {
         set({ selectedChip: null });
       }
       set({ selectedChip: chip });
     },
-    addBetHistory: (betHistory) => {
-      set((state) => ({ betHistory: [...state.betHistory, betHistory] }));
+    addBetHistory: betHistory => {
+      set(state => ({ betHistory: [...state.betHistory, betHistory] }));
     },
     clearBets: () => {
       set(initialState);
     },
     multiplyBets: (multiplier: number) => {
-      set((state) => ({
+      set(state => ({
         bets: Object.fromEntries(
           Object.entries(state.bets).map(([key, betAmountArray]) => [
             key,
-            betAmountArray?.map((betAmount) => betAmount * multiplier),
-          ]),
+            betAmountArray?.map(betAmount => betAmount * multiplier),
+          ])
         ),
       }));
     },
     undoBet: () => {
-      set((state) => {
+      set(state => {
         if (state.betHistory.length === 0) return state;
         const lastBetId = state.betHistory[state.betHistory.length - 1];
 
@@ -85,8 +85,8 @@ const useRouletteStore = create<RouletteStoreState & RouletteStoreActions>(
         };
       });
     },
-    addBet: (betId) => {
-      set((state) => {
+    addBet: betId => {
+      set(state => {
         if (!state.selectedChip) {
           return state;
         }
@@ -110,13 +110,13 @@ const useRouletteStore = create<RouletteStoreState & RouletteStoreActions>(
         };
       });
     },
-    setLatestResult: (result) => {
+    setLatestResult: result => {
       set({ latestResult: result });
     },
-    setIsRouletteWheelStopped: (isStopped) => {
+    setIsRouletteWheelStopped: isStopped => {
       set({ isRouletteWheelStopped: isStopped });
     },
-  }),
+  })
 );
 
 export default useRouletteStore;

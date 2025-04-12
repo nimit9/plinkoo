@@ -35,7 +35,7 @@ function VerificationResult({
         if (typeof outcome === 'string' || !outcome) return <>{null}</>;
         return (
           <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5 -my-12 py-2">
-            {Array.from({ length: NO_OF_TILES }, (_, i) => i).map((number) => (
+            {Array.from({ length: NO_OF_TILES }, (_, i) => i).map(number => (
               <InactiveGameTile
                 index={number}
                 key={number}

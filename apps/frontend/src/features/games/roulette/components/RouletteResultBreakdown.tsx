@@ -30,7 +30,7 @@ function RouletteResultBreakdown({
       const bytes = await byteGenerator(
         serverSeed ?? '',
         `${clientSeed}:${nonce}`,
-        1,
+        1
       );
       return bytes;
     },
@@ -90,7 +90,7 @@ function RouletteResultBreakdown({
                 'text-neutral-weak flex flex-col gap-1 items-center font-medium',
                 {
                   'text-neutral-default': index < 4,
-                },
+                }
               )}
               key={id}
             >

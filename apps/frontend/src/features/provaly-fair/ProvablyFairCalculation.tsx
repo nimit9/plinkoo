@@ -11,7 +11,7 @@ import MinesResultBreakdown from '../games/mines/components/MinesResultBreakdown
 function ProvablyFairCalculation(): JSX.Element {
   const [outcome, setOutcome] = useState<string | number[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<Game>(
-    GAMES_DROPDOWN_OPTIONS[0].value,
+    GAMES_DROPDOWN_OPTIONS[0].value
   );
   const [verificationInputs, setVerificationInputs] =
     useState<VerificationInputsState | null>(null);
@@ -53,7 +53,7 @@ function ProvablyFairCalculation(): JSX.Element {
       <div className="flex flex-col gap-2">
         <CommonSelect
           label="Game"
-          onValueChange={(value) => {
+          onValueChange={value => {
             setSelectedGame(value as Game);
           }}
           options={GAMES_DROPDOWN_OPTIONS}

@@ -10,7 +10,7 @@ export const getBalance = async (): Promise<number> => {
     '/api/v1/user/balance',
     {
       withCredentials: true,
-    },
+    }
   );
   return data.balance;
 };

@@ -6,10 +6,10 @@ interface RouletteBoardHoverStore {
 }
 
 export const useRouletteBoardHoverStore = create<RouletteBoardHoverStore>(
-  (set) => ({
+  set => ({
     hoverId: null,
-    setHoverId: (hoverId) => {
+    setHoverId: hoverId => {
       set({ hoverId });
     },
-  }),
+  })
 );

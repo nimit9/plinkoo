@@ -6,13 +6,13 @@ import type {
 import { fetchPost } from '../_utils/fetch';
 
 export const placeBet = async (
-  bets: RouletteBet[],
+  bets: RouletteBet[]
 ): Promise<ApiResponse<RoulettePlaceBetResponse>> => {
   return fetchPost(
     '/api/v1/games/roulette/place-bet',
     { bets },
     {
       withCredentials: true,
-    },
+    }
   );
 };

@@ -31,7 +31,7 @@ function RootLayout(): JSX.Element {
     <>
       <Outlet />
       <LoginModal />
-      <TanStackRouterDevtools />
+      {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
     </>
   );
 }

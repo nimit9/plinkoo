@@ -10,7 +10,7 @@ import { fetchRevealedServerSeed } from '@/api/user';
 function UnhashServerSeed(): JSX.Element {
   const [hashedServerSeed, setHashedServerSeed] = useState<string>('');
   const [revealedServerSeed, setRevealedServerSeed] = useState<string | null>(
-    null,
+    null
   );
 
   const {
@@ -30,7 +30,7 @@ function UnhashServerSeed(): JSX.Element {
       }
       return apiResponse;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       setRevealedServerSeed(data.data.serverSeed);
     },
   });
@@ -45,7 +45,7 @@ function UnhashServerSeed(): JSX.Element {
             <InputWithIcon
               className="text-neutral-default font-medium text-xs"
               icon={null}
-              onChange={(e) => {
+              onChange={e => {
                 setHashedServerSeed(e.target.value);
               }}
               value={hashedServerSeed}
@@ -53,7 +53,7 @@ function UnhashServerSeed(): JSX.Element {
                 'bg-brand-stronger border-brand-weaker shadow-none w-full pr-0 h-8 rounded-r-none',
                 {
                   'border-red-500': isError,
-                },
+                }
               )}
             />
           </div>
@@ -87,7 +87,7 @@ function UnhashServerSeed(): JSX.Element {
               icon={null}
               value={isRevealing ? '⏳' : revealedServerSeed || ''}
               wrapperClassName={cn(
-                'bg-brand-weaker border-brand-weaker shadow-none h-8 w-full pr-0',
+                'bg-brand-weaker border-brand-weaker shadow-none h-8 w-full pr-0'
               )}
             />
           </div>

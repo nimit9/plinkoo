@@ -40,7 +40,7 @@ function ProvablyFair(): JSX.Element {
       </div>
       <div className="grid grid-cols-12 gap-4 my-4 items-start">
         <div className="flex flex-col col-span-2 bg-brand-stronger rounded-md py-2">
-          {provablyFairRoutes.map((route) => (
+          {provablyFairRoutes.map(route => (
             <Link key={route.path} to={route.path}>
               <p
                 className={cn(
@@ -48,7 +48,7 @@ function ProvablyFair(): JSX.Element {
                   {
                     'bg-brand-strongest  border-l-[#1475e1] hover:border-l-[#1475e1]':
                       route.path === pathname,
-                  },
+                  }
                 )}
               >
                 {route.label}

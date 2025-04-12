@@ -42,8 +42,8 @@ passport.use(
       } catch (err) {
         done(err, undefined);
       }
-    },
-  ),
+    }
+  )
 );
 
 passport.use(
@@ -66,8 +66,8 @@ passport.use(
       } catch (err) {
         done(err, undefined);
       }
-    },
-  ),
+    }
+  )
 );
 
 passport.serializeUser((user: Express.User, done) => {

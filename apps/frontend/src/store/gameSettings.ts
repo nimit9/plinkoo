@@ -37,30 +37,30 @@ const defaultSettings = {
 
 export const useGameSettingsStore = create<GameSettingsState>()(
   persist(
-    (set) => ({
+    set => ({
       // Initial state with defaults
       ...defaultSettings,
 
       // Actions to update individual settings
-      setVolume: (volume) => {
+      setVolume: volume => {
         // Ensure volume is between 0 and 100
         const validVolume = Math.max(0, Math.min(100, volume));
         set({ volume: validVolume });
       },
 
-      setAnimations: (enabled) => {
+      setAnimations: enabled => {
         set({ animations: enabled });
       },
 
-      setShowMaxBetButton: (show) => {
+      setShowMaxBetButton: show => {
         set({ showMaxBetButton: show });
       },
 
-      setInstantBet: (enabled) => {
+      setInstantBet: enabled => {
         set({ instantBet: enabled });
       },
 
-      setHotkeysEnabled: (enabled) => {
+      setHotkeysEnabled: enabled => {
         set({ hotkeysEnabled: enabled });
       },
 
@@ -73,6 +73,6 @@ export const useGameSettingsStore = create<GameSettingsState>()(
       name: 'game-settings-storage', // localStorage key
       // Sync with localStorage immediately
       skipHydration: false,
-    },
-  ),
+    }
+  )
 );

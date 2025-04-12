@@ -45,7 +45,7 @@ export function Roulette({
       setLatestResult(data);
       return data;
     },
-    onError: (error) => {
+    onError: error => {
       return error;
     },
   });

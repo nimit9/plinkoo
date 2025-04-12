@@ -10,7 +10,7 @@ export const calculateOutcome = () => {
   const pattern: TPattern = [];
   // const floats = rng.generateFloats({ clientSeed, count: TOTAL_DROPS });
   const floats = [2];
-  floats.forEach((float) => {
+  floats.forEach(float => {
     const direction = DIRECTIONS[Math.floor(float * 2)]; // 0 or 1 -> L or R
     pattern.push(direction);
     if (direction === 'R') {

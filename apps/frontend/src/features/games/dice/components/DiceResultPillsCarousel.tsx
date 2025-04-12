@@ -24,7 +24,7 @@ export function DiceResultPillsCarousel({
             getAnimationClass(index, results.length),
             payoutMultiplier > 0
               ? 'bg-[#00e600] text-black'
-              : 'bg-secondary-light',
+              : 'bg-secondary-light'
           )}
           key={id}
         >

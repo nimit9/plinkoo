@@ -1,4 +1,4 @@
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
 import BottomNumberBets from './BottomNumberBets';
 import BottomColorBets from './BottomColorBets';
 

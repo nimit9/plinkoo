@@ -16,7 +16,7 @@ router.get('/provably-fair-state', isAuthenticated, getProvablyFairState);
 router.get(
   '/unhash-server-seed/:hashedServerSeed',
   isAuthenticated,
-  getRevealedServerSeed,
+  getRevealedServerSeed
 );
 router.get('/bets', isAuthenticated, getUserBetHistory);
 

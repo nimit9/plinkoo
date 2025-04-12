@@ -1,5 +1,5 @@
 import { redNumbers } from '@repo/common/game-utils/roulette/constants.js';
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/types.js';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/index.js';
 import { useRef } from 'react';
 import { sum } from 'lodash';
 import { motion } from 'motion/react';
@@ -58,19 +58,19 @@ function NumberBet({ number }: { number: number }): JSX.Element {
         {
           'bg-roulette-red-hover': isRedNumber && isNumberHover,
           'bg-roulette-black-hover': !isRedNumber && isNumberHover,
-        },
+        }
       )}
       key={betKey}
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         if (!isPreview) {
           addBet(betId);
         }
       }}
-      onKeyDown={(event) => {
+      onKeyDown={event => {
         return event;
       }}
-      ref={(el) => {
+      ref={el => {
         referenceDiv.current = el;
       }}
       role="button"
@@ -157,7 +157,7 @@ function NumberBet({ number }: { number: number }): JSX.Element {
       {shouldRenderSixLineBet(number) && (
         <DroppableArea
           betTypeData={{
-            betType: RouletteBetTypes.SIX_LINE,
+            betType: RouletteBetTypes.SIXLINE,
             selection: [
               number,
               number + 1,

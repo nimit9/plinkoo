@@ -8,7 +8,8 @@
     "dev": "vite --host 0.0.0.0 --port 3000 --clearScreen false",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
-    "add:ui": "pnpm dlx shadcn@latest add"
+    "add:ui": "pnpm dlx shadcn@latest add",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

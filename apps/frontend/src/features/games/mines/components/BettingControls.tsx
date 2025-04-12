@@ -83,7 +83,7 @@ function BettingControls(): JSX.Element {
                       icon={null}
                       value={minesCount}
                       wrapperClassName={cn(
-                        'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 ',
+                        'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 '
                       )}
                     />
                   </div>
@@ -100,7 +100,7 @@ function BettingControls(): JSX.Element {
                       icon={null}
                       value={NO_OF_TILES - minesCount}
                       wrapperClassName={cn(
-                        'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0',
+                        'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0'
                       )}
                     />
                   </div>
@@ -120,7 +120,7 @@ function BettingControls(): JSX.Element {
                       betAmount * (lastRound?.payoutMultiplier || 1)
                     ).toFixed(2)}
                     wrapperClassName={cn(
-                      'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 ',
+                      'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 '
                     )}
                   />
                 </div>

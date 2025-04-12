@@ -56,7 +56,7 @@ export function CommonDataTable<TData, TValue>({
       size: 200, //starting column size
     },
     columnResizeMode: 'onChange',
-    onPaginationChange: (updater) => {
+    onPaginationChange: updater => {
       // Handle the updater whether it's a function or an object
       if (typeof updater === 'function') {
         const newState = updater(pagination);
@@ -80,16 +80,16 @@ export function CommonDataTable<TData, TValue>({
     <div>
       <TableUI className="[&_tr:nth-child(odd)>td]:bg-brand-weak [&_tr:nth-child(odd)>td:first-child]:rounded-l-sm [&_tr:nth-child(odd)>td:last-child]:rounded-r-sm">
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
+              {headerGroup.headers.map(header => (
                 <TableHead
                   className={cn(
                     'font-semibold text-neutral-weak text-xs',
                     header.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     header.column.columnDef.meta?.alignment === 'center' &&
-                      'text-center',
+                      'text-center'
                   )}
                   key={header.id}
                 >
@@ -97,7 +97,7 @@ export function CommonDataTable<TData, TValue>({
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
-                        header.getContext(),
+                        header.getContext()
                       )}
                 </TableHead>
               ))}
@@ -105,19 +105,19 @@ export function CommonDataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map(row => (
             <TableRow
               data-state={row.getIsSelected() && 'selected'}
               key={row.id}
             >
-              {row.getVisibleCells().map((cell) => (
+              {row.getVisibleCells().map(cell => (
                 <TableCell
                   className={cn(
                     'p-3 text-xs',
                     cell.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     cell.column.columnDef.meta?.alignment === 'center' &&
-                      'text-center',
+                      'text-center'
                   )}
                   key={cell.id}
                 >

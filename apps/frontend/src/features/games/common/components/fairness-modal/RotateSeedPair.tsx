@@ -19,7 +19,7 @@ function RotateSeedPair({
   isLoading,
 }: RotateSeedPairProps): JSX.Element {
   const [nextClientSeed, setNextClientSeed] = useState<string>(
-    generateRandomString(10),
+    generateRandomString(10)
   );
 
   return (
@@ -34,12 +34,12 @@ function RotateSeedPair({
             <InputWithIcon
               className="text-neutral-default font-medium text-xs"
               icon={null}
-              onChange={(e) => {
+              onChange={e => {
                 setNextClientSeed(e.target.value);
               }}
               value={nextClientSeed}
               wrapperClassName={cn(
-                'bg-brand-stronger border-brand-weaker shadow-none w-full pr-0 h-8 rounded-r-none',
+                'bg-brand-stronger border-brand-weaker shadow-none w-full pr-0 h-8 rounded-r-none'
               )}
             />
           </div>
@@ -68,7 +68,7 @@ function RotateSeedPair({
               icon={null}
               value={isLoading ? '⏳' : activeSeeds?.hashedNextServerSeed}
               wrapperClassName={cn(
-                'bg-brand-weaker border-brand-weaker shadow-none h-8 w-full pr-0',
+                'bg-brand-weaker border-brand-weaker shadow-none h-8 w-full pr-0'
               )}
             />
           </div>

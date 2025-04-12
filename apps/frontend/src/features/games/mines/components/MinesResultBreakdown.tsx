@@ -40,7 +40,7 @@ function MinesResultBreakdown({
       const bytes = await byteGenerator(
         serverSeed ?? '',
         `${clientSeed}:${nonce}`,
-        3,
+        3
       );
       return bytes;
     },
@@ -80,7 +80,7 @@ function MinesResultBreakdown({
 
   const chunkedHmacByteIds = chunk(
     hmacByteIds,
-    Math.ceil(hmacByteIds.length / 3),
+    Math.ceil(hmacByteIds.length / 3)
   );
   //   Create unique identifiers for selected bytes
   const selectedByteIds = useMemo(() => {
@@ -114,7 +114,7 @@ function MinesResultBreakdown({
         Mines Coordinates:
         <span className="ml-1 tracking-wide">
           {mines
-            .map((mine) => `(${(mine % 5) + 1}, ${5 - Math.floor(mine / 5)})`)
+            .map(mine => `(${(mine % 5) + 1}, ${5 - Math.floor(mine / 5)})`)
             .join(', ')}
         </span>
       </div>
@@ -130,7 +130,7 @@ function MinesResultBreakdown({
                 {chunkedHmacByteId.map(({ byte, id }) => (
                   <div
                     className={cn(
-                      'text-neutral-default flex flex-col gap-1 items-center font-medium',
+                      'text-neutral-default flex flex-col gap-1 items-center font-medium'
                     )}
                     key={id}
                   >
@@ -167,7 +167,7 @@ function MinesResultBreakdown({
                                 'char',
                                 char,
                                 charIndex,
-                                byte,
+                                byte
                               )}
                             >
                               {char}
@@ -192,7 +192,7 @@ function MinesResultBreakdown({
                           key={generateUniqueId(
                             'outcome-char',
                             char,
-                            charIndex,
+                            charIndex
                           )}
                         >
                           {char}
@@ -206,14 +206,14 @@ function MinesResultBreakdown({
                   <span className="font-semibold col-span-5 place-self-start tracking-widest">
                     {
                       String(
-                        (floats[index] * (NO_OF_TILES - index)).toFixed(12),
+                        (floats[index] * (NO_OF_TILES - index)).toFixed(12)
                       ).split('.')[0]
                     }
                     <span className="text-neutral-weak">
                       .
                       {
                         String(
-                          (floats[index] * (NO_OF_TILES - index)).toFixed(12),
+                          (floats[index] * (NO_OF_TILES - index)).toFixed(12)
                         ).split('.')[1]
                       }
                     </span>

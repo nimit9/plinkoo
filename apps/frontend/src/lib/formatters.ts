@@ -15,7 +15,7 @@ export function formatCompactNumber(value: number, decimalPlaces = 10): string {
 
   // Find the appropriate tier
   const tier =
-    tiers.find((t) => absValue >= t.threshold) ?? tiers[tiers.length - 1];
+    tiers.find(t => absValue >= t.threshold) ?? tiers[tiers.length - 1];
 
   // Calculate the scaled value
   const scaledValue = absValue / tier.threshold;
@@ -55,7 +55,7 @@ export function formatColorizedNumber(
   value: number,
   min = 0,
   max = 100,
-  decimalPlaces = 1,
+  decimalPlaces = 1
 ): { formatted: string; color: string } {
   return {
     formatted: formatCompactNumber(value, decimalPlaces),

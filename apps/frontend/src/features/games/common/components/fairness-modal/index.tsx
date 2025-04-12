@@ -32,7 +32,7 @@ export function FairnessModal({ game }: { game: Game }): JSX.Element {
         </DialogHeader>
         <Tabs
           defaultValue="seeds"
-          onValueChange={(value) => {
+          onValueChange={value => {
             setActiveTab(value as 'seeds' | 'verify');
           }}
         >

@@ -16,7 +16,7 @@ function Verify({ game }: { game: Game }): JSX.Element {
       <div className="bg-brand-stronger p-3 flex flex-col gap-2">
         <CommonSelect
           label="Game"
-          onValueChange={(value) => {
+          onValueChange={value => {
             setSelectedGame(value as Game);
           }}
           options={GAMES_DROPDOWN_OPTIONS}

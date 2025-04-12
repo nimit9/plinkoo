@@ -10,10 +10,10 @@ export interface AuthState {
   hideLoginModal: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>(set => ({
   user: getStoredUser(),
   isModalOpen: false,
-  setUser: (user) => {
+  setUser: user => {
     setStoredUser(user);
     set({ user });
   },

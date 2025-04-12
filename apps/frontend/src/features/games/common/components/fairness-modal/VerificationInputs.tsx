@@ -39,20 +39,20 @@ function VerificationInputs({
 
   const handleInputChange = (
     input: keyof VerificationInputsState,
-    value: string,
+    value: string
   ): void => {
-    setVerificationInputs((prev) => ({ ...prev, [input]: value }));
+    setVerificationInputs(prev => ({ ...prev, [input]: value }));
   };
 
   const incrementNonce = (): void => {
-    setVerificationInputs((prev) => ({
+    setVerificationInputs(prev => ({
       ...prev,
       nonce: String(Number(prev.nonce) + 1),
     }));
   };
 
   const decrementNonce = (): void => {
-    setVerificationInputs((prev) => ({
+    setVerificationInputs(prev => ({
       ...prev,
       nonce: Math.max(0, Number(prev.nonce) - 1).toString(),
     }));
@@ -66,7 +66,7 @@ function VerificationInputs({
             label="Mines"
             onValueChange={(value: string) => {
               setMeta({ minesCount: Number(value) });
-              setVerificationInputs((prev) => ({
+              setVerificationInputs(prev => ({
                 ...prev,
                 meta: { minesCount: Number(value) },
               }));
@@ -118,12 +118,12 @@ function VerificationInputs({
           <InputWithIcon
             className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
             icon={null}
-            onChange={(e) => {
+            onChange={e => {
               handleInputChange('clientSeed', e.target.value);
             }}
             value={verificationInputs.clientSeed}
             wrapperClassName={cn(
-              'bg-brand-stonger h-8 border-brand-weaker shadow-none w-full pr-0 ',
+              'bg-brand-stonger h-8 border-brand-weaker shadow-none w-full pr-0 '
             )}
           />
         </div>
@@ -136,12 +136,12 @@ function VerificationInputs({
           <InputWithIcon
             className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
             icon={null}
-            onChange={(e) => {
+            onChange={e => {
               handleInputChange('serverSeed', e.target.value);
             }}
             value={verificationInputs.serverSeed}
             wrapperClassName={cn(
-              'bg-brand-stronger h-8 border-brand-weaker shadow-none w-full pr-0 ',
+              'bg-brand-stronger h-8 border-brand-weaker shadow-none w-full pr-0 '
             )}
           />
         </div>
@@ -156,14 +156,14 @@ function VerificationInputs({
               className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
               icon={null}
               min={0}
-              onChange={(e) => {
+              onChange={e => {
                 handleInputChange('nonce', e.target.value);
               }}
               step={1}
               type="number"
               value={verificationInputs.nonce}
               wrapperClassName={cn(
-                'bg-brand-stronger h-8 border-brand-weaker shadow-none w-full pr-0 rounded-r-none',
+                'bg-brand-stronger h-8 border-brand-weaker shadow-none w-full pr-0 rounded-r-none'
               )}
             />
           </div>

@@ -4,7 +4,7 @@ import chunk from 'lodash/chunk';
 export const generateRandomString = (length = 10): string => {
   const array = new Uint8Array(length);
   return btoa(
-    String.fromCharCode.apply(null, Array.from(crypto.getRandomValues(array))),
+    String.fromCharCode.apply(null, Array.from(crypto.getRandomValues(array)))
   )
     .replace(/[^a-zA-Z0-9]/g, '') // Remove non-alphanumeric characters
     .slice(0, length); // Ensure exact length
@@ -12,7 +12,7 @@ export const generateRandomString = (length = 10): string => {
 
 export const getHmacSeed = async (
   seed: string,
-  message: string,
+  message: string
 ): Promise<string> => {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -20,21 +20,21 @@ export const getHmacSeed = async (
     encoder.encode(seed),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ['sign'],
+    ['sign']
   );
   const signature = await crypto.subtle.sign(
     'HMAC',
     key,
-    encoder.encode(message),
+    encoder.encode(message)
   );
   return Array.from(new Uint8Array(signature))
-    .map((b) => b.toString(16).padStart(2, '0'))
+    .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 };
 
 export const getHmacBuffer = async (
   seed: string,
-  message: string,
+  message: string
 ): Promise<ArrayBuffer> => {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -42,7 +42,7 @@ export const getHmacBuffer = async (
     encoder.encode(seed),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ['sign'],
+    ['sign']
   );
   return crypto.subtle.sign('HMAC', key, encoder.encode(message));
 };
@@ -50,18 +50,18 @@ export const getHmacBuffer = async (
 export async function byteGenerator(
   seed: string,
   message: string,
-  rounds: number,
+  rounds: number
 ): Promise<number[]> {
   const promises: Promise<Uint8Array>[] = [];
 
   for (let i = 0; i < rounds; i++) {
     promises.push(
-      getHmacBuffer(seed, `${message}:${i}`).then((buf) => new Uint8Array(buf)),
+      getHmacBuffer(seed, `${message}:${i}`).then(buf => new Uint8Array(buf))
     );
   }
 
   const buffers = await Promise.all(promises);
-  return buffers.flatMap((buffer) => Array.from(buffer));
+  return buffers.flatMap(buffer => Array.from(buffer));
 }
 
 export const getGeneratedFloats = async ({
@@ -79,11 +79,11 @@ export const getGeneratedFloats = async ({
   const bytes = await byteGenerator(seed, message, rounds);
   const selectedBytes = bytes.slice(0, bytesNeeded);
 
-  return chunk(selectedBytes, 4).map((bytesChunk) =>
+  return chunk(selectedBytes, 4).map(bytesChunk =>
     bytesChunk.reduce((result, value, i) => {
       const divider = 256 ** (i + 1);
       return result + value / divider;
-    }, 0),
+    }, 0)
   );
 };
 

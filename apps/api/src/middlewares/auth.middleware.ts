@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 export const isAuthenticated = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): void => {
   if (!req.isAuthenticated()) {
     res.status(StatusCodes.UNAUTHORIZED).json({

@@ -5,7 +5,7 @@ function DiceResultPreview({ result }: { result: number }): JSX.Element {
   return (
     <>
       <div className="flex items-center justify-between w-full gap-2 pl-6 pr-4">
-        {[0, 25, 50, 75, 100].map((value) => (
+        {[0, 25, 50, 75, 100].map(value => (
           <div className="font-semibold text-xs" key={value}>
             {value}
           </div>

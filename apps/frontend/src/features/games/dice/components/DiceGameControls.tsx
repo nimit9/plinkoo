@@ -39,7 +39,7 @@ function NumericControlInput({
               <InputWithIcon
                 icon={<Icon className="text-gray-500 w-5 h-5" />}
                 min={control.min}
-                onChange={(e) => {
+                onChange={e => {
                   control.setValue(state, Number(e.target.value));
                 }}
                 step={control.step}
@@ -58,7 +58,7 @@ function NumericControlInput({
         <InputWithIcon
           icon={<Icon className="text-gray-500 w-5 h-5" />}
           min={control.min}
-          onChange={(e) => {
+          onChange={e => {
             control.setValue(state, Number(e.target.value));
           }}
           step={control.step}
@@ -91,7 +91,7 @@ function RollControlInput({
         onClick={() => {
           control.onToggle(state);
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
             control.onToggle(state);
           }
@@ -125,7 +125,7 @@ export function DiceGameControls({
 }: GameControlsProps): JSX.Element {
   return (
     <div className="bg-brand-weak px-4 py-2 pb-3 rounded flex gap-4 w-full">
-      {controls.map((control) => (
+      {controls.map(control => (
         <ControlInput control={control} key={control.id} state={state} />
       ))}
     </div>

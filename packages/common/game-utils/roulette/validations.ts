@@ -1,12 +1,26 @@
 import { z } from 'zod';
-import { RouletteBetTypes } from './types';
 import {
   validCornerBets,
   validSixLineBets,
   validSplitBets,
   validStreetBets,
 } from './constants';
-import { log } from 'console';
+
+export enum RouletteBetTypes {
+  STRAIGHT = 'straight',
+  SPLIT = 'split',
+  SIXLINE = 'sixline',
+  CORNER = 'corner',
+  STREET = 'street',
+  ODD = 'odd',
+  EVEN = 'even',
+  HIGH = 'high',
+  LOW = 'low',
+  BLACK = 'black',
+  RED = 'red',
+  COLUMN = 'column',
+  DOZEN = 'dozen',
+}
 
 const amountSchema = z.number().min(0.01, 'Bet amount must be at least 0.01');
 
@@ -71,7 +85,7 @@ const streetBetSchema = z.object({
 });
 
 const sixLineBetSchema = z.object({
-  betType: z.literal(RouletteBetTypes.SIX_LINE),
+  betType: z.literal(RouletteBetTypes.SIXLINE),
   selection: z
     .array(z.number().int().min(1).max(36))
     .length(6)
@@ -132,7 +146,7 @@ const BetsSchema = z.object({
 });
 
 const validateBets = (bets: RouletteBet[]) => {
-  return bets.filter((bet) => {
+  return bets.filter(bet => {
     switch (bet.betType) {
       case RouletteBetTypes.STRAIGHT:
         return straightBetSchema.safeParse(bet).success;
@@ -142,7 +156,7 @@ const validateBets = (bets: RouletteBet[]) => {
         return cornerBetSchema.safeParse(bet).success;
       case RouletteBetTypes.STREET:
         return streetBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.SIX_LINE:
+      case RouletteBetTypes.SIXLINE:
         return sixLineBetSchema.safeParse(bet).success;
       case RouletteBetTypes.DOZEN:
         return dozenBetSchema.safeParse(bet).success;

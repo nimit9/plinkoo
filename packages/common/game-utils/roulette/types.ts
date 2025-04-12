@@ -1,20 +1,4 @@
-import { RouletteBet } from './validations';
-
-enum RouletteBetTypes {
-  STRAIGHT = 'straight',
-  SPLIT = 'split',
-  SIX_LINE = 'sixline',
-  CORNER = 'corner',
-  STREET = 'street',
-  ODD = 'odd',
-  EVEN = 'even',
-  HIGH = 'high',
-  LOW = 'low',
-  BLACK = 'black',
-  RED = 'red',
-  COLUMN = 'column',
-  DOZEN = 'dozen',
-}
+import type { RouletteBet } from './validations';
 
 export interface RouletterPlaceBetState {
   bets: RouletteBet[];
@@ -28,5 +12,3 @@ export interface RoulettePlaceBetResponse {
   payout: number;
   balance: number;
 }
-
-export { RouletteBetTypes };

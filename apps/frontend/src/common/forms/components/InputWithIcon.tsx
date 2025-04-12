@@ -21,14 +21,14 @@ function InputWithIcon({
           'border-brand-weaker hover:border-brand-weakest border-2':
             !inputProps.disabled,
         },
-        wrapperClassName,
+        wrapperClassName
       )}
     >
       <Input
         {...inputProps}
         className={cn(
           'focus-visible:ring-0 border-0 bg-transparent pl-2',
-          inputProps.className,
+          inputProps.className
         )}
       />
       {icon}

@@ -5,10 +5,11 @@
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint -- --max-warnings=0",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db:generate": "cd packages/db && npx prisma generate && cd ../.."
   },
   "devDependencies": {
     "husky": "^8.0.0",
@@ -23,8 +24,8 @@
   "name": "testimonials",
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "pnpm lint",
+      "pnpm format"
     ],
     "**/*.{json,css,md}": [
       "prettier --write"

@@ -62,7 +62,7 @@ function DroppableArea({
   height?: string;
 }): JSX.Element {
   const betId = `${betTypeData.betType}-${getBetTypeSelectionId(
-    betTypeData.selection || null,
+    betTypeData.selection || null
   )}`;
 
   const { setHoverId } = useRouletteBoardHoverStore();
@@ -96,12 +96,12 @@ function DroppableArea({
 
   return (
     <div
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         if (isPreview) return;
         addBet(betId);
       }}
-      onKeyDown={(event) => {
+      onKeyDown={event => {
         return event;
       }}
       onMouseEnter={() => {

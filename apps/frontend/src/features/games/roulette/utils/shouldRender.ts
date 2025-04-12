@@ -24,7 +24,7 @@ export const shouldRenderTopStreet = (currentNumber: number): boolean =>
   noTopRender.includes(currentNumber);
 
 export const shouldRenderTopRightDoubleStreet = (
-  currentNumber: number,
+  currentNumber: number
 ): boolean => topRightDobuleStreetRender.includes(currentNumber);
 
 export { shouldRenderCornerBet };

@@ -6,7 +6,7 @@ export const setupInterceptors = ({
 }: {
   authErrCb: () => void;
 }): void => {
-  axios.interceptors.request.use((config) => {
+  axios.interceptors.request.use(config => {
     return {
       ...config,
       withCredentials: true,
@@ -14,7 +14,7 @@ export const setupInterceptors = ({
   });
 
   axios.interceptors.response.use(
-    (response) => {
+    response => {
       return Promise.resolve(response);
     },
     (error: AxiosError) => {
@@ -22,6 +22,6 @@ export const setupInterceptors = ({
         authErrCb();
       }
       return Promise.reject(error);
-    },
+    }
   );
 };

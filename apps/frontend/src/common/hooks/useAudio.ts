@@ -3,7 +3,7 @@ import throttle from 'lodash/throttle';
 
 const useAudio = (
   audioSrc: string,
-  volume = 1,
+  volume = 1
 ): {
   isPlaying: boolean;
   play: () => Promise<void>;
@@ -32,7 +32,7 @@ const useAudio = (
         .catch((error: Error) => {
           return error;
         });
-    }, 2),
+    }, 2)
   );
 
   const play = async (): Promise<void> => {

@@ -3,13 +3,13 @@ import { NO_OF_TILES } from './constants';
 
 const convertFloatsToGameEvents = (
   floats: number[] | undefined,
-  totalEvents: number,
+  totalEvents: number
 ): number[] => {
   if (!floats || floats.length === 0) {
     return [];
   }
   let remainingEvents = totalEvents;
-  return floats.map((float) => {
+  return floats.map(float => {
     const event = Math.floor(float * remainingEvents);
     remainingEvents -= 1;
     return event;
@@ -17,7 +17,7 @@ const convertFloatsToGameEvents = (
 };
 
 const calculateMines = (gameEvents: number[], minesCount: number): number[] => {
-  if (!gameEvents || gameEvents.length === 0) {
+  if (gameEvents.length === 0) {
     return [];
   }
   let tileNumbers = range(NO_OF_TILES);

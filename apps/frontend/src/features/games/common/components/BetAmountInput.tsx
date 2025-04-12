@@ -23,7 +23,7 @@ export function BetAmountInput({
             disabled={isInputDisabled}
             icon={<BadgeDollarSign className="text-gray-500" />}
             min={0}
-            onChange={(e) => {
+            onChange={e => {
               onBetAmountChange?.(Number(e.target.value));
             }}
             step={1}
