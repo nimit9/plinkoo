@@ -9,6 +9,7 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/backend-deploy.yml'
+      - 'Docker/Dockerfile.api'
   workflow_dispatch: # Allow manual triggering
 
 jobs:
