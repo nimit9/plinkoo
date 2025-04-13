@@ -12,7 +12,7 @@ on:
   workflow_dispatch: # Allow manual triggering
 
 env:
-  NODE_VERSION: 23.5.0
+  NODE_VERSION: 22.14.0 # Latest LTS version
   PNPM_VERSION: 9.9.0
 
 jobs:

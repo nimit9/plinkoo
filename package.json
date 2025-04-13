@@ -21,7 +21,7 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "testimonials",
+  "name": "simcasino",
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
       "pnpm lint",

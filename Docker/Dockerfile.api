@@ -21,4 +21,6 @@ RUN pnpm db:generate
 
 RUN pnpm build --filter=api
 
-CMD ["pnpm", "start", "--filter=api"]
+WORKDIR /usr/src/app/apps/api
+
+CMD ["pnpm", "start"]
