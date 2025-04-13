@@ -10,7 +10,8 @@
         "dist/**",
         ".next/**",
         "!.next/cache/**"
-      ]
+      ],
+      "env": ["VITE_APP_API_URL"]
     },
     "test": {
       "outputs": ["coverage/**"],
