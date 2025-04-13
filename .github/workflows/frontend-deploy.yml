@@ -3,7 +3,7 @@ name: Deploy Frontend to S3 and CloudFront
 on:
   push:
     branches:
-      - main
+      - dont-deploy
     paths:
       - 'apps/frontend/**'
       - 'packages/**'

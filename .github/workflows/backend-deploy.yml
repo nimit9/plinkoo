@@ -3,7 +3,7 @@ name: Deploy Backend to Production
 on:
   push:
     branches:
-      - main
+      - dont-deploy
     paths:
       - 'apps/api/**'
       - 'packages/**'
