@@ -4,6 +4,7 @@ export enum Games {
   DICE = 'dice',
   ROULETTE = 'roulette',
   MINES = 'mines',
+  KENO = 'keno',
 }
 
 export type Game = (typeof Games)[keyof typeof Games];

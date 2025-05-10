@@ -3,6 +3,7 @@ import { Roulette } from '@/features/games/roulette';
 import { Mines } from '@/features/games/mines';
 import { Plinkoo } from '@/features/games/plinkoo';
 import { DiceGame } from '@/features/games/dice';
+import { Keno } from '@/features/games/keno';
 
 export const Route = createFileRoute('/_protected/casino/games/$gameId')({
   component: GamePage,
@@ -20,6 +21,8 @@ function GamePage(): JSX.Element {
       return <Mines />;
     case 'plinkoo':
       return <Plinkoo />;
+    case 'keno':
+      return <Keno />;
     default:
       return <div>Game not found</div>;
   }

@@ -151,6 +151,8 @@ module.exports = {
       'roulette-black-hover': '#4b6e84',
       'roulette-green': '#419e3f',
       'roulette-green-hover': '#69c267',
+      'keno-selected-tile': '#962EFF',
+      'keno-selected-tile-hover': 'rgb(176, 97, 255)',
     }),
     textColor: ({ theme }) => ({
       'roulette-red': '#fe2247',
@@ -221,11 +223,11 @@ module.exports = {
     plugin(({ matchUtilities }) => {
       matchUtilities(
         {
-          icon: (value) => ({ color: value }),
+          icon: value => ({ color: value }),
         },
         {
           values: { ...iconTokens },
-        },
+        }
       );
     }),
   ],

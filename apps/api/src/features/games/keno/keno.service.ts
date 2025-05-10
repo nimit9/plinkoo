@@ -1,7 +1,7 @@
 import range from 'lodash/range';
+import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
 // import { rng } from '../../user/user.service';
-import { PAYOUT_MULTIPLIERS } from './keno.constant';
-import type { KenoRisk } from './keno.types';
+import { PAYOUT_MULTIPLIERS } from '@repo/common/game-utils/keno/constants.js';
 
 const NO_OF_TILES = 40;
 
