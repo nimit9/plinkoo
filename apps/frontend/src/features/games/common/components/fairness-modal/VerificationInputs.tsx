@@ -116,7 +116,7 @@ function VerificationInputs({
         </Label>
         <div className="flex h-8 rounded-sm overflow-hidden group">
           <InputWithIcon
-            className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
+            className="text-neutral-default disabled:opacity-100 font-medium text-sm disabled:cursor-text"
             icon={null}
             onChange={e => {
               handleInputChange('clientSeed', e.target.value);
@@ -134,7 +134,7 @@ function VerificationInputs({
         </Label>
         <div className="flex h-8 rounded-sm overflow-hidden group">
           <InputWithIcon
-            className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
+            className="text-neutral-default disabled:opacity-100 font-medium text-sm disabled:cursor-text"
             icon={null}
             onChange={e => {
               handleInputChange('serverSeed', e.target.value);
@@ -153,7 +153,7 @@ function VerificationInputs({
         <div className="flex h-8 rounded-sm overflow-hidden group">
           <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
             <InputWithIcon
-              className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
+              className="text-neutral-default disabled:opacity-100 font-medium text- disabled:cursor-text"
               icon={null}
               min={0}
               onChange={e => {

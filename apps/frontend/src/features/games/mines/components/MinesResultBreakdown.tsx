@@ -123,10 +123,10 @@ function MinesResultBreakdown({
         <div className="flex flex-col gap-4 my-1">
           {chunkedHmacByteIds.map((chunkedHmacByteId, index) => (
             <div key={generateUniqueId('chunk', index)}>
-              <p className="text-xs mb-0.5 font-semibold tracking-wider">
+              <p className="text-sm mb-0.5 font-semibold tracking-wider">
                 {`HMAC_SHA256(${serverSeed}, ${clientSeed}:${nonce}:${index})`}
               </p>
-              <div className="flex gap-2 text-xs overflow-x-auto no-scrollbar">
+              <div className="flex gap-2 text-sm overflow-x-auto no-scrollbar">
                 {chunkedHmacByteId.map(({ byte, id }) => (
                   <div
                     className={cn(
@@ -145,7 +145,7 @@ function MinesResultBreakdown({
       </div>
       <div className="overflow-x-auto no-scrollbar">
         <Label>Bytes to Number</Label>
-        <div className="flex gap-6 w-max text-xs">
+        <div className="flex gap-6 w-max text-sm">
           {chunkedSelectedByteIds.map((selectedBytes, index) => {
             return (
               <div className="flex-1" key={generateUniqueId('chunk', index)}>
@@ -226,10 +226,10 @@ function MinesResultBreakdown({
       </div>
       <div>
         <Label>Numbers to Shuffle</Label>
-        <div className="flex flex-col gap-1 my-1 w-full text-neutral-default font-semibold">
+        <div className="flex flex-col gap-1 my-1 w-full text-neutral-default font-medium">
           {fisherYatesShuffle.map(({ array, chosenIndex }, index) => (
             <div key={generateUniqueId('fisher-yates-shuffle', index)}>
-              <div className="flex gap-2 text-xs w-full justify-stretch ">
+              <div className="flex gap-2 w-full justify-stretch text-sm">
                 {array.map((byte, idx) => (
                   <div
                     className={cn('flex-1 px-px text-center', {

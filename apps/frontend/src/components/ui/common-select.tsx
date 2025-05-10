@@ -41,14 +41,14 @@ function CommonSelect({
       </Label>
       <Select onValueChange={onValueChange} value={value ?? ''}>
         <SelectTrigger
-          className={cn('h-8 pl-2 text-xs font-medium', triggerClassName)}
+          className={cn('h-8 pl-2 text-sm font-medium', triggerClassName)}
         >
           <SelectValue className="text-neutral-default" />
         </SelectTrigger>
         <SelectContent>
           {options.map(option => (
             <SelectItem
-              className="h-7 text-xs font-medium"
+              className="h-7 text-sm font-medium"
               key={option.value}
               value={option.value}
             >

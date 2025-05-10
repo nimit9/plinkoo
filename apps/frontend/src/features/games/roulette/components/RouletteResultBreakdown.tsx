@@ -80,10 +80,10 @@ function RouletteResultBreakdown({
       </div>
       <div>
         <Label>Casino Seeds to Bytes</Label>
-        <p className="text-xs my-1 mb-0.5 font-semibold tracking-wider">
+        <p className="text-sm my-1 mb-0.5 font-semibold tracking-wider">
           {`HMAC_SHA256(${serverSeed}, ${clientSeed}:${nonce}:0)`}
         </p>
-        <div className="flex gap-2 text-xs overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 text-sm overflow-x-auto no-scrollbar">
           {hmacByteIds.map(({ byte, id }, index) => (
             <div
               className={cn(
@@ -102,7 +102,7 @@ function RouletteResultBreakdown({
       </div>
       <div>
         <Label>Bytes to Number</Label>
-        <div className="flex gap-2 text-xs overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 text-sm overflow-x-auto no-scrollbar">
           <div className="grid grid-cols-11">
             <div className="col-span-11 font-semibold tracking-widest">{`(${selectedBytes.join(', ')}) -> [0, ..., 36] = ${finalOutcome}`}</div>
             {selectedByteIds.map(({ byte, id }, index) => (
