@@ -1,12 +1,13 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
+import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
 import CommonSelect from '@/components/ui/common-select';
 import { Button } from '@/components/ui/button';
+import { placeBet } from '@/api/games/keno';
 import { BetButton } from '../../common/components/BettingControls';
 import { BetAmountInput } from '../../common/components/BetAmountInput';
 import useKenoStore from '../store/kenoStore';
 import { KenoRiskDropdown } from '../const';
-import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
 import { useSelectedTiles } from '../store/kenoSelectors';
 
 function BettingControls(): JSX.Element {
@@ -39,33 +40,46 @@ function BettingControls(): JSX.Element {
   //     },
   //   });
 
-  //   const { mutate: start, isPending: isStartingGame } = useMutation({
-  //     mutationKey: ['mines-start-game'],
-  //     mutationFn: () => startGame({ betAmount, minesCount }),
-  //     onSuccess: ({ data }) => {
-  //       setGameState(data);
-  //       setBetAmount(Number(data.betAmount));
-  //     },
-  //   });
+  const { mutate: placeBetMutation, isPending } = useMutation({
+    mutationKey: ['keno-start-game'],
+    mutationFn: () =>
+      placeBet({
+        betAmount,
+        selectedTiles: Array.from(selectedTiles),
+        risk: kenoRisk,
+      }),
+    onSuccess: ({ data }) => {
+      setBetAmount(Number(data.betAmount));
+    },
+  });
   const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled =
     betAmount > (balance ?? 0) || betAmount <= 0 || selectedTiles.size === 0;
 
   // async function to update selected tile and sleep for 200ms
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const sleep = (ms: number): Promise<void> =>
+    new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
 
-  const autoPickTiles = async () => {
+  const autoPickTiles = async (): Promise<void> => {
     // Choose 10 random tiles between 1 and 40
     const randomTiles = new Set<number>();
     while (randomTiles.size < 10) {
       const randomTile = Math.floor(Math.random() * NO_OF_TILES_KENO) + 1;
       randomTiles.add(randomTile);
     }
-    for (const tile of randomTiles) {
-      updateSelectedTile(tile);
-      await sleep(100);
-    }
+
+    // Update tiles with delays
+    const tilesArray = Array.from(randomTiles);
+    const updatePromises = tilesArray.map((tile, index) =>
+      sleep(index * 100).then(() => {
+        updateSelectedTile(tile);
+      })
+    );
+
+    await Promise.all(updatePromises);
   };
 
   return (
@@ -89,7 +103,7 @@ function BettingControls(): JSX.Element {
         />
         <Button
           className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-sm mt-1"
-          onClick={autoPickTiles}
+          onClick={() => void autoPickTiles()}
         >
           Auto Pick
         </Button>
@@ -104,11 +118,9 @@ function BettingControls(): JSX.Element {
       <BetButton
         animate="animate-pulse"
         disabled={isDisabled}
-        isPending={false}
+        isPending={isPending}
         loadingImage="/games/mines/bomb.png"
-        onClick={() => {
-          // Handle button click
-        }}
+        onClick={placeBetMutation}
       />
     </div>
   );

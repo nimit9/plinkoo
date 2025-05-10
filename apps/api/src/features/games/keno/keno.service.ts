@@ -1,20 +1,11 @@
-import range from 'lodash/range';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
-// import { rng } from '../../user/user.service';
-import { PAYOUT_MULTIPLIERS } from '@repo/common/game-utils/keno/constants.js';
-
-const NO_OF_TILES = 40;
-
-const drawNumbers = (randomFloats: number[]) => {
-  let tiles = range(NO_OF_TILES);
-
-  const draw = randomFloats.map(float => {
-    const tile = tiles[Math.floor(float * tiles.length)];
-    tiles = [...tiles.slice(0, tile), ...tiles.slice(tile + 1)];
-    return tile;
-  });
-  return draw;
-};
+import {
+  NO_OF_TILES_KENO,
+  PAYOUT_MULTIPLIERS,
+} from '@repo/common/game-utils/keno/constants.js';
+import { calculateSelectedGems } from '@repo/common/game-utils/keno/utils.js';
+import { convertFloatsToGameEvents } from '@repo/common/game-utils/mines/utils.js';
+import type { UserInstance } from '../../user/user.service';
 
 const getPayoutMultiplier = (
   drawnNumbers: number[],
@@ -31,14 +22,23 @@ const getPayoutMultiplier = (
   return PAYOUT_MULTIPLIERS[risk][selectedTiles.length][matches];
 };
 
-export const getResult = (
-  clientSeed: string,
-  selectedTiles: number[],
-  risk: KenoRisk
-) => {
-  const floats = [2];
+export const getResult = ({
+  userInstance,
+  selectedTiles,
+  risk,
+}: {
+  userInstance: UserInstance;
+  selectedTiles: number[];
+  risk: KenoRisk;
+}) => {
+  const floats = userInstance.generateFloats(10);
 
-  const drawnNumbers = drawNumbers(floats);
+  const gameEvents = convertFloatsToGameEvents(floats, NO_OF_TILES_KENO);
+
+  const drawnNumbers = calculateSelectedGems(gameEvents, 10).map(
+    num => num + 1
+  );
+
   const payoutMultiplier = getPayoutMultiplier(
     drawnNumbers,
     selectedTiles,

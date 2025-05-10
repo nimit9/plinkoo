@@ -17,6 +17,7 @@ enum Game {
   dice
   roulette
   mines
+  keno
 }
 
 model User {
