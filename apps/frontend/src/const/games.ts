@@ -18,12 +18,12 @@ export const GAME_VALUES_MAPPING = {
   },
   [Games.MINES]: {
     label: 'Mines',
-    // icon: MineIcon,
+    // icon: DicesIcon,
     path: '/casino/games/mines',
   },
   [Games.KENO]: {
     label: 'Keno',
-    // icon: KenoIcon,
+    // icon: DicesIcon,
     path: '/casino/games/keno',
   },
 };

@@ -5,6 +5,7 @@ import limboRouter from './limbo/limbo.router';
 import kenoRouter from './keno/keno.router';
 import diceRouter from './dice/dice.router';
 import rouletteRouter from './roulette/roulette.router';
+import blackjackRouter from './blackjack/blackjack.router';
 
 const gameRouter: Router = Router();
 
@@ -14,5 +15,6 @@ gameRouter.use('/limbo', limboRouter);
 gameRouter.use('/keno', kenoRouter);
 gameRouter.use('/dice', diceRouter);
 gameRouter.use('/roulette', rouletteRouter);
+gameRouter.use('/blackjack', blackjackRouter);
 
 export default gameRouter;

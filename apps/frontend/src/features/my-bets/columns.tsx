@@ -19,7 +19,9 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
       return (
         <Link to={game.path}>
           <div className="flex items-center gap-2 font-semibold group hover:cursor-pointer">
-            <game.icon className="size-3 icon-neutral-weak group-hover:icon-neutral-default" />
+            {'icon' in game && (
+              <game.icon className="size-3 icon-neutral-weak group-hover:icon-neutral-default" />
+            )}
             {game.label}
           </div>
         </Link>

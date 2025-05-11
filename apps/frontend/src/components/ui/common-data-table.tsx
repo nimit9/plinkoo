@@ -78,14 +78,14 @@ export function CommonDataTable<TData, TValue>({
 
   return (
     <div>
-      <TableUI className="[&_tr:nth-child(odd)>td]:bg-brand-weak [&_tr:nth-child(odd)>td:first-child]:rounded-l-sm [&_tr:nth-child(odd)>td:last-child]:rounded-r-sm">
+      <TableUI className="[&_tr:nth-child(odd)>td]:bg-brand-weak [&_tr:nth-child(odd)>td:first-child]:rounded-l-sm [&_tr:nth-child(odd)>td:last-child]:rounded-r-sm mt-2">
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <TableHead
                   className={cn(
-                    'font-semibold text-neutral-weak text-xs',
+                    'font-semibold text-neutral-weak text-sm',
                     header.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     header.column.columnDef.meta?.alignment === 'center' &&
@@ -113,7 +113,7 @@ export function CommonDataTable<TData, TValue>({
               {row.getVisibleCells().map(cell => (
                 <TableCell
                   className={cn(
-                    'p-3 text-xs',
+                    'p-3 text-sm',
                     cell.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     cell.column.columnDef.meta?.alignment === 'center' &&
@@ -137,7 +137,7 @@ export function CommonDataTable<TData, TValue>({
           onClick={() => {
             table.previousPage();
           }}
-          size="sm"
+          size="default"
           variant="ghost"
         >
           <ChevronLeftIcon className="h-4 w-4 mr-1" />
@@ -149,7 +149,7 @@ export function CommonDataTable<TData, TValue>({
           onClick={() => {
             table.nextPage();
           }}
-          size="sm"
+          size="default"
           variant="ghost"
         >
           Next
