@@ -21,6 +21,11 @@ export const GAME_VALUES_MAPPING = {
     // icon: MineIcon,
     path: '/casino/games/mines',
   },
+  [Games.KENO]: {
+    label: 'Keno',
+    // icon: KenoIcon,
+    path: '/casino/games/keno',
+  },
 };
 
 export const GAMES_DROPDOWN_OPTIONS = [
@@ -35,5 +40,9 @@ export const GAMES_DROPDOWN_OPTIONS = [
   {
     label: GAME_VALUES_MAPPING[Games.MINES].label,
     value: Games.MINES,
+  },
+  {
+    label: GAME_VALUES_MAPPING[Games.KENO].label,
+    value: Games.KENO,
   },
 ];

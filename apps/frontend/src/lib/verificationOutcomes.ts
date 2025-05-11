@@ -3,6 +3,8 @@ import {
   convertFloatsToGameEvents,
   calculateMines,
 } from '@repo/common/game-utils/mines/utils.js';
+import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
+import { calculateSelectedGems } from '@repo/common/game-utils/keno/utils.js';
 import { Games } from '@/const/games';
 import type { Game } from '@/const/games';
 import { getGeneratedFloats } from './crypto';
@@ -70,6 +72,27 @@ const rouletteVerificationOutcomes = async ({
   return result.toString();
 };
 
+const kenoVerificationOutcomes = async ({
+  clientSeed,
+  serverSeed,
+  nonce,
+}: {
+  clientSeed: string;
+  serverSeed: string;
+  nonce: string;
+}): Promise<number[]> => {
+  const floats = await getGeneratedFloats({
+    count: 10,
+    seed: serverSeed,
+    message: `${clientSeed}:${nonce}`,
+  });
+  const gameEvents = convertFloatsToGameEvents(floats, NO_OF_TILES_KENO);
+  const drawnNumbers = calculateSelectedGems(gameEvents, 10).map(
+    num => num + 1
+  );
+  return drawnNumbers;
+};
+
 export const getVerificationOutcome = async ({
   game,
   clientSeed,
@@ -90,6 +113,8 @@ export const getVerificationOutcome = async ({
       return rouletteVerificationOutcomes({ clientSeed, serverSeed, nonce });
     case Games.MINES:
       return minesVerificationOutcomes({ clientSeed, serverSeed, nonce, meta });
+    case Games.KENO:
+      return kenoVerificationOutcomes({ clientSeed, serverSeed, nonce });
     default:
       return '';
   }

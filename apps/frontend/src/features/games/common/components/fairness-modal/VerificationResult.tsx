@@ -1,9 +1,11 @@
 import { HashLoader } from 'react-spinners';
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
+import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
 import DiceResultPreview from '@/features/games/dice/components/DiceResultPreview';
 import { Games, type Game } from '@/const/games';
 import RouletteWheel from '@/features/games/roulette/components/RouletteWheel';
 import InactiveGameTile from '@/features/games/mines/components/InactiveGameTile';
+import VerificationResultKenoTile from '@/features/games/keno/components/VerificationResultKenoTile';
 
 function VerificationResult({
   game,
@@ -47,6 +49,22 @@ function VerificationResult({
                 className="size-16"
               />
             ))}
+          </div>
+        );
+      }
+      case Games.KENO: {
+        if (typeof outcome === 'string' || !outcome) return <>{null}</>;
+        return (
+          <div className="inline-grid grid-cols-8 mx-auto justify-items-center gap-2.5 -my-12 py-2">
+            {Array.from({ length: NO_OF_TILES_KENO }, (_, i) => i).map(
+              number => (
+                <VerificationResultKenoTile
+                  drawnNumbers={new Set(outcome)}
+                  index={number + 1}
+                  key={number}
+                />
+              )
+            )}
           </div>
         );
       }
