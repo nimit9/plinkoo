@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
-import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
+import type { KenoResponse } from '@repo/common/game-utils/keno/types.js';
+import { KenoRequestSchema } from '@repo/common/game-utils/keno/types.js';
 import type { User } from '@prisma/client';
 import db from '@repo/db';
 import { StatusCodes } from 'http-status-codes';
@@ -8,18 +9,15 @@ import { BadRequestError } from '../../../errors';
 import { userManager } from '../../user/user.service';
 import { getResult } from './keno.service';
 
-interface KenoRequestBody {
-  betAmount: number;
-  selectedTiles: number[];
-  risk: KenoRisk;
-}
-
-export const placeBet = async (req: Request, res: Response) => {
-  const { betAmount, selectedTiles, risk } = req.body as KenoRequestBody;
-
-  if (betAmount <= 0) {
-    throw new BadRequestError('Bet amount must be greater than 0');
+export const placeBet = async (
+  req: Request,
+  res: Response<ApiResponse<KenoResponse>>
+) => {
+  const parsedRequest = KenoRequestSchema.safeParse(req.body);
+  if (!parsedRequest.success) {
+    throw new BadRequestError('Invalid request body');
   }
+  const { betAmount, selectedTiles, risk } = parsedRequest.data;
 
   const userInstance = await userManager.getUser((req.user as User).id);
   const user = userInstance.getUser();

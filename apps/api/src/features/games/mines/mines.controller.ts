@@ -147,7 +147,7 @@ export const getActiveGame = async (
       state: {
         mines: null,
         rounds: game.getRounds(),
-        minesCount: (activeBet.state as MinesHiddenState).minesCount,
+        minesCount: (activeBet.state as unknown as MinesHiddenState).minesCount,
       },
       betAmount: activeBet.betAmount / 100,
     })

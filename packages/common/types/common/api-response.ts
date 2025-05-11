@@ -3,7 +3,7 @@ class ApiResponse<T> {
   data: T;
   message: string;
   success: boolean;
-  constructor(statusCode: number, data: T, message: string = 'Success') {
+  constructor(statusCode: number, data: T, message = 'Success') {
     this.statusCode = statusCode;
     this.data = data;
     this.message = message;

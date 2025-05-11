@@ -115,7 +115,7 @@ class Mines {
     if (!this.bet.state) {
       throw new Error('Game state not found');
     }
-    const { mines, minesCount } = this.bet.state as
+    const { mines, minesCount } = this.bet.state as unknown as
       | MinesHiddenState
       | MinesRevealedState;
     if (!mines) {
@@ -133,7 +133,10 @@ class Mines {
     await db.bet.update({
       where: { id: this.bet.id, active: true },
       data: {
-        state: { ...(this.bet.state as MinesHiddenState), rounds: this.rounds },
+        state: {
+          ...(this.bet.state as unknown as MinesHiddenState),
+          rounds: this.rounds,
+        },
       },
     });
     return {
@@ -187,7 +190,10 @@ class Mines {
     userInstance.setBalance(balance);
     return {
       id: this.bet.id,
-      state: { ...(this.bet.state as MinesRevealedState), rounds: this.rounds },
+      state: {
+        ...(this.bet.state as unknown as MinesRevealedState),
+        rounds: this.rounds,
+      },
       payoutMultiplier,
       payout: Number((payoutAmount / 100).toFixed(2)),
       balance: Number((parseInt(balance, 10) / 100).toFixed(2)),

@@ -18,27 +18,10 @@ function BettingControls(): JSX.Element {
     setKenoRisk,
     clearTiles,
     updateSelectedTile,
+    setOutcome,
   } = useKenoStore();
 
   const selectedTiles = useSelectedTiles();
-
-  //   const {
-  //     isPending: isFetchingActiveGame,
-  //     data: activeGame,
-  //     isError,
-  //   } = useQuery({
-  //     queryKey: ['keno-active-game'],
-  //     queryFn: getActiveGame,
-  //     retry: false,
-  //   });
-
-  //   const { mutate: cashout, isPending: isCashingOut } = useMutation({
-  //     mutationKey: ['mines-cashout'],
-  //     mutationFn: cashOut,
-  //     onSuccess: ({ data }) => {
-  //       setGameState(data);
-  //     },
-  //   });
 
   const { mutate: placeBetMutation, isPending } = useMutation({
     mutationKey: ['keno-start-game'],
@@ -48,8 +31,22 @@ function BettingControls(): JSX.Element {
         selectedTiles: Array.from(selectedTiles),
         risk: kenoRisk,
       }),
-    onSuccess: ({ data }) => {
-      setBetAmount(Number(data.betAmount));
+    onSuccess: async ({ data }): Promise<void> => {
+      const drawnNumbers = data.state.drawnNumbers;
+
+      const updatePromises = Array.from(drawnNumbers.keys()).map(index =>
+        sleep(100 * index).then(() => {
+          setOutcome({
+            ...data,
+            state: {
+              ...data.state,
+              drawnNumbers: drawnNumbers.slice(0, index + 1),
+            },
+          });
+        })
+      );
+
+      await Promise.all(updatePromises);
     },
   });
   const queryClient = useQueryClient();

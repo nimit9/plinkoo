@@ -1,37 +1,37 @@
-import { z } from 'zod';
-import { MinesBetSchema } from './validations';
+import type { z } from 'zod';
+import type { MinesBetSchema } from './validations';
 
 export type MinesBet = z.infer<typeof MinesBetSchema>;
 
-export type MinesRound = {
+export interface MinesRound {
   selectedTileIndex: number;
   payoutMultiplier: number;
-};
+}
 
-export type MinesRevealedState = {
+export interface MinesRevealedState {
   mines: number[];
   minesCount: number;
   rounds: MinesRound[];
-};
+}
 
-export type MinesHiddenState = {
+export interface MinesHiddenState {
   mines: null;
   minesCount: number;
   rounds: MinesRound[];
-};
+}
 
-export type MinesPlayRoundResponse = {
+export interface MinesPlayRoundResponse {
   id: string;
   state: MinesHiddenState;
   active: boolean;
   betAmount: number;
-};
+}
 
-export type MinesGameOverResponse = {
+export interface MinesGameOverResponse {
   id: string;
   state: MinesRevealedState;
   payoutMultiplier: number;
   payout: number;
   balance: number;
   active: boolean;
-};
+}

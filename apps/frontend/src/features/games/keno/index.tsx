@@ -3,13 +3,18 @@ import {
   NO_OF_TILES_KENO,
   PAYOUT_MULTIPLIERS,
 } from '@repo/common/game-utils/keno/constants.js';
-import { BadgeDollarSign } from 'lucide-react';
+import { BadgeDollarSign, BadgeDollarSignIcon } from 'lucide-react';
 import { Games } from '@/const/games';
 import { Label } from '@/components/ui/label';
 import GameSettingsBar from '../common/components/game-settings';
 import BettingControls from './components/BettingControls';
 import KenoTile from './components/KenoTile';
-import { useSelectedTiles } from './store/kenoSelectors';
+import {
+  useDrawnNumbers,
+  usePayout,
+  usePayoutMultiplier,
+  useSelectedTiles,
+} from './store/kenoSelectors';
 import useKenoStore from './store/kenoStore';
 
 export function Keno(): JSX.Element {
@@ -19,6 +24,10 @@ export function Keno(): JSX.Element {
     hoveredTile !== null
       ? PAYOUT_MULTIPLIERS[kenoRisk][selectedTiles.size][hoveredTile].toFixed(2)
       : null;
+
+  const payoutMultiplier = usePayoutMultiplier();
+  const payout = usePayout();
+  const drawnNumbers = useDrawnNumbers();
 
   return (
     <>
@@ -119,10 +128,10 @@ export function Keno(): JSX.Element {
             </div>
           )}
 
-          {/* {isGameWon ? (
+          {payoutMultiplier > 0 && drawnNumbers.size === 10 ? (
             <div className="absolute flex flex-col gap-2 border-[6px] border-[#00e600] rounded-xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-default p-2.5 w-32 items-center">
               <p className="text-[#00e600] text-xl font-bold">
-                {payoutMultiplier || '1.00'}x
+                {payoutMultiplier.toFixed(2)}x
               </p>
               <div className="border-2 border-neutral-weaker w-1/2" />
               <p className="text-[#00e600] text-lg font-bold flex items-center gap-1">
@@ -130,7 +139,7 @@ export function Keno(): JSX.Element {
                 <BadgeDollarSignIcon className="size-4" />
               </p>
             </div>
-          ) : null} */}
+          ) : null}
         </div>
       </div>
       <GameSettingsBar game={Games.KENO} />
