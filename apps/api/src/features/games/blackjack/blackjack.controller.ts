@@ -2,9 +2,15 @@ import type { User } from '@prisma/client';
 import { ApiResponse } from '@repo/common/types';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { getSafeGameState } from '@repo/common/game-utils/blackjack/utils.js';
-import { BlackjackBetSchema } from '@repo/common/game-utils/blackjack/validations.js';
-import type { BlackjackPlayRoundResponse } from '@repo/common/game-utils/blackjack/types.js';
+import {
+  BlackjackBetSchema,
+  BlackjackPlayRoundSchema,
+} from '@repo/common/game-utils/blackjack/validations.js';
+import type {
+  BlackjackActions,
+  BlackjackPlayRoundResponse,
+} from '@repo/common/game-utils/blackjack/types.js';
+import db from '@repo/db';
 import { userManager } from '../../user/user.service';
 import { blackjackManager } from './blackjack.service';
 
@@ -12,51 +18,27 @@ export const placeBet = async (
   req: Request,
   res: Response<ApiResponse<BlackjackPlayRoundResponse> | { message: string }>
 ) => {
-  const validationResult = BlackjackBetSchema.safeParse(req.body);
+  const { betAmount } = validateBetRequest(req.body as { betAmount: number });
+  const user = req.user as User;
 
-  if (!validationResult.success) {
-    return res
-      .status(400)
-      .json(
-        new ApiResponse(
-          StatusCodes.BAD_REQUEST,
-          {},
-          validationResult.error.message
-        )
-      );
-  }
+  await validateActiveBet(user.id);
 
-  const { betAmount } = validationResult.data;
-
-  const userInstance = await userManager.getUser((req.user as User).id);
-  const user = userInstance.getUser();
-
-  const betAmountInCents = Math.round(betAmount * 100);
-  const userBalanceInCents = userInstance.getBalanceAsNumber();
-
-  if (userBalanceInCents < betAmountInCents) {
-    return res
-      .status(400)
-      .json(
-        new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Insufficient balance')
-      );
-  }
+  await validateUserBalance(user.id, betAmount);
 
   const game = await blackjackManager.createGame({
-    betAmount: betAmountInCents,
+    betAmount: Math.round(betAmount * 100), // Convert to cents
     userId: user.id,
   });
 
-  const bet = game.getBet();
+  const dbUpdateObject = game.getDbUpdateObject();
 
-  res.status(StatusCodes.OK).json(
-    new ApiResponse(StatusCodes.OK, {
-      id: bet.id,
-      active: true,
-      state: getSafeGameState(game.getGameState()),
-      betAmount: betAmountInCents,
-    })
-  );
+  if (dbUpdateObject) {
+    await db.bet.update(dbUpdateObject);
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
 };
 
 export const getActiveGame = async (
@@ -66,27 +48,72 @@ export const getActiveGame = async (
   const userId = (req.user as User).id;
   const game = await blackjackManager.getGame(userId);
 
-  if (!game) {
+  if (!game || !game.getBet().active) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json(new ApiResponse(StatusCodes.NOT_FOUND, {}, 'Game not found'));
   }
 
-  const activeBet = game.getBet();
+  return res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
+};
 
-  if (!activeBet.active || !activeBet.state) {
+export const blackjackNext = async (
+  req: Request,
+  res: Response<ApiResponse<BlackjackPlayRoundResponse> | { message: string }>
+) => {
+  const { action } = validatePlayRequest(req.body as { action: string });
+  const userId = (req.user as User).id;
+  const game = await blackjackManager.getGame(userId);
+
+  if (!game?.getBet().active) {
     return res
-      .status(StatusCodes.NOT_FOUND)
-      .json(new ApiResponse(StatusCodes.NOT_FOUND, {}, 'Game not found'));
+      .status(StatusCodes.BAD_REQUEST)
+      .json(new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Game not found'));
   }
 
-  return res.status(StatusCodes.OK).json(
-    new ApiResponse(StatusCodes.OK, {
-      id: activeBet.id,
-      active: activeBet.active,
-      state: getSafeGameState(game.getGameState()),
-      betAmount: activeBet.betAmount / 100,
-      amountMultiplier: game.amountMultiplier,
-    })
-  );
+  game.playRound(action as BlackjackActions);
+  const dbUpdateObject = game.getDbUpdateObject();
+
+  if (dbUpdateObject) {
+    await db.bet.update(dbUpdateObject);
+  }
+
+  return res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
+};
+
+const validateBetRequest = (body: { betAmount: number }) => {
+  const result = BlackjackBetSchema.safeParse(body);
+  if (!result.success) {
+    throw new Error(result.error.message);
+  }
+  return result.data;
+};
+
+const validateUserBalance = async (userId: string, betAmount: number) => {
+  const userInstance = await userManager.getUser(userId);
+  const betAmountInCents = Math.round(betAmount * 100);
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
+
+  if (userBalanceInCents < betAmountInCents) {
+    throw new Error('Insufficient balance');
+  }
+};
+
+const validateActiveBet = async (userId: string) => {
+  const game = await blackjackManager.getGame(userId);
+  if (game && game.getBet().active) {
+    throw new Error('You already have an active bet');
+  }
+};
+
+const validatePlayRequest = (body: { action: string }) => {
+  const result = BlackjackPlayRoundSchema.safeParse(body);
+  if (!result.success) {
+    throw new Error(result.error.message);
+  }
+  return result.data;
 };

@@ -14,10 +14,11 @@ datasource db {
 }
 
 enum Game {
+  blackjack
   dice
-  roulette
-  mines
   keno
+  mines
+  roulette
 }
 
 model User {

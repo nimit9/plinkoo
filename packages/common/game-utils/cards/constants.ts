@@ -40,6 +40,22 @@ const VALUE_RANK_MAP: Record<number, CardRanks> = {
   1: CardRanks.ACE, // Ace is considered the lowest rank in some games,
 };
 
+const BLACKJACK_RANK_VALUE_MAP: Record<CardRanks, number> = {
+  [CardRanks.TWO]: 2,
+  [CardRanks.THREE]: 3,
+  [CardRanks.FOUR]: 4,
+  [CardRanks.FIVE]: 5,
+  [CardRanks.SIX]: 6,
+  [CardRanks.SEVEN]: 7,
+  [CardRanks.EIGHT]: 8,
+  [CardRanks.NINE]: 9,
+  [CardRanks.TEN]: 10,
+  [CardRanks.JACK]: 10,
+  [CardRanks.QUEEN]: 10,
+  [CardRanks.KING]: 10,
+  [CardRanks.ACE]: 11, // Ace is considered 11 in Blackjack
+};
+
 const CARD_DECK: CardDeck[] = [
   ...Array.from({ length: 48 }, (_, i) => {
     const suit = SUIT_ORDER[Math.floor(i % 4)];
@@ -67,4 +83,4 @@ const CARD_DECK: CardDeck[] = [
   },
 ];
 
-export { CARD_DECK, RANK_VALUE_MAP, VALUE_RANK_MAP };
+export { BLACKJACK_RANK_VALUE_MAP, CARD_DECK, RANK_VALUE_MAP, VALUE_RANK_MAP };

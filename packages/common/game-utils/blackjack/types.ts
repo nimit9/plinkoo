@@ -1,4 +1,4 @@
-import type { CardDeck } from 'game-utils/cards/types';
+import type { CardDeck } from '../cards/types';
 
 export enum BlackjackActions {
   DEAL = 'deal',
@@ -8,24 +8,55 @@ export enum BlackjackActions {
   SPLIT = 'split',
   INSURANCE = 'insurance',
   NOINSURANCE = 'noInsurance',
+  BUST = 'bust',
+  FULL = 'full',
+  BLACKJACK = 'blackjack',
+  WIN = 'win',
+  LOSE = 'lose',
+  PUSH = 'push',
+}
+
+export interface PlayerGameState {
+  actions: BlackjackActions[];
+  value: number;
+  cards: CardDeck[];
+}
+
+export interface DealerGameState {
+  actions: (
+    | BlackjackActions.DEAL
+    | BlackjackActions.HIT
+    | BlackjackActions.BLACKJACK
+    | BlackjackActions.BUST
+  )[];
+  value: number;
+  cards: CardDeck[];
+}
+
+export interface SafeDealerGameState {
+  actions: (
+    | BlackjackActions.DEAL
+    | BlackjackActions.HIT
+    | BlackjackActions.BLACKJACK
+    | BlackjackActions.BUST
+  )[];
+  value: number;
+  cards: [CardDeck];
 }
 
 export interface BlackjackGameState {
-  player: {
-    actions: BlackjackActions[];
-    value: number;
-    cards: CardDeck[];
-  };
-  dealer: {
-    actions: ('deal' | 'hit')[];
-    value: number;
-    cards: CardDeck[];
-  };
+  player: PlayerGameState[];
+  dealer: DealerGameState;
 }
 
-export interface MinesPlayRoundResponse {
+export interface SafeBlackjackGameState {
+  player: PlayerGameState[];
+  dealer: SafeDealerGameState;
+}
+
+export interface BlackjackPlayRoundResponse {
   id: string;
-  state: BlackjackGameState;
+  state: SafeBlackjackGameState;
   active: boolean;
   betAmount: number;
   amountMultiplier: number;

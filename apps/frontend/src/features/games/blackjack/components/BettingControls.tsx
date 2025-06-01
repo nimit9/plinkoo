@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getValidActionsMapFromState } from '@repo/common/game-utils/blackjack/utils.js';
+import { getValidActionsFromState } from '@repo/common/game-utils/blackjack/utils.js';
 import { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import { blackjackBet, getActiveGame, playRound } from '@/api/games/blackjack';
 import { Button } from '@/components/ui/button';
@@ -63,7 +63,7 @@ function BettingControls(): JSX.Element {
   const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled = betAmount > (balance ?? 0) || betAmount <= 0;
 
-  const validActions = getValidActionsMapFromState(gameState?.state || null);
+  const validActions = getValidActionsFromState(gameState?.state || null);
 
   useEffect(() => {
     if (isError) {
