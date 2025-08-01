@@ -154,7 +154,7 @@ class BlackjackGame {
           state: BlackjackActions[][];
         }
       | {
-          active: boolean;
+          active: false;
           payoutAmount: number;
           state: BlackjackActions[][];
         };
@@ -184,7 +184,9 @@ class BlackjackGame {
   }
 
   private validateAction(action: BlackjackActions): void {
-    if (!isActionValid(this.gameState, action)) {
+    if (
+      !isActionValid({ gameState: this.gameState, action, active: this.active })
+    ) {
       throw new Error(`Invalid action: ${action}`);
     }
   }

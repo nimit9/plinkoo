@@ -127,7 +127,13 @@ const getSafeGameState = (
   };
 };
 
-const getValidActionsFromState = (state: BlackjackGameState | null) => {
+const getValidActionsFromState = ({
+  state,
+  active,
+}: {
+  state: BlackjackGameState | null;
+  active: boolean;
+}) => {
   const defaultActions = {
     [BlackjackActions.HIT]: false,
     [BlackjackActions.STAND]: false,
@@ -137,7 +143,7 @@ const getValidActionsFromState = (state: BlackjackGameState | null) => {
   };
 
   const currentHand = getCurrentActiveHand(state?.player);
-  if (!currentHand || !state) return defaultActions;
+  if (!currentHand || !state || !active) return defaultActions;
 
   const { cards, actions, value } = currentHand;
   const isFirstMove =
@@ -163,11 +169,16 @@ const getValidActionsFromState = (state: BlackjackGameState | null) => {
   };
 };
 
-const isActionValid = (
-  gameState: BlackjackGameState,
-  action: BlackjackActions
-): boolean => {
-  const validActions = getValidActionsFromState(gameState);
+const isActionValid = ({
+  gameState,
+  action,
+  active,
+}: {
+  gameState: BlackjackGameState;
+  action: BlackjackActions;
+  active: boolean;
+}): boolean => {
+  const validActions = getValidActionsFromState({ state: gameState, active });
 
   if (
     [BlackjackActions.INSURANCE, BlackjackActions.NOINSURANCE].includes(action)
@@ -199,6 +210,7 @@ const handleHit = ({
   hand,
   gameEvents,
   drawIndex,
+  gameState,
 }: {
   hand: PlayerGameState;
   gameEvents: number[];
@@ -212,8 +224,21 @@ const handleHit = ({
 
   updateHandStatus(hand);
 
+  let currentDrawIndex = drawIndex + 1;
+
+  if (hand.actions.includes(BlackjackActions.FULL)) {
+    const dealerHand = gameState.dealer;
+    while (dealerHand.value < 17) {
+      const nextCard = CARD_DECK[currentDrawIndex];
+      dealerHand.cards.push(nextCard);
+      dealerHand.value = calculateHandValue(dealerHand.cards);
+      dealerHand.actions.push(BlackjackActions.HIT);
+      currentDrawIndex++;
+    }
+  }
+
   return {
-    drawIndex: drawIndex + 1,
+    drawIndex: currentDrawIndex,
   };
 };
 

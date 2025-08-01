@@ -49,7 +49,7 @@ function BettingControls(): JSX.Element {
     mutationKey: ['blackjack-bet'],
     mutationFn: () => blackjackBet({ betAmount }),
     onSuccess: ({ data }) => {
-      setGameState(data);
+      setGameState(data, false);
       setBetAmount(Number(data.betAmount));
     },
   });
@@ -57,25 +57,20 @@ function BettingControls(): JSX.Element {
   const { mutate: playNextRound, isPending: isPlayingRound } = useMutation({
     mutationKey: ['blackjack-play-round'],
     mutationFn: (action: BlackjackActions) => playRound(action),
+    onSuccess: ({ data }) => {
+      setGameState(data, false);
+      setBetAmount(Number(data.betAmount));
+    },
   });
 
   const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled = betAmount > (balance ?? 0) || betAmount <= 0;
 
-  const validActions = getValidActionsFromState(gameState?.state || null);
-
-  useEffect(() => {
-    if (isError) {
-      setGameState(null);
-      setBetAmount(0);
-      return;
-    }
-    if (activeGame) {
-      setGameState(activeGame.data || null);
-      setBetAmount(Number(activeGame.data?.betAmount || 0));
-    }
-  }, [activeGame, isError, setGameState, setBetAmount]);
+  const validActions = getValidActionsFromState({
+    state: gameState?.state || null,
+    active: gameState?.active || false,
+  });
 
   return (
     <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
@@ -87,104 +82,57 @@ function BettingControls(): JSX.Element {
           }}
         />
         <div className="grid grid-cols-2 gap-2 gap-y-3 my-2">
-          {BlackjackActionButtons.map(action => (
-            <Button
-              className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12 flex items-center justify-center gap-1"
-              disabled={
-                !validActions[action.value as keyof typeof validActions]
-              }
-              key={action.label}
-              onClick={() => {
-                playNextRound(action.value);
-              }}
-            >
-              {action.label}
-              <img alt={action.label} className="size-4" src={action.icon} />
-            </Button>
-          ))}
+          {validActions.insurance ? (
+            <>
+              <div className="flex items-center justify-center col-span-2 font-semibold text-sm my-2">
+                Insurance?
+              </div>
+              <Button
+                className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12 flex items-center justify-center gap-1"
+                onClick={() => {
+                  playNextRound(BlackjackActions.INSURANCE);
+                }}
+              >
+                Accept Insurance
+              </Button>
+              <Button
+                className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12 flex items-center justify-center gap-1"
+                onClick={() => {
+                  playNextRound(BlackjackActions.NOINSURANCE);
+                }}
+              >
+                No Insurance
+              </Button>
+            </>
+          ) : (
+            BlackjackActionButtons.map(action => (
+              <Button
+                className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12 flex items-center justify-center gap-1"
+                disabled={
+                  !validActions[action.value as keyof typeof validActions]
+                }
+                key={action.label}
+                onClick={() => {
+                  playNextRound(action.value);
+                }}
+              >
+                {action.label}
+                <img alt={action.label} className="size-4" src={action.icon} />
+              </Button>
+            ))
+          )}
+          {}
         </div>
-
-        {/* {isGameActive ? (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <div>
-                <Label className="pl-px text-xs text-neutral-weak font-medium">
-                  Mines
-                </Label>
-                <div className="flex h-8 rounded-sm overflow-hidden group">
-                  <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
-                    <InputWithIcon
-                      className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text select-none"
-                      icon={null}
-                      value={minesCount}
-                      wrapperClassName={cn(
-                        'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 '
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Label className="pl-px text-xs text-neutral-weak font-medium">
-                  Gems
-                </Label>
-                <div className="flex h-8 rounded-sm overflow-hidden group">
-                  <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
-                    <InputWithIcon
-                      className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
-                      icon={null}
-                      value={NO_OF_TILES - minesCount}
-                      wrapperClassName={cn(
-                        'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0'
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <Label className="pl-px text-xs text-neutral-weak font-medium">
-                Total Profit ({lastRound?.payoutMultiplier || '1.00'}x)
-              </Label>
-              <div className="flex h-8 rounded-sm overflow-hidden group">
-                <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
-                  <InputWithIcon
-                    className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text select-none"
-                    icon={null}
-                    value={(
-                      betAmount * (lastRound?.payoutMultiplier || 1)
-                    ).toFixed(2)}
-                    wrapperClassName={cn(
-                      'bg-brand-weaker h-8 border-brand-weaker shadow-none w-full pr-0 '
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
-            <Button className="bg-brand-weaker rounded-sm text-neutral-default font-semibold hover:bg-brand-weakest text-xs mt-1">
-              Pick random tile
-            </Button>
-          </div>
-        ) : (
-          <CommonSelect
-            label="Mines"
-            labelClassName="font-semibold"
-            onValueChange={(value: string) => {
-              setMinesCount(Number(value));
-            }}
-            options={Array.from({ length: 24 }, (_, i) => ({
-              label: (i + 1).toString(),
-              value: (i + 1).toString(),
-            }))}
-            triggerClassName="h-10 text-sm font-medium bg-brand-stronger"
-            value={minesCount.toString()}
-          />
-        )} */}
       </div>
 
       <BetButton
         animate="animate-pulse"
-        disabled={isDisabled || isFetchingActiveGame}
+        disabled={
+          isDisabled ||
+          isFetchingActiveGame ||
+          Boolean(gameState?.active) ||
+          isPlayingRound
+        }
         isPending={isFetchingActiveGame || isStartingGame}
         loadingImage="/games/mines/bomb.png"
         onClick={bet}

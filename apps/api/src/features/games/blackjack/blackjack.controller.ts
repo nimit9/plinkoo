@@ -34,6 +34,9 @@ export const placeBet = async (
 
   if (dbUpdateObject) {
     await db.bet.update(dbUpdateObject);
+    if ('active' in dbUpdateObject.data) {
+      blackjackManager.deleteGame(user.id);
+    }
   }
 
   res
@@ -77,6 +80,9 @@ export const blackjackNext = async (
   const dbUpdateObject = game.getDbUpdateObject();
 
   if (dbUpdateObject) {
+    if ('active' in dbUpdateObject.data) {
+      blackjackManager.deleteGame(userId);
+    }
     await db.bet.update(dbUpdateObject);
   }
 

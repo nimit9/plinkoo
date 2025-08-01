@@ -7,18 +7,34 @@ import { create } from 'zustand';
 interface BlackjackStore {
   betAmount: number;
   setBetAmount: (betAmount: number) => void;
+
   gameState: BlackjackPlayRoundResponse | null;
-  setGameState: (gameState: BlackjackPlayRoundResponse | null) => void;
+  prevGameState: BlackjackPlayRoundResponse | null;
+  setGameState: (
+    gameState: BlackjackPlayRoundResponse | null,
+    flipped: boolean
+  ) => void;
+
+  flippedCards: Record<string, Set<string>>;
+  incomingCards: Record<string, Set<string>>;
+
+  clearTransientCards: () => void;
 }
 
-const useBlackjackStore = create<BlackjackStore>(set => ({
+const useBlackjackStore = create<BlackjackStore>((set, get) => ({
   betAmount: 0,
   setBetAmount: betAmount => {
     set({ betAmount });
   },
   gameState: null,
-  setGameState: (gameState: BlackjackPlayRoundResponse | null) => {
-    set({ gameState });
+  prevGameState: null,
+
+  flippedCards: {},
+  incomingCards: {},
+  setGameState: () => {},
+
+  clearTransientCards: () => {
+    set({ incomingCards: {} });
   },
 }));
 
