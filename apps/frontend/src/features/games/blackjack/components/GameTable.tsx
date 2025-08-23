@@ -1,27 +1,39 @@
 import { LayoutGroup } from 'motion/react';
 import type { PlayerGameState } from '@repo/common/game-utils/blackjack/types.js';
-import PlayingCard from '@/components/ui/playing-card';
-import { Badge } from '@/components/ui/badge';
+import {
+  getCurrentActiveHandIndex,
+  calculateHandValueWithSoft,
+} from '@repo/common/game-utils/blackjack/utils.js';
+import PlayingCard, { CardBorders } from '@/components/ui/playing-card';
 import useBlackjackStore from '../store/blackjackStore';
 import { FACE_DOWN_HIDDEN_DEALER_CARD } from '../const';
+import { getBlackjackGameResult } from '../utils';
+import HandValue from './HandValue';
 
-interface GameTableProps {
-  isGameActive?: boolean;
-}
-
-function GameTable({ isGameActive = false }: GameTableProps): JSX.Element {
-  const { gameState, cardInDeck, flippedCards, incomingCards } =
+function GameTable(): JSX.Element {
+  const { gameState, gameOver, cardInDeck, flippedCards, incomingCards } =
     useBlackjackStore();
 
   // Show dealer's hole card only when game is not active
-  const showDealerHoleCard = !isGameActive;
+  const showDealerHoleCard =
+    gameState &&
+    gameState.state.dealer.cards.length > 1 &&
+    incomingCards.has(gameState.state.dealer.cards[1].id);
+
+  const currentActiveHandIndex = getCurrentActiveHandIndex(
+    gameState?.state.player
+  );
 
   const renderDealerHand = (): JSX.Element | null => {
     if (!gameState?.state.dealer.cards.length) return null;
 
     // Calculate center offset: -48 - (totalCards - 1) * 20
     const totalCards =
-      gameState.state.dealer.cards.length + (!showDealerHoleCard ? 1 : 0);
+      gameState.state.dealer.cards.filter(card => incomingCards.has(card.id))
+        .length +
+      (!showDealerHoleCard && incomingCards.has(FACE_DOWN_HIDDEN_DEALER_CARD)
+        ? 1
+        : 0);
     const centerOffset = -48 - (totalCards - 1) * 20;
     const rightmostCardLeft = (totalCards - 1) * 40 + centerOffset;
     const cardWidth = 96; // Assuming standard card width
@@ -30,14 +42,14 @@ function GameTable({ isGameActive = false }: GameTableProps): JSX.Element {
     return (
       <div className="flex flex-col items-center">
         <div className="relative">
-          <Badge
-            className="absolute -top-6 transform rounded-full bg-brand-weakest text-primary px-4 font-bold text-sm hover:bg-brand-weakest"
-            style={{
-              right: -rightmostCardRight,
-            }}
-          >
-            {gameState.state.dealer.value}
-          </Badge>
+          <HandValue
+            rightPosition={rightmostCardRight}
+            value={calculateHandValueWithSoft(
+              gameState.state.dealer.cards.filter(card =>
+                flippedCards.has(card.id)
+              )
+            )}
+          />
           {gameState.state.dealer.cards.map((card, index) => {
             const isHoleCard = index === 1;
             const shouldShowCard = !isHoleCard || showDealerHoleCard;
@@ -80,26 +92,40 @@ function GameTable({ isGameActive = false }: GameTableProps): JSX.Element {
   ): JSX.Element => {
     const isMultipleHands = hand.cards.length > 1;
 
-    const totalCards = hand.cards.length;
+    const totalCards = Math.max(
+      hand.cards.filter(card => incomingCards.has(card.id)).length,
+      1
+    );
     const centerOffset = -48 - (totalCards - 1) * 20;
     const rightmostCardLeft = (totalCards - 1) * 40 + centerOffset;
     const cardWidth = 96; // Assuming standard card width
     const rightmostCardRight = rightmostCardLeft + cardWidth;
 
+    const result =
+      gameState !== null
+        ? getBlackjackGameResult({
+            hand,
+            dealerState: gameState.state.dealer,
+            isActive:
+              currentActiveHandIndex === handIndex &&
+              gameState.state.player.length > 1 &&
+              hand.cards.every(card => flippedCards.has(card.id)),
+            gameOver,
+          })
+        : CardBorders.TRANSPARENT;
     return (
       <div
         className={`flex flex-col items-center ${isMultipleHands ? 'mx-8' : ''}`}
         key={`hand-${handIndex}`}
       >
         <div className="relative">
-          <Badge
-            className="absolute -top-6 transform rounded-full bg-brand-weakest text-primary px-4 font-bold text-sm hover:bg-brand-weakest"
-            style={{
-              right: -rightmostCardRight,
-            }}
-          >
-            {hand.value}
-          </Badge>
+          <HandValue
+            background={result}
+            rightPosition={rightmostCardRight}
+            value={calculateHandValueWithSoft(
+              hand.cards.filter(card => flippedCards.has(card.id))
+            )}
+          />
           {hand.cards.map((card, cardIndex) => {
             // Calculate center offset: -48 - (totalCards - 1) * 20
 
@@ -117,6 +143,7 @@ function GameTable({ isGameActive = false }: GameTableProps): JSX.Element {
                 }}
               >
                 <PlayingCard
+                  border={result}
                   faceDown={!flippedCards.has(card.id)}
                   layoutId={card.id}
                   rank={card.rank}
@@ -178,7 +205,7 @@ function GameTable({ isGameActive = false }: GameTableProps): JSX.Element {
         {/* Player's hand(s) at the bottom */}
         <div className="flex justify-center pb-4 h-full w-full pt-16">
           <div
-            className={`flex ${(gameState?.state.player.length || 0) > 1 ? 'gap-16' : ''} justify-center`}
+            className={`flex ${(gameState?.state.player.length || 0) > 1 ? 'gap-40' : ''} justify-center`}
           >
             {gameState?.state.player.map((hand, index) =>
               renderPlayerHand(hand, index)

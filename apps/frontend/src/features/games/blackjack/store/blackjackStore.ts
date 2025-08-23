@@ -19,11 +19,14 @@ interface BlackjackStore {
   flippedCards: Set<string>;
   incomingCards: Set<string>;
 
+  gameOver: boolean;
+
   // Actions
   initializeGame: (backendState: BlackjackPlayRoundResponse) => void;
   dealNextCard: () => Promise<void>;
   clearTransientCards: () => void;
-  playNextRoundHandler: (data: BlackjackPlayRoundResponse) => void;
+  playNextRoundHandler: (data: BlackjackPlayRoundResponse) => Promise<void>;
+  setActiveGame: (activeGame: BlackjackPlayRoundResponse) => void;
 }
 
 const delay = (ms: number): Promise<void> =>
@@ -38,6 +41,8 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
   },
   gameState: null,
 
+  gameOver: false,
+
   // Animation state
   dealingQueue: [],
   cardInDeck: null,
@@ -46,20 +51,15 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
   incomingCards: new Set(),
 
   setGameState: gameState => {
-    const currentState = get();
     set({
       gameState,
     });
-
-    // If this is a new game state with cards, initialize the dealing sequence
-    if (gameState && !currentState.gameState) {
-      get().initializeGame(gameState);
-    }
   },
 
   initializeGame: (backendState: BlackjackPlayRoundResponse) => {
     // Clear existing cards
     set({
+      gameOver: false,
       cardInDeck: null,
       flippedCards: new Set(),
       incomingCards: new Set(),
@@ -104,7 +104,7 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
       cardInDeck: null,
     }));
 
-    await delay(600); // Wait for the card to be visible
+    await delay(400); // Wait for the card to be visible
 
     set(currentState => ({
       flippedCards: new Set(currentState.flippedCards).add(nextCard),
@@ -114,8 +114,9 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
     await get().dealNextCard();
   },
 
-  playNextRoundHandler: (data: BlackjackPlayRoundResponse) => {
+  playNextRoundHandler: async (data: BlackjackPlayRoundResponse) => {
     const { player, dealer } = data.state;
+    const { active } = data;
 
     const playerRoundCards = player.flatMap(hand =>
       hand.cards.map(card => card.id)
@@ -130,16 +131,74 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
       cardId => !get().incomingCards.has(cardId)
     );
 
-    const dealingQueue = [...newPlayerCards, ...newDealerCards];
+    // If game is over (not active) and dealer has a hidden card that needs to be revealed
+    if (
+      !active &&
+      get().incomingCards.has(FACE_DOWN_HIDDEN_DEALER_CARD) &&
+      dealer.cards.length > 1
+    ) {
+      set({ dealingQueue: newPlayerCards });
+      await get().dealNextCard();
+      const secondDealerCard = dealer.cards[1];
 
-    set({ dealingQueue });
-    void get().dealNextCard();
+      // Remove the face-down hidden card and add the actual second dealer card
+      set(currentState => {
+        const newIncomingCards = new Set(currentState.incomingCards);
+
+        // Add the actual second dealer card (but don't flip it yet)
+        newIncomingCards.add(secondDealerCard.id);
+
+        return {
+          incomingCards: newIncomingCards,
+        };
+      });
+
+      // Add a delay before flipping the card to create the animation
+      await delay(200);
+
+      set(currentState => ({
+        flippedCards: new Set(currentState.flippedCards).add(
+          secondDealerCard.id
+        ),
+      }));
+
+      // Filter out the second dealer card from new cards since we just handled it
+      const filteredNewDealerCards = newDealerCards.filter(
+        cardId => cardId !== secondDealerCard.id
+      );
+      set({ dealingQueue: filteredNewDealerCards });
+    } else {
+      const dealingQueue = [...newPlayerCards, ...newDealerCards];
+      set({ dealingQueue });
+    }
+
+    await get().dealNextCard();
+
+    if (!data.active) {
+      set({ gameOver: true });
+    }
   },
 
   clearTransientCards: () => {
     set({
       dealingQueue: [],
       cardInDeck: null,
+    });
+  },
+
+  setActiveGame: (gameState: BlackjackPlayRoundResponse) => {
+    const cardIds = new Set([
+      ...gameState.state.dealer.cards.map(card => card.id),
+      ...gameState.state.player.flatMap(hand =>
+        hand.cards.map(card => card.id)
+      ),
+      FACE_DOWN_HIDDEN_DEALER_CARD,
+    ]);
+    set({
+      flippedCards: new Set(cardIds),
+      incomingCards: new Set(cardIds),
+      gameState,
+      gameOver: false,
     });
   },
 }));

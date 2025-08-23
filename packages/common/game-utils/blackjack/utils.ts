@@ -15,20 +15,47 @@ const convertFloatsToGameEvents = (floats: number[] | undefined) => {
   return floats.map(float => Math.floor(float * 52));
 };
 
-const calculateHandValue = (cards: CardDeck[]) => {
-  let value = cards.reduce(
+export const calculateHandValue = (cards: CardDeck[]) => {
+  const value = cards.reduce(
     (sum, card) => sum + BLACKJACK_RANK_VALUE_MAP[card.rank],
     0
   );
-  let aces = cards.filter(card => card.rank === CardRanks.ACE).length;
+  const aces = cards.filter(card => card.rank === CardRanks.ACE).length;
 
   // Adjust for Aces one at a time (convert from 11 to 1 when value exceeds 21)
   // This ensures optimal value: 2 Aces = 12 (A,A = 11+1), 3 Aces = 13 (A,A,A = 11+1+1)
-  while (value > 21 && aces > 0) {
-    value -= 10; // Convert one Ace from 11 to 1 (difference of 10)
-    aces--;
+  let adjustedValue = value;
+  let adjustedAces = aces;
+  while (adjustedValue > 21 && adjustedAces > 0) {
+    adjustedValue -= 10; // Convert one Ace from 11 to 1 (difference of 10)
+    adjustedAces--;
   }
-  return value;
+  return adjustedValue;
+};
+
+export const calculateHandValueWithSoft = (cards: CardDeck[]) => {
+  const value = cards.reduce(
+    (sum, card) => sum + BLACKJACK_RANK_VALUE_MAP[card.rank],
+    0
+  );
+  const aces = cards.filter(card => card.rank === CardRanks.ACE).length;
+
+  // If no aces return single value
+  if (aces === 0) {
+    return value;
+  }
+
+  // Calculate soft value (keeping one Ace as 11) and hard value (all Aces as 1)
+  const hardValue = value - aces * 10; // Convert all Aces from 11 to 1
+  const softValue = value - (aces - 1) * 10; // Keep one Ace as 11, rest as 1
+
+  // If soft value is still over 21, return only hard value
+  if (softValue > 21) {
+    return hardValue;
+  }
+
+  // Return both values as "hard,soft" (e.g., "8,18")
+  return `${hardValue}, ${softValue}`;
 };
 
 const getIsBlackjack = (cards: CardDeck[], value: number) => {
@@ -46,14 +73,16 @@ const getCurrentActiveHand = (
 ): PlayerGameState | undefined => {
   return playerHands?.find(
     hand =>
-      !hand.actions.some(action =>
-        [
-          BlackjackActions.STAND,
-          BlackjackActions.BUST,
-          BlackjackActions.FULL,
-          BlackjackActions.BLACKJACK,
-        ].includes(action)
-      )
+      !hand.actions.some(action => PLAYER_TURN_OVER_ACTIONS.includes(action))
+  );
+};
+
+export const getCurrentActiveHandIndex = (
+  playerHands?: PlayerGameState[]
+): number | undefined => {
+  return playerHands?.findIndex(
+    hand =>
+      !hand.actions.some(action => PLAYER_TURN_OVER_ACTIONS.includes(action))
   );
 };
 
@@ -323,10 +352,7 @@ const handleSplit = ({
   gameState: BlackjackGameState;
   amountMultiplier: number;
 }): ActionResult => {
-  const [first, second] = hand.cards.map(card => ({
-    ...card,
-    id: crypto.randomUUID(),
-  }));
+  const [first, second] = hand.cards;
   const newCard1 = CARD_DECK[gameEvents[drawIndex]];
   const newCard2 = CARD_DECK[gameEvents[drawIndex + 1]];
 

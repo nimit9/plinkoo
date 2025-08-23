@@ -38,6 +38,7 @@ function BettingControls(): JSX.Element {
     gameState,
     setGameState,
     playNextRoundHandler,
+    setActiveGame,
     initializeGame,
   } = useBlackjackStore();
 
@@ -50,10 +51,10 @@ function BettingControls(): JSX.Element {
   // Load active game on mount
   useEffect(() => {
     if (activeGame?.data && !gameState) {
-      setGameState(activeGame.data, false);
       setBetAmount(Number(activeGame.data.betAmount));
+      setActiveGame(activeGame.data);
     }
-  }, [activeGame, gameState, setGameState, setBetAmount]);
+  }, [activeGame, gameState, setGameState, setBetAmount, setActiveGame]);
 
   const { mutate: bet, isPending: isStartingGame } = useMutation({
     mutationKey: ['blackjack-bet'],
@@ -71,7 +72,7 @@ function BettingControls(): JSX.Element {
     onSuccess: ({ data }) => {
       setGameState(data, false);
       setBetAmount(Number(data.betAmount));
-      playNextRoundHandler(data);
+      void playNextRoundHandler(data);
     },
   });
 

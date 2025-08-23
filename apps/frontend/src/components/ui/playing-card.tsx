@@ -2,16 +2,26 @@ import { CardSuits } from '@repo/common/game-utils/cards/types.js';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
+export enum CardBorders {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  WARNING = 'warning',
+  TRANSPARENT = 'transparent',
+  INFO = 'info',
+}
+
 function PlayingCard({
   faceDown = false,
   layoutId,
   rank,
   suit,
+  border = CardBorders.TRANSPARENT,
 }: {
   rank?: string;
   suit?: CardSuits;
   faceDown?: boolean;
   layoutId?: string;
+  border?: CardBorders;
 }): JSX.Element {
   return (
     <motion.div
@@ -21,16 +31,26 @@ function PlayingCard({
       style={{
         perspective: '1000px',
       }}
-      transition={{ duration: 0.6, ease: 'easeInOut' }}
+      transition={{ duration: 0.4, ease: 'easeInOut' }}
     >
       <motion.div
         animate={{ rotateY: faceDown ? 180 : 0 }}
         className="w-full h-full relative"
         initial={{ rotateY: faceDown ? 180 : 0 }}
         style={{ transformStyle: 'preserve-3d' }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
         <div
-          className="absolute inset-0 w-full h-full rounded bg-white select-none"
+          className={cn(
+            'absolute inset-0 w-full h-full rounded bg-white select-none border-[5px]',
+            {
+              'border-roulette-red': border === CardBorders.ERROR,
+              'border-[#1fff20]': border === CardBorders.SUCCESS,
+              'border-[#ff9d00]': border === CardBorders.WARNING,
+              'border-[#1475e1]': border === CardBorders.INFO,
+              'border-transparent': border === CardBorders.TRANSPARENT,
+            }
+          )}
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(0deg)',
