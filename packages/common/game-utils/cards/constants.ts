@@ -81,6 +81,6 @@ const CARD_DECK: CardDeck[] = [
     suit: SUIT_ORDER[3],
     rank: CardRanks.ACE,
   },
-];
+].map(card => ({ ...card, id: crypto.randomUUID() }));
 
 export { BLACKJACK_RANK_VALUE_MAP, CARD_DECK, RANK_VALUE_MAP, VALUE_RANK_MAP };

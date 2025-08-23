@@ -22,6 +22,7 @@ export enum CardRanks {
 }
 
 export interface CardDeck {
+  id: string;
   suit: CardSuits;
   rank: CardRanks;
 }

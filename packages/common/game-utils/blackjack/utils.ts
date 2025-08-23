@@ -124,6 +124,10 @@ const getSafeGameState = (
       actions: [BlackjackActions.DEAL],
       cards: [gameState.dealer.cards[0]],
     },
+    player: gameState.player.map(playerGameState => ({
+      ...playerGameState,
+      cards: playerGameState.cards,
+    })),
   };
 };
 
@@ -218,7 +222,7 @@ const handleHit = ({
   gameState: BlackjackGameState;
 }): ActionResult => {
   const card = CARD_DECK[gameEvents[drawIndex]];
-  hand.cards.push(card);
+  hand.cards.push({ ...card, id: `player-${card.suit}-${card.rank}` });
   hand.value = calculateHandValue(hand.cards);
   hand.actions.push(BlackjackActions.HIT);
 
@@ -229,7 +233,7 @@ const handleHit = ({
   if (hand.actions.includes(BlackjackActions.FULL)) {
     const dealerHand = gameState.dealer;
     while (dealerHand.value < 17) {
-      const nextCard = CARD_DECK[currentDrawIndex];
+      const nextCard = CARD_DECK[gameEvents[currentDrawIndex]];
       dealerHand.cards.push(nextCard);
       dealerHand.value = calculateHandValue(dealerHand.cards);
       dealerHand.actions.push(BlackjackActions.HIT);
@@ -243,19 +247,21 @@ const handleHit = ({
 };
 
 const handleStand = ({
-  hand,
   dealerHand,
   drawIndex,
+  gameEvents,
+  hand,
 }: {
-  hand: PlayerGameState;
   dealerHand: DealerGameState;
   drawIndex: number;
+  gameEvents: number[];
+  hand: PlayerGameState;
 }): ActionResult => {
   hand.actions.push(BlackjackActions.STAND);
   // Dealer's turn logic
   let currentDrawIndex = drawIndex;
   while (dealerHand.value < 17) {
-    const nextCard = CARD_DECK[currentDrawIndex];
+    const nextCard = CARD_DECK[gameEvents[currentDrawIndex]];
     dealerHand.cards.push(nextCard);
     dealerHand.value = calculateHandValue(dealerHand.cards);
     dealerHand.actions.push(BlackjackActions.HIT);
@@ -289,7 +295,7 @@ const handleDouble = ({
 
   let currentDrawIndex = drawIndex + 1;
   while (dealerHand.value < 17) {
-    const nextCard = CARD_DECK[currentDrawIndex];
+    const nextCard = CARD_DECK[gameEvents[currentDrawIndex]];
     dealerHand.cards.push(nextCard);
     dealerHand.value = calculateHandValue(dealerHand.cards);
     dealerHand.actions.push(BlackjackActions.HIT);
@@ -416,9 +422,10 @@ const playRoundAndUpdateState = ({
       handleHit({ hand: currentHand, gameEvents, drawIndex, gameState }),
     [BlackjackActions.STAND]: () =>
       handleStand({
-        hand: currentHand,
-        drawIndex,
         dealerHand: gameState.dealer,
+        drawIndex,
+        gameEvents,
+        hand: currentHand,
       }),
     [BlackjackActions.DOUBLE]: () =>
       handleDouble({

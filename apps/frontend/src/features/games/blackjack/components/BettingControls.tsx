@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getValidActionsFromState } from '@repo/common/game-utils/blackjack/utils.js';
 import { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
-import { blackjackBet, getActiveGame, playRound } from '@/api/games/blackjack';
 import { Button } from '@/components/ui/button';
+import { blackjackBet, getActiveGame, playRound } from '@/api/games/blackjack';
 import useBlackjackStore from '../store/blackjackStore';
 import { BetAmountInput } from '../../common/components/BetAmountInput';
 import { BetButton } from '../../common/components/BettingControls';
@@ -32,18 +32,28 @@ const BlackjackActionButtons = [
 ];
 
 function BettingControls(): JSX.Element {
-  const { betAmount, setBetAmount, gameState, setGameState } =
-    useBlackjackStore();
-
   const {
-    isPending: isFetchingActiveGame,
-    data: activeGame,
-    isError,
-  } = useQuery({
+    betAmount,
+    setBetAmount,
+    gameState,
+    setGameState,
+    playNextRoundHandler,
+    initializeGame,
+  } = useBlackjackStore();
+
+  const { isPending: isFetchingActiveGame, data: activeGame } = useQuery({
     queryKey: ['blackjack-active-game'],
     queryFn: getActiveGame,
     retry: false,
   });
+
+  // Load active game on mount
+  useEffect(() => {
+    if (activeGame?.data && !gameState) {
+      setGameState(activeGame.data, false);
+      setBetAmount(Number(activeGame.data.betAmount));
+    }
+  }, [activeGame, gameState, setGameState, setBetAmount]);
 
   const { mutate: bet, isPending: isStartingGame } = useMutation({
     mutationKey: ['blackjack-bet'],
@@ -51,6 +61,7 @@ function BettingControls(): JSX.Element {
     onSuccess: ({ data }) => {
       setGameState(data, false);
       setBetAmount(Number(data.betAmount));
+      initializeGame(data);
     },
   });
 
@@ -60,6 +71,7 @@ function BettingControls(): JSX.Element {
     onSuccess: ({ data }) => {
       setGameState(data, false);
       setBetAmount(Number(data.betAmount));
+      playNextRoundHandler(data);
     },
   });
 
