@@ -1,5 +1,5 @@
 import { ApiResponse } from '@repo/common/types';
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 interface CustomError {
@@ -11,7 +11,8 @@ interface CustomError {
 export const errorHandlerMiddleware = (
   err: Error | CustomError,
   _: Request,
-  res: Response
+  res: Response,
+  __: NextFunction
 ) => {
   const defaultError: CustomError = {
     statusCode:

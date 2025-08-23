@@ -6,6 +6,7 @@ import type {
   PaginatedBetsResponse,
   ProvablyFairStateResponse,
 } from '@repo/common/types';
+import db from '@repo/db';
 import { BadRequestError } from '../../errors';
 import { userManager, getUserBets } from './user.service';
 
@@ -26,7 +27,17 @@ export const rotateSeed = async (
   if (!clientSeed) {
     throw new BadRequestError('Client seed is required');
   }
+
   const userInstance = await userManager.getUser((req.user as User).id);
+
+  const activeBet = await db.bet.findFirst({
+    where: { userId: (req.user as User).id, active: true },
+  });
+
+  if (activeBet) {
+    throw new BadRequestError('Cannot rotate seeds while a bet is active');
+  }
+
   const seed = await userInstance.rotateSeed(clientSeed);
   return res.status(StatusCodes.OK).json(new ApiResponse(StatusCodes.OK, seed));
 };
