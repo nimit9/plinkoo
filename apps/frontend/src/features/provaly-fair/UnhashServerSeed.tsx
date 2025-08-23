@@ -77,7 +77,7 @@ function UnhashServerSeed(): JSX.Element {
       </div>
       <div>
         <Label className="pl-px text-xs text-neutral-weak font-medium">
-          Next Server Seed (Hashed)
+          Server Seed
         </Label>
         <div className="flex h-8 rounded-sm overflow-hidden group">
           <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">

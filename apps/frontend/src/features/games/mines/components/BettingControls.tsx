@@ -65,6 +65,7 @@ function BettingControls(): JSX.Element {
       <div className="flex flex-col gap-2">
         <BetAmountInput
           betAmount={betAmount}
+          isInputDisabled={isGameActive}
           onBetAmountChange={(amount, multiplier = 1) => {
             setBetAmount(amount * multiplier);
           }}
@@ -80,6 +81,7 @@ function BettingControls(): JSX.Element {
                   <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
                     <InputWithIcon
                       className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text select-none"
+                      disabled={isGameActive}
                       icon={null}
                       value={minesCount}
                       wrapperClassName={cn(
@@ -97,6 +99,7 @@ function BettingControls(): JSX.Element {
                   <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
                     <InputWithIcon
                       className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
+                      disabled={isGameActive}
                       icon={null}
                       value={NO_OF_TILES - minesCount}
                       wrapperClassName={cn(
@@ -115,6 +118,7 @@ function BettingControls(): JSX.Element {
                 <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
                   <InputWithIcon
                     className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text select-none"
+                    disabled
                     icon={null}
                     value={(
                       betAmount * (lastRound?.payoutMultiplier || 1)
