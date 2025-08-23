@@ -56,7 +56,7 @@ export interface SafeBlackjackGameState {
 
 export interface BlackjackPlayRoundResponse {
   id: string;
-  state: SafeBlackjackGameState;
+  state: SafeBlackjackGameState | BlackjackGameState;
   active: boolean;
   betAmount: number;
   amountMultiplier: number;

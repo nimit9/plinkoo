@@ -71,7 +71,9 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
       player[0].cards[0].id,
       dealer.cards[0].id,
       player[0].cards[1].id,
-      FACE_DOWN_HIDDEN_DEALER_CARD,
+      'cards' in dealer && dealer.cards.length > 1
+        ? dealer.cards[1].id
+        : FACE_DOWN_HIDDEN_DEALER_CARD,
     ];
 
     set({ dealingQueue });

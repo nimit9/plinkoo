@@ -66,13 +66,13 @@ const createInitialGameState = (gameEvents: number[]): BlackjackGameState => {
 
   const dealerState: DealerGameState = {
     actions: [BlackjackActions.DEAL],
-    cards: dealerCards,
+    cards: dealerCards.map(card => ({ ...card, id: crypto.randomUUID() })),
     value: dealerValue,
   };
 
   const playerState: PlayerGameState = {
     actions: [BlackjackActions.DEAL],
-    cards: playerCards,
+    cards: playerCards.map(card => ({ ...card, id: crypto.randomUUID() })),
     value: playerValue,
   };
 
@@ -222,7 +222,7 @@ const handleHit = ({
   gameState: BlackjackGameState;
 }): ActionResult => {
   const card = CARD_DECK[gameEvents[drawIndex]];
-  hand.cards.push({ ...card, id: `player-${card.suit}-${card.rank}` });
+  hand.cards.push({ ...card, id: crypto.randomUUID() });
   hand.value = calculateHandValue(hand.cards);
   hand.actions.push(BlackjackActions.HIT);
 
@@ -234,7 +234,7 @@ const handleHit = ({
     const dealerHand = gameState.dealer;
     while (dealerHand.value < 17) {
       const nextCard = CARD_DECK[gameEvents[currentDrawIndex]];
-      dealerHand.cards.push(nextCard);
+      dealerHand.cards.push({ ...nextCard, id: crypto.randomUUID() });
       dealerHand.value = calculateHandValue(dealerHand.cards);
       dealerHand.actions.push(BlackjackActions.HIT);
       currentDrawIndex++;
@@ -262,7 +262,7 @@ const handleStand = ({
   let currentDrawIndex = drawIndex;
   while (dealerHand.value < 17) {
     const nextCard = CARD_DECK[gameEvents[currentDrawIndex]];
-    dealerHand.cards.push(nextCard);
+    dealerHand.cards.push({ ...nextCard, id: crypto.randomUUID() });
     dealerHand.value = calculateHandValue(dealerHand.cards);
     dealerHand.actions.push(BlackjackActions.HIT);
     currentDrawIndex++;
@@ -287,7 +287,7 @@ const handleDouble = ({
   amountMultiplier: number;
 }): ActionResult => {
   const card = CARD_DECK[gameEvents[drawIndex]];
-  hand.cards.push(card);
+  hand.cards.push({ ...card, id: crypto.randomUUID() });
   hand.value = calculateHandValue(hand.cards);
   hand.actions.push(BlackjackActions.DOUBLE);
 
@@ -296,7 +296,7 @@ const handleDouble = ({
   let currentDrawIndex = drawIndex + 1;
   while (dealerHand.value < 17) {
     const nextCard = CARD_DECK[gameEvents[currentDrawIndex]];
-    dealerHand.cards.push(nextCard);
+    dealerHand.cards.push({ ...nextCard, id: crypto.randomUUID() });
     dealerHand.value = calculateHandValue(dealerHand.cards);
     dealerHand.actions.push(BlackjackActions.HIT);
     currentDrawIndex++;
@@ -323,19 +323,22 @@ const handleSplit = ({
   gameState: BlackjackGameState;
   amountMultiplier: number;
 }): ActionResult => {
-  const [first, second] = hand.cards;
+  const [first, second] = hand.cards.map(card => ({
+    ...card,
+    id: crypto.randomUUID(),
+  }));
   const newCard1 = CARD_DECK[gameEvents[drawIndex]];
   const newCard2 = CARD_DECK[gameEvents[drawIndex + 1]];
 
   // Update current hand
-  hand.cards = [first, newCard1];
+  hand.cards = [first, { ...newCard1, id: crypto.randomUUID() }];
   hand.value = calculateHandValue(hand.cards);
   hand.actions.push(BlackjackActions.SPLIT);
 
   // Create new hand
   const newHand: PlayerGameState = {
     actions: [BlackjackActions.DEAL, BlackjackActions.SPLIT],
-    cards: [second, newCard2],
+    cards: [second, { ...newCard2, id: crypto.randomUUID() }],
     value: calculateHandValue([second, newCard2]),
   };
 
