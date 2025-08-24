@@ -12,8 +12,14 @@ import {
   convertFloatsToGameEvents,
   calculateMines,
 } from '@repo/common/game-utils/mines/utils.js';
-import { userManager } from '../../user/user.service';
+import { userManager, UserInstance } from '../../user/user.service';
 import { payouts } from './mines.constant';
+import {
+  createBetTransaction,
+  editBetAndUpdateBalance,
+  minorToAmount,
+} from '../../../utils/bet.utils';
+import { BadRequestError } from '../../../errors';
 
 class MinesManager {
   private static instance: MinesManager | undefined;
@@ -47,35 +53,22 @@ class MinesManager {
   async createGame({
     minesCount,
     betAmount,
-    userId,
-  }: MinesBet & { userId: string }) {
-    const userInstance = await userManager.getUser(userId);
+    userInstance,
+  }: MinesBet & { userInstance: UserInstance }) {
     const floats = userInstance.generateFloats(NO_OF_TILES - 1);
     const gameEvents = convertFloatsToGameEvents(floats, NO_OF_TILES);
     const mines = calculateMines(gameEvents, minesCount);
-    const createdBet = await db.$transaction(async tx => {
-      const bet = await tx.bet.create({
-        data: {
-          active: true,
-          betAmount,
-          betNonce: userInstance.getNonce(),
-          game: 'mines',
-          provablyFairStateId: userInstance.getProvablyFairStateId(),
-          state: {
-            mines,
-            minesCount,
-            rounds: [],
-          },
-          userId: userInstance.getUser().id,
-          payoutAmount: 0,
-        },
-      });
-      await userInstance.updateNonce(tx);
-      return bet;
+    const transaction = await createBetTransaction({
+      active: true,
+      betAmount,
+      game: 'dice',
+      gameState: { mines, minesCount, rounds: [] },
+      userInstance,
     });
-    const game = new Mines(createdBet);
-    this.games.set(createdBet.userId, game);
-    return game;
+    const game = new Mines(transaction.bet);
+    console.log('Game created:', game);
+    this.games.set(userInstance.getUserId(), game);
+    return transaction;
   }
 
   deleteGame(userId: string) {
@@ -83,7 +76,7 @@ class MinesManager {
   }
 }
 
-class Mines {
+export class Mines {
   private bet: Bet;
   private rounds: { selectedTileIndex: number; payoutMultiplier: number }[] =
     [];
@@ -100,35 +93,29 @@ class Mines {
     return this.rounds;
   }
 
-  async playRound(
-    selectedTileIndex: number
-  ): Promise<MinesPlayRoundResponse | MinesGameOverResponse> {
+  validatePlayRound(selectedTileIndex: number) {
     if (this.selectedTiles.includes(selectedTileIndex)) {
-      throw new Error('Tile already selected');
-    } else {
-      this.selectedTiles.push(selectedTileIndex);
+      throw new BadRequestError('Tile already selected');
     }
     if (this.rounds.length === NO_OF_TILES - 1) {
-      throw new Error('Game over');
+      throw new BadRequestError('Game over');
     }
     if (!this.bet.state) {
-      throw new Error('Game state not found');
+      throw new BadRequestError('Game state not found');
     }
-    const { mines, minesCount } = this.bet.state as unknown as
+
+    const { mines } = this.bet.state as unknown as
       | MinesHiddenState
       | MinesRevealedState;
+
     if (!mines) {
-      throw new Error('Game not started');
+      throw new BadRequestError('Game not started');
     }
-    if (mines.includes(selectedTileIndex)) {
-      this.rounds.push({ selectedTileIndex, payoutMultiplier: 0 });
-      return this.getGameOverState(this.bet.userId);
-    }
-    const gemsCount = this.rounds.length + 1;
+  }
 
-    const payoutMultiplier = payouts[gemsCount][minesCount];
-
-    this.rounds.push({ selectedTileIndex, payoutMultiplier });
+  async updateDbAndGetGameState(
+    minesCount: number
+  ): Promise<MinesPlayRoundResponse> {
     await db.bet.update({
       where: { id: this.bet.id, active: true },
       data: {
@@ -150,6 +137,25 @@ class Mines {
     };
   }
 
+  async playRound(
+    selectedTileIndex: number
+  ): Promise<MinesPlayRoundResponse | MinesGameOverResponse> {
+    this.selectedTiles.push(selectedTileIndex);
+    const { mines, minesCount } = this.bet
+      .state as unknown as MinesRevealedState;
+
+    if (mines.includes(selectedTileIndex)) {
+      this.rounds.push({ selectedTileIndex, payoutMultiplier: 0 });
+      return this.getGameOverState(this.bet.userId);
+    }
+
+    const gemsCount = this.rounds.length + 1;
+    const payoutMultiplier = payouts[gemsCount][minesCount];
+    this.rounds.push({ selectedTileIndex, payoutMultiplier });
+
+    return await this.updateDbAndGetGameState(minesCount);
+  }
+
   async cashOut(userId: string) {
     if (this.rounds.length === 0) {
       throw new Error('Game not started');
@@ -163,30 +169,20 @@ class Mines {
     const userInstance = await userManager.getUser(userId);
     const payoutMultiplier = this.rounds.at(-1)?.payoutMultiplier || 0;
     const payoutAmount = payoutMultiplier * this.bet.betAmount;
-    const balanceChangeInCents = payoutAmount - this.bet.betAmount;
 
-    const userBalanceInCents = userInstance.getBalanceAsNumber();
-    const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+    console.log('Payout amount:', payoutAmount);
 
-    const balance = await db.$transaction(async tx => {
-      await tx.bet.update({
-        where: { id: this.bet.id },
-        data: {
-          payoutAmount,
-          active: false,
-          state: this.bet.state || {},
-        },
-      });
-
-      const userWithNewBalance = await tx.user.update({
-        where: { id: userId },
-        data: {
-          balance: newBalance,
-        },
-      });
-      return userWithNewBalance.balance;
+    const { newBalance } = await editBetAndUpdateBalance({
+      betId: this.bet.id,
+      userInstance,
+      payoutAmount,
+      betAmount: 0,
+      data: {
+        payoutAmount,
+        active: false,
+        state: this.bet.state || {},
+      },
     });
-    userInstance.setBalance(balance);
     return {
       id: this.bet.id,
       state: {
@@ -194,8 +190,8 @@ class Mines {
         rounds: this.rounds,
       },
       payoutMultiplier,
-      payout: Number((payoutAmount / 100).toFixed(2)),
-      balance: Number((parseInt(balance, 10) / 100).toFixed(2)),
+      payout: minorToAmount(payoutAmount),
+      balance: minorToAmount(parseFloat(newBalance)),
       active: false,
     };
   }

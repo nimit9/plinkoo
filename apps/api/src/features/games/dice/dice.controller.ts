@@ -43,7 +43,7 @@ export const placeBet = async (
   // Create bet transaction using utility
   const transaction = await createBetTransaction({
     betAmount: betAmountInCents,
-    userId: (req.user as User).id,
+    userInstance,
     game: 'dice',
     gameState: result.state,
     payoutAmount: payoutInCents, // Convert to dollars

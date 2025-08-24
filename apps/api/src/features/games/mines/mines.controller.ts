@@ -10,11 +10,9 @@ import type {
 } from '@repo/common/game-utils/mines/types.js';
 import { userManager } from '../../user/user.service';
 import { minesManager } from './mines.service';
-
-interface PlayRoundRequestBody {
-  selectedTileIndex: number;
-  id: string;
-}
+import { formatGameResponse } from '../../../utils/game.utils';
+import { BadRequestError } from '../../../errors';
+import { minorToAmount } from '../../../utils/bet.utils';
 
 export const startGame = async (
   req: Request,
@@ -22,48 +20,29 @@ export const startGame = async (
 ) => {
   const validationResult = MinesBetSchema.safeParse(req.body);
 
+  const { betAmountInCents, userInstance } = req.validatedBet!;
+
   if (!validationResult.success) {
-    return res
-      .status(400)
-      .json(
-        new ApiResponse(
-          StatusCodes.BAD_REQUEST,
-          {},
-          validationResult.error.message
-        )
-      );
+    throw new BadRequestError(validationResult.error.message);
   }
 
-  const { betAmount, minesCount } = validationResult.data;
+  const { minesCount } = validationResult.data;
 
-  const userInstance = await userManager.getUser((req.user as User).id);
-  const user = userInstance.getUser();
-
-  const betAmountInCents = Math.round(betAmount * 100);
-  const userBalanceInCents = userInstance.getBalanceAsNumber();
-
-  if (userBalanceInCents < betAmountInCents) {
-    return res
-      .status(400)
-      .json(
-        new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Insufficient balance')
-      );
-  }
-
-  const game = await minesManager.createGame({
+  const transaction = await minesManager.createGame({
     betAmount: betAmountInCents,
     minesCount,
-    userId: user.id,
+    userInstance,
   });
 
-  const bet = game.getBet();
+  const { bet, newBalance } = transaction;
 
   res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       id: bet.id,
       active: true,
       state: { mines: null, minesCount, rounds: [] },
-      betAmount: betAmountInCents,
+      betAmount: minorToAmount(betAmountInCents),
+      balance: minorToAmount(parseFloat(newBalance)),
     })
   );
 };
@@ -75,21 +54,10 @@ export const playRound = async (
     | { message: string }
   >
 ) => {
-  const userInstance = await userManager.getUser((req.user as User).id);
-  const user = userInstance.getUser();
-
-  const { selectedTileIndex } = req.body as PlayRoundRequestBody;
-  const game = await minesManager.getGame(user.id);
-
-  if (!game?.getBet().active) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Game not found'));
-  }
-
+  const { selectedTileIndex, game, userInstance } = req.validatedRequest!;
   const gameState = await game.playRound(selectedTileIndex);
   if (!gameState.active) {
-    minesManager.deleteGame(user.id);
+    minesManager.deleteGame(userInstance.getUserId());
   }
   return res
     .status(StatusCodes.OK)

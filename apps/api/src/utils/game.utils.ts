@@ -53,7 +53,7 @@ export abstract class BaseGameService {
     // 2. Create bet transaction
     const transaction = await validateAndCreateBet({
       betAmount,
-      userId,
+      userInstance,
       game: this.game,
       gameState: result.gameState,
       payoutAmount: result.payout,

@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import type { User, Game } from '@prisma/client';
 import { BadRequestError, UnAuthenticatedError } from '../errors';
 import { validateBetAmount } from '../utils/bet.utils';
+import { userManager } from '../features/user/user.service';
 
 declare module 'express' {
   interface Request {
@@ -14,9 +15,7 @@ declare module 'express' {
 }
 
 export interface BetValidationMiddlewareOptions {
-  game: Game;
-  minBet?: number;
-  maxBet?: number;
+  game?: Game;
   betAmountField?: string;
 }
 
@@ -37,37 +36,33 @@ export const requireAuth = (
 /**
  * Middleware to validate bet amount and user balance
  */
-export const validateBet = (options: BetValidationMiddlewareOptions) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const user = req.user as User;
-      if (!user) {
-        throw new UnAuthenticatedError('Authentication required');
-      }
+export const validateBet = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user as User;
+  if (!user) {
+    throw new UnAuthenticatedError('Authentication required');
+  }
+  const betAmount = req.body.betAmount;
 
-      const betAmountField = options.betAmountField || 'betAmount';
-      const betAmount = req.body[betAmountField];
+  if (!betAmount || typeof betAmount !== 'number') {
+    throw new BadRequestError(`betAmount is required and must be a number`);
+  }
 
-      if (!betAmount || typeof betAmount !== 'number') {
-        throw new BadRequestError(
-          `${betAmountField} is required and must be a number`
-        );
-      }
+  // Get user instance
+  const userInstance = await userManager.getUser(user.id);
 
-      // Validate bet amount and balance
-      const validatedBet = await validateBetAmount({
-        betAmount,
-        userId: user.id,
-      });
+  // Validate bet amount and balance
+  const validatedBet = await validateBetAmount({
+    betAmount,
+    userInstance,
+  });
+  // Attach validated data to request
+  req.validatedBet = { ...validatedBet, userInstance };
 
-      // Attach validated data to request
-      req.validatedBet = validatedBet;
-
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
+  next();
 };
 
 /**

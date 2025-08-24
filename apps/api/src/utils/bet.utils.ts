@@ -1,26 +1,32 @@
-import type { User, Game } from '@prisma/client';
-import db from '@repo/db';
+import type { User, Game, Bet, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import db, { PrismaTransactionalClient } from '@repo/db';
 import { BadRequestError } from '../errors';
-import { userManager } from '../features/user/user.service';
+import { userManager, UserInstance } from '../features/user/user.service';
 
 export interface BetValidationOptions {
   betAmount: number;
-  userId: string;
+  userInstance: UserInstance;
+}
+
+export interface UpdateBetTransactionOptions {
+  betId: string;
+  data: any;
 }
 
 export interface BetTransactionOptions {
-  userId: string;
+  active?: boolean;
   betAmount: number;
   game: Game;
   gameState: any;
   payoutAmount?: number;
-  active?: boolean;
+  userInstance: UserInstance;
 }
 
 export interface BetTransactionResult {
+  bet: Bet;
   betId: string;
   newBalance: string;
-  balanceChange: number;
 }
 
 /**
@@ -28,19 +34,15 @@ export interface BetTransactionResult {
  */
 export const validateBetAmount = async ({
   betAmount,
-  userId,
+  userInstance,
 }: BetValidationOptions): Promise<{
   betAmountInCents: number;
   userBalanceInCents: number;
-  userInstance: any;
 }> => {
   // Validate bet amount range
   if (betAmount <= 0) {
     throw new BadRequestError('Bet amount must be greater than 0');
   }
-
-  // Get user instance
-  const userInstance = await userManager.getUser(userId);
 
   // Convert to cents for precision
   const betAmountInCents = Math.round(betAmount * 100);
@@ -54,27 +56,50 @@ export const validateBetAmount = async ({
   return {
     betAmountInCents,
     userBalanceInCents,
-    userInstance,
   };
+};
+
+const updateBalance = async ({
+  betAmount,
+  payoutAmount,
+  tx,
+  userInstance,
+}: {
+  betAmount: number;
+  payoutAmount: number;
+  tx: PrismaTransactionalClient;
+  userInstance: UserInstance;
+}): Promise<string> => {
+  const userBalance = userInstance.getBalanceAsNumber();
+  const balanceChange = payoutAmount - betAmount;
+  const newBalance = (userBalance + balanceChange).toString();
+
+  if (balanceChange === 0) {
+    return userBalance.toString();
+  }
+
+  const userWithNewBalance = await tx.user.update({
+    where: { id: userInstance.getUserId() },
+    data: {
+      balance: newBalance,
+    },
+  });
+
+  return userWithNewBalance.balance;
 };
 
 /**
  * Creates a bet transaction and updates user balance
  */
 export const createBetTransaction = async ({
-  userId,
+  active = false,
   betAmount,
   game,
   gameState,
   payoutAmount = 0,
-  active = false,
+  userInstance,
 }: BetTransactionOptions): Promise<BetTransactionResult> => {
-  const userInstance = await userManager.getUser(userId);
-  const userBalance = userInstance.getBalanceAsNumber();
-  const balanceChange = payoutAmount - betAmount;
-  const newBalance = (userBalance + balanceChange).toString();
-
-  const { balance, id } = await db.$transaction(async tx => {
+  const { balance, bet } = await db.$transaction(async tx => {
     // Create bet record
     const bet = await tx.bet.create({
       data: {
@@ -85,7 +110,7 @@ export const createBetTransaction = async ({
         payoutAmount,
         provablyFairStateId: userInstance.getProvablyFairStateId(),
         state: gameState,
-        userId,
+        userId: userInstance.getUserId(),
       },
     });
 
@@ -93,16 +118,16 @@ export const createBetTransaction = async ({
     await userInstance.updateNonce(tx);
 
     // Update user balance
-    const userWithNewBalance = await tx.user.update({
-      where: { id: userId },
-      data: {
-        balance: newBalance,
-      },
+    const balance = await updateBalance({
+      tx,
+      userInstance,
+      payoutAmount,
+      betAmount,
     });
 
     return {
-      balance: userWithNewBalance.balance,
-      id: bet.id,
+      balance,
+      bet,
     };
   });
 
@@ -110,9 +135,51 @@ export const createBetTransaction = async ({
   userInstance.setBalance(balance);
 
   return {
-    betId: id,
+    betId: bet.id,
+    bet,
     newBalance: balance,
-    balanceChange,
+  };
+};
+
+export const editBetAndUpdateBalance = async ({
+  betAmount,
+  betId,
+  data,
+  payoutAmount = 0,
+  userInstance,
+}: UpdateBetTransactionOptions &
+  Omit<BetTransactionOptions, 'active' | 'game' | 'gameState'>) => {
+  const { balance, bet } = await db.$transaction(async tx => {
+    // Create bet record
+    const bet = await tx.bet.update({
+      where: { id: betId },
+      data,
+    });
+
+    // Update user nonce
+    await userInstance.updateNonce(tx);
+
+    // Update user balance
+    const balance = await updateBalance({
+      betAmount,
+      payoutAmount,
+      tx,
+      userInstance,
+    });
+
+    return {
+      balance,
+      bet,
+    };
+  });
+
+  // Update user instance with new balance
+  userInstance.setBalance(balance);
+
+  return {
+    bet,
+    betId: bet.id,
+    newBalance: balance,
   };
 };
 
@@ -120,28 +187,28 @@ export const createBetTransaction = async ({
  * Validates and creates a complete bet transaction
  */
 export const validateAndCreateBet = async ({
+  active = false,
   betAmount,
-  userId,
   game,
   gameState,
   payoutAmount = 0,
-  active = false,
+  userInstance,
 }: BetValidationOptions &
   Omit<
     BetTransactionOptions,
     'betAmount' | 'userId'
   >): Promise<BetTransactionResult> => {
   // Validate bet
-  await validateBetAmount({ betAmount, userId });
+  await validateBetAmount({ betAmount, userInstance });
 
   // Create transaction
   return createBetTransaction({
-    userId,
+    active,
     betAmount,
     game,
     gameState,
     payoutAmount,
-    active,
+    userInstance,
   });
 };
 

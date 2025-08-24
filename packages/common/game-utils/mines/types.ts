@@ -25,6 +25,7 @@ export interface MinesPlayRoundResponse {
   state: MinesHiddenState;
   active: boolean;
   betAmount: number;
+  balance?: number;
 }
 
 export interface MinesGameOverResponse {

@@ -24,6 +24,10 @@ export class UserInstance {
     return this.user;
   }
 
+  getUserId() {
+    return this.user.id;
+  }
+
   async rotateSeed(clientSeed: string): Promise<ProvablyFairStateResponse> {
     const newServerSeed = this.generateNextServerSeed();
     const hashedServerSeed = getHashedSeed(newServerSeed);

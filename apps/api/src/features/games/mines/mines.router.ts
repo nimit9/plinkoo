@@ -6,12 +6,19 @@ import {
   playRound,
   startGame,
 } from './mines.controller';
+import { requireAuth, validateBet } from '../../../middlewares/bet.middleware';
+import { validatePlayRoundRequest } from './mines.middleware';
 
 const minesRouter: Router = Router();
 
-minesRouter.post('/start', isAuthenticated, startGame);
-minesRouter.post('/play-round', isAuthenticated, playRound);
-minesRouter.post('/cash-out', isAuthenticated, cashOut);
-minesRouter.get('/active', isAuthenticated, getActiveGame);
+minesRouter.post('/start', requireAuth, validateBet, startGame);
+minesRouter.post(
+  '/play-round',
+  requireAuth,
+  validatePlayRoundRequest,
+  playRound
+);
+minesRouter.post('/cash-out', requireAuth, cashOut);
+minesRouter.get('/active', requireAuth, getActiveGame);
 
 export default minesRouter;

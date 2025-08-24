@@ -16,6 +16,9 @@ function BettingControls(): JSX.Element {
   const { betAmount, setBetAmount, minesCount, setMinesCount, setGameState } =
     useMinesStore();
 
+  const queryClient = useQueryClient();
+  const balance = queryClient.getQueryData<number>(['balance']);
+
   const {
     isPending: isFetchingActiveGame,
     data: activeGame,
@@ -31,6 +34,7 @@ function BettingControls(): JSX.Element {
     mutationFn: cashOut,
     onSuccess: ({ data }) => {
       setGameState(data);
+      queryClient.setQueryData(['balance'], data.balance);
     },
   });
 
@@ -40,10 +44,12 @@ function BettingControls(): JSX.Element {
     onSuccess: ({ data }) => {
       setGameState(data);
       setBetAmount(Number(data.betAmount));
+      if (data.balance) {
+        queryClient.setQueryData(['balance'], data.balance);
+      }
     },
   });
-  const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']);
+
   const isDisabled = betAmount > (balance ?? 0) || betAmount <= 0;
 
   const isGameActive = useIsGameActive();
@@ -156,7 +162,7 @@ function BettingControls(): JSX.Element {
           animate="animate-pulse"
           betButtonText="Cashout"
           disabled={
-            !lastRound?.selectedTileIndex ||
+            !(lastRound && 'selectedTileIndex' in lastRound) ||
             isDisabled ||
             isFetchingActiveGame ||
             isStartingGame ||
