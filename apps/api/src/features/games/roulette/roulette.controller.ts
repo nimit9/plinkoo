@@ -1,102 +1,63 @@
-import db from '@repo/db';
 import type { Request, Response } from 'express';
-import type { RoulettePlaceBetResponse } from '@repo/common/game-utils/roulette/index.js';
-import {
-  BetsSchema,
-  validateBets,
+import type {
+  RouletteBet,
+  RoulettePlaceBetResponse,
 } from '@repo/common/game-utils/roulette/index.js';
-import { type User } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
-import { sum } from 'lodash';
-import { BadRequestError } from '../../../errors';
-import { userManager } from '../../user/user.service';
 import { calculatePayout, spinWheel } from './roulette.service';
+import {
+  createBetTransaction,
+  minorToAmount,
+  amountToMinor,
+} from '../../../utils/bet.utils';
+import { formatGameResponse } from '../../../utils/game.utils';
 
 export const placeBetAndSpin = async (
   request: Request,
-  response: Response<ApiResponse<RoulettePlaceBetResponse>>
+  res: Response<ApiResponse<RoulettePlaceBetResponse>>
 ): Promise<void> => {
-  const validationResult = BetsSchema.safeParse(request.body);
+  const { bets } = request.body as { bets: RouletteBet[] };
 
-  if (!validationResult.success) {
-    throw new BadRequestError('Invalid request for bets');
-  }
+  const { userInstance, betAmountInCents } = request.validatedBet!;
 
-  const { bets } = validationResult.data;
+  const winningNumber = await spinWheel(userInstance);
 
-  const validBets = validateBets(bets);
-
-  if (validBets.length === 0) {
-    throw new BadRequestError('No valid bets placed');
-  }
-
-  const userInstance = await userManager.getUser((request.user as User).id);
-  const user = userInstance.getUser();
-
-  const totalBetAmountInCents = Math.round(
-    sum(validBets.map(bet => bet.amount)) * 100
-  );
-
-  const userBalanceInCents = userInstance.getBalanceAsNumber();
-
-  if (userBalanceInCents < totalBetAmountInCents) {
-    throw new BadRequestError('Insufficient balance');
-  }
-
-  const winningNumber = await spinWheel(user.id);
-
-  const payout = calculatePayout(validBets, winningNumber);
+  const payout = calculatePayout(bets, winningNumber);
 
   const gameState = {
-    bets: validBets,
+    bets,
     winningNumber: String(winningNumber),
   };
 
   const payoutInCents = Math.round(payout * 100);
 
-  const balanceChangeInCents = payoutInCents - totalBetAmountInCents;
-
-  const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
-
-  const { balance, id } = await db.$transaction(async tx => {
-    const bet = await tx.bet.create({
-      data: {
-        active: false,
-        betAmount: totalBetAmountInCents,
-        betNonce: userInstance.getNonce(),
-        game: 'roulette',
-        payoutAmount: payoutInCents,
-        provablyFairStateId: userInstance.getProvablyFairStateId(),
-        state: gameState,
-        userId: user.id,
-      },
-    });
-
-    await userInstance.updateNonce(tx);
-
-    const userWithNewBalance = await tx.user.update({
-      where: { id: user.id },
-      data: {
-        balance: newBalance,
-      },
-    });
-
-    return {
-      balance: userWithNewBalance.balance,
-      id: bet.id,
-    };
+  const transaction = await createBetTransaction({
+    betAmount: betAmountInCents,
+    userInstance,
+    game: 'dice',
+    gameState,
+    payoutAmount: payoutInCents, // Convert to dollars
+    active: false,
   });
 
-  userInstance.setBalance(balance);
+  const response = formatGameResponse(
+    {
+      gameState,
+      payout: minorToAmount(payoutInCents),
+      payoutMultiplier: payoutInCents / betAmountInCents,
+    },
+    transaction,
+    amountToMinor(betAmountInCents)
+  );
 
-  response.status(StatusCodes.OK).json(
+  res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
-      id,
+      id: transaction.bet.id,
       state: gameState,
-      payoutMultiplier: payoutInCents / totalBetAmountInCents,
-      payout: payoutInCents / 100,
-      balance: userInstance.getBalanceAsNumber() / 100,
+      payoutMultiplier: response.payoutMultiplier,
+      payout: response.payout,
+      balance: response.balance,
     })
   );
 };

@@ -26,7 +26,6 @@ export const placeBet = async (
 
   const payoutInCents =
     payoutMultiplier > 0 ? Math.round(betAmountInCents * payoutMultiplier) : 0;
-  const balanceChangeInCents = payoutInCents - betAmountInCents;
 
   const transaction = await createBetTransaction({
     betAmount: betAmountInCents,

@@ -1,7 +1,7 @@
 import { sum } from 'lodash';
 import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
 import { validateBets } from '@repo/common/game-utils/roulette/validations.js';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BadgeDollarSignIcon, RefreshCcwIcon, Undo2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { placeBet } from '@/api/games/roulette';
@@ -32,6 +32,7 @@ export function Roulette({
     isRouletteWheelStopped,
     setIsRouletteWheelStopped,
   } = useRouletteStore();
+  const queryClient = useQueryClient();
   const { data: balance = 0 } = useQuery({
     queryKey: ['balance'],
     queryFn: getBalance,
@@ -43,6 +44,7 @@ export function Roulette({
     mutationFn: (rouletteBets: RouletteBet[]) => placeBet(rouletteBets),
     onSuccess: ({ data }) => {
       setLatestResult(data);
+      queryClient.setQueryData(['balance'], data.balance);
       return data;
     },
     onError: error => {

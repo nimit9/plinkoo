@@ -67,7 +67,6 @@ function RouletteWheel({
   const rotationAngle = normalizeAngle(rotationOffset);
 
   const controls = useAnimation();
-  const queryClient = useQueryClient();
   const { setIsRouletteWheelStopped } = useRouletteStore();
   useEffect(() => {
     if (isSpinning && !isPreview)
@@ -87,12 +86,10 @@ function RouletteWheel({
         })
         .then(() => {
           setIsRouletteWheelStopped(true);
-          void queryClient.invalidateQueries({ queryKey: ['balance'] });
         });
     }
   }, [
     controls,
-    queryClient,
     rotationAngle,
     setIsRouletteWheelStopped,
     winningNumber,

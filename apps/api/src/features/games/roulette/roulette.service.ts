@@ -5,12 +5,11 @@ import {
   RouletteBetTypes,
 } from '@repo/common/game-utils/roulette/index.js';
 import { sum } from 'lodash';
-import { userManager } from '../../user/user.service';
+import { userManager, UserInstance } from '../../user/user.service';
 import { isNumberInRange } from '../../../utils/numbers';
 
-const spinWheel = async (userId: string) => {
-  const user = await userManager.getUser(userId);
-  const [float] = user.generateFloats(1);
+const spinWheel = async (userInstance: UserInstance) => {
+  const [float] = userInstance.generateFloats(1);
   return Math.floor(float * 37); // Generates a number between 0 and 36
 };
 
