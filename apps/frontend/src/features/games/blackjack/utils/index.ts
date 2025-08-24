@@ -18,7 +18,6 @@ export const getBlackjackGameResult = ({
   gameOver: boolean;
 }): CardBorders => {
   const playerValue = hand.value;
-
   if (isActive) {
     return CardBorders.INFO;
   }
@@ -28,8 +27,13 @@ export const getBlackjackGameResult = ({
 
   if (playerValue > 21 || hand.actions.includes(BlackjackActions.BUST))
     return CardBorders.ERROR;
-  if (dealerValue > 21 || dealerState.actions.includes(BlackjackActions.BUST))
+  if (
+    playerValue === 21 ||
+    dealerValue > 21 ||
+    dealerState.actions.includes(BlackjackActions.BUST)
+  ) {
     return CardBorders.SUCCESS;
+  }
   if (playerValue === dealerValue) return CardBorders.WARNING;
   return playerValue > dealerValue ? CardBorders.SUCCESS : CardBorders.ERROR;
 };

@@ -60,4 +60,7 @@ export interface BlackjackPlayRoundResponse {
   active: boolean;
   betAmount: number;
   amountMultiplier: number;
+  payout?: number;
+  payoutMultiplier?: number;
+  balance: number;
 }

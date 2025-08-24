@@ -62,6 +62,16 @@ module.exports = {
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
+          glow: 'hsl(var(--accent-glow))',
+        },
+        'accent-purple': {
+          DEFAULT: 'hsl(var(--accent-purple))',
+          foreground: 'hsl(var(--accent-foreground))',
+          glow: 'hsl(var(--accent-glow))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
@@ -128,6 +138,10 @@ module.exports = {
       fontFamily: {
         custom: ['Montserrat', 'sans-serif'],
       },
+      boxShadow: {
+        glow: 'var(--shadow-glow)',
+        card: 'var(--shadow-card)',
+      },
     },
     backgroundColor: ({ theme }) => ({
       ...theme('colors'),
@@ -154,6 +168,11 @@ module.exports = {
       'keno-selected-tile': '#962EFF',
       'keno-selected-tile-hover': 'rgb(176, 97, 255)',
     }),
+    backgroundImage: {
+      'gradient-primary': 'var(--gradient-primary)',
+      'gradient-subtle': 'var(--gradient-subtle)',
+      'gradient-glow': 'var(--gradient-glow)',
+    },
     textColor: ({ theme }) => ({
       'roulette-red': '#fe2247',
       'roulette-red-hover': '#fe6e86',
@@ -217,6 +236,49 @@ module.exports = {
       'brand-strongest': '#071824',
       ...theme('colors'),
     }),
+
+    transitionProperty: {
+      smooth: 'var(--transition-smooth)',
+      glow: 'var(--transition-glow)',
+    },
+    keyframes: {
+      'accordion-down': {
+        from: {
+          height: '0',
+        },
+        to: {
+          height: 'var(--radix-accordion-content-height)',
+        },
+      },
+      'accordion-up': {
+        from: {
+          height: 'var(--radix-accordion-content-height)',
+        },
+        to: {
+          height: '0',
+        },
+      },
+      float: {
+        '0%, 100%': { transform: 'translateY(0px)' },
+        '50%': { transform: 'translateY(-20px)' },
+      },
+      'fade-in': {
+        '0%': {
+          opacity: '0',
+          transform: 'translateY(10px)',
+        },
+        '100%': {
+          opacity: '1',
+          transform: 'translateY(0)',
+        },
+      },
+    },
+    animation: {
+      'accordion-down': 'accordion-down 0.2s ease-out',
+      'accordion-up': 'accordion-up 0.2s ease-out',
+      float: 'float 6s ease-in-out infinite',
+      'fade-in': 'fade-in 0.3s ease-out',
+    },
   },
   plugins: [
     require('tailwindcss-animate'),

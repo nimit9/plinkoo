@@ -33,7 +33,7 @@ export function LoginModal(): JSX.Element {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            Welcome to Fake Stake
+            Welcome to SimCasino
           </DialogTitle>
         </DialogHeader>
 

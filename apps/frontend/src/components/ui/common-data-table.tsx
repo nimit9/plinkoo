@@ -23,10 +23,10 @@ import { Button } from './button';
 interface CommonDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pageCount: number;
-  setPagination: (updater: Updater<PaginationState>) => void;
-  pagination: PaginationState;
-  rowCount: number;
+  pageCount?: number;
+  setPagination?: (updater: Updater<PaginationState>) => void;
+  pagination?: PaginationState;
+  rowCount?: number;
 }
 
 // Type declaration to extend ColumnDef with our custom meta properties
@@ -57,15 +57,16 @@ export function CommonDataTable<TData, TValue>({
     },
     columnResizeMode: 'onChange',
     onPaginationChange: updater => {
+      if (!pagination) return;
       // Handle the updater whether it's a function or an object
       if (typeof updater === 'function') {
         const newState = updater(pagination);
-        setPagination({
+        setPagination?.({
           pageIndex: newState.pageIndex,
           pageSize: newState.pageSize,
         });
       } else {
-        setPagination({
+        setPagination?.({
           pageIndex: updater.pageIndex,
           pageSize: updater.pageSize,
         });
@@ -85,7 +86,7 @@ export function CommonDataTable<TData, TValue>({
               {headerGroup.headers.map(header => (
                 <TableHead
                   className={cn(
-                    'font-semibold text-neutral-weak text-sm',
+                    'font-semibold text-neutral-weak text-sm px-3',
                     header.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     header.column.columnDef.meta?.alignment === 'center' &&
@@ -130,32 +131,34 @@ export function CommonDataTable<TData, TValue>({
       </TableUI>
 
       {/* Pagination controls */}
-      <div className="flex justify-center mt-4 gap-4 items-center">
-        <Button
-          className="flex items-center"
-          disabled={!table.getCanPreviousPage()}
-          onClick={() => {
-            table.previousPage();
-          }}
-          size="default"
-          variant="ghost"
-        >
-          <ChevronLeftIcon className="h-4 w-4 mr-1" />
-          Prev
-        </Button>
-        <Button
-          className="flex items-center"
-          disabled={!table.getCanNextPage()}
-          onClick={() => {
-            table.nextPage();
-          }}
-          size="default"
-          variant="ghost"
-        >
-          Next
-          <ChevronRightIcon className="h-4 w-4 ml-1" />
-        </Button>
-      </div>
+      {pagination ? (
+        <div className="flex justify-center mt-4 gap-4 items-center">
+          <Button
+            className="flex items-center"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              table.previousPage();
+            }}
+            size="default"
+            variant="ghost"
+          >
+            <ChevronLeftIcon className="h-4 w-4 mr-1" />
+            Prev
+          </Button>
+          <Button
+            className="flex items-center"
+            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              table.nextPage();
+            }}
+            size="default"
+            variant="ghost"
+          >
+            Next
+            <ChevronRightIcon className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

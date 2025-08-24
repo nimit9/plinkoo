@@ -41,7 +41,7 @@ export const calculateHandValueWithSoft = (cards: CardDeck[]) => {
   const aces = cards.filter(card => card.rank === CardRanks.ACE).length;
 
   // If no aces return single value
-  if (aces === 0) {
+  if (aces === 0 || value === 21) {
     return value;
   }
 

@@ -48,6 +48,8 @@ function BettingControls(): JSX.Element {
     retry: false,
   });
 
+  const queryClient = useQueryClient();
+
   // Load active game on mount
   useEffect(() => {
     if (activeGame?.data && !gameState) {
@@ -59,24 +61,28 @@ function BettingControls(): JSX.Element {
   const { mutate: bet, isPending: isStartingGame } = useMutation({
     mutationKey: ['blackjack-bet'],
     mutationFn: () => blackjackBet({ betAmount }),
-    onSuccess: ({ data }) => {
+    onSuccess: async ({ data }) => {
       setGameState(data, false);
       setBetAmount(Number(data.betAmount));
-      initializeGame(data);
+      if (data.active) {
+        void initializeGame(data);
+      } else {
+        await initializeGame(data);
+      }
+      queryClient.setQueryData(['balance'], data.balance);
     },
   });
 
   const { mutate: playNextRound, isPending: isPlayingRound } = useMutation({
     mutationKey: ['blackjack-play-round'],
     mutationFn: (action: BlackjackActions) => playRound(action),
-    onSuccess: ({ data }) => {
+    onSuccess: async ({ data }) => {
       setGameState(data, false);
       setBetAmount(Number(data.betAmount));
-      void playNextRoundHandler(data);
+      await playNextRoundHandler(data);
+      queryClient.setQueryData(['balance'], data.balance);
     },
   });
-
-  const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled = betAmount > (balance ?? 0) || betAmount <= 0;
 

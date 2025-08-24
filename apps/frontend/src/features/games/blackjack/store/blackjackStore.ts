@@ -22,7 +22,7 @@ interface BlackjackStore {
   gameOver: boolean;
 
   // Actions
-  initializeGame: (backendState: BlackjackPlayRoundResponse) => void;
+  initializeGame: (backendState: BlackjackPlayRoundResponse) => Promise<void>;
   dealNextCard: () => Promise<void>;
   clearTransientCards: () => void;
   playNextRoundHandler: (data: BlackjackPlayRoundResponse) => Promise<void>;
@@ -56,7 +56,7 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
     });
   },
 
-  initializeGame: (backendState: BlackjackPlayRoundResponse) => {
+  initializeGame: async (backendState: BlackjackPlayRoundResponse) => {
     // Clear existing cards
     set({
       gameOver: false,
@@ -78,7 +78,11 @@ const useBlackjackStore = create<BlackjackStore>((set, get) => ({
 
     set({ dealingQueue });
     // Call dealNextCard but don't return the promise
-    void get().dealNextCard();
+    await get().dealNextCard();
+
+    if (!backendState.active) {
+      set({ gameOver: true });
+    }
   },
 
   dealNextCard: async () => {

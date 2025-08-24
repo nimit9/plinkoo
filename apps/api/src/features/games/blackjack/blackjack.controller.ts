@@ -23,25 +23,61 @@ export const placeBet = async (
 
   await validateActiveBet(user.id);
 
-  await validateUserBalance(user.id, betAmount);
+  const userInstance = await userManager.getUser(user.id);
+
+  // Convert betAmount to cents for comparison and storage
+  const betAmountInCents = Math.round(betAmount * 100);
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
+
+  if (userBalanceInCents < betAmountInCents) {
+    throw new Error('Insufficient balance');
+  }
 
   const game = await blackjackManager.createGame({
-    betAmount: Math.round(betAmount * 100), // Convert to cents
+    betAmount: betAmountInCents, // Pass amount in cents
     userId: user.id,
   });
 
   const dbUpdateObject = game.getDbUpdateObject();
 
-  if (dbUpdateObject) {
-    await db.bet.update(dbUpdateObject);
-    if ('active' in dbUpdateObject.data) {
-      blackjackManager.deleteGame(user.id);
-    }
+  const payout =
+    dbUpdateObject && 'active' in dbUpdateObject.data
+      ? dbUpdateObject.data.payoutAmount
+      : 0;
+
+  if (payout) {
+    blackjackManager.deleteGame(user.id);
   }
+
+  // Calculate new balance after deducting bet amount
+  const balanceChangeInCents = -betAmountInCents; // Negative because we're deducting
+  const newBalance = (
+    userBalanceInCents +
+    balanceChangeInCents +
+    payout
+  ).toString();
+
+  // Update user balance in a transaction
+  await db.$transaction(async tx => {
+    if (dbUpdateObject) {
+      await tx.bet.update(dbUpdateObject);
+    }
+    await tx.user.update({
+      where: { id: user.id },
+      data: {
+        balance: newBalance,
+      },
+    });
+  });
+
+  // Update the user instance with the new balance
+  userInstance.setBalance(newBalance);
 
   res
     .status(StatusCodes.OK)
-    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
+    .json(
+      new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse(newBalance))
+    );
 };
 
 export const getActiveGame = async (
@@ -50,6 +86,9 @@ export const getActiveGame = async (
 ) => {
   const userId = (req.user as User).id;
   const game = await blackjackManager.getGame(userId);
+  const userInstance = await userManager.getUser(userId);
+
+  const balance = userInstance.getBalance();
 
   if (!game || !game.getBet().active) {
     return res
@@ -59,7 +98,7 @@ export const getActiveGame = async (
 
   return res
     .status(StatusCodes.OK)
-    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
+    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse(balance)));
 };
 
 export const blackjackNext = async (
@@ -76,7 +115,7 @@ export const blackjackNext = async (
       .json(new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Game not found'));
   }
 
-  game.playRound(action as BlackjackActions);
+  const moneySpent = game.playRound(action as BlackjackActions);
   const dbUpdateObject = game.getDbUpdateObject();
 
   if (dbUpdateObject) {
@@ -86,9 +125,28 @@ export const blackjackNext = async (
     await db.bet.update(dbUpdateObject);
   }
 
+  const userInstance = await userManager.getUser(userId);
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
+
+  const newBalance = (userBalanceInCents + moneySpent).toString();
+
+  // Update user balance in a transaction
+  await db.$transaction(async tx => {
+    await tx.user.update({
+      where: { id: userId },
+      data: {
+        balance: newBalance,
+      },
+    });
+  });
+
+  userInstance.setBalance(newBalance);
+
   return res
     .status(StatusCodes.OK)
-    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
+    .json(
+      new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse(newBalance))
+    );
 };
 
 const validateBetRequest = (body: { betAmount: number }) => {
@@ -97,16 +155,6 @@ const validateBetRequest = (body: { betAmount: number }) => {
     throw new Error(result.error.message);
   }
   return result.data;
-};
-
-const validateUserBalance = async (userId: string, betAmount: number) => {
-  const userInstance = await userManager.getUser(userId);
-  const betAmountInCents = Math.round(betAmount * 100);
-  const userBalanceInCents = userInstance.getBalanceAsNumber();
-
-  if (userBalanceInCents < betAmountInCents) {
-    throw new Error('Insufficient balance');
-  }
 };
 
 const validateActiveBet = async (userId: string) => {

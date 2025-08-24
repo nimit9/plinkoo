@@ -12,6 +12,7 @@ import {
 import type {
   BlackjackActions,
   BlackjackGameState,
+  BlackjackPlayRoundResponse,
 } from '@repo/common/game-utils/blackjack/types.js';
 import type { UserInstance } from '../../user/user.service';
 import { userManager } from '../../user/user.service';
@@ -141,10 +142,12 @@ class BlackjackGame {
 
   playRound(action: BlackjackActions) {
     this.validateAction(action);
-    this.executeAction(action);
+    const moneySpent = this.executeAction(action);
     if (this.isPlayerTurnComplete()) {
       this.resolveGame();
+      return this.payout - moneySpent;
     }
+    return -moneySpent;
   }
 
   getDbUpdateObject(isGameCreate = false): null | {
@@ -191,17 +194,20 @@ class BlackjackGame {
     }
   }
 
-  private executeAction(action: BlackjackActions): void {
+  private executeAction(action: BlackjackActions): number {
+    const amountMultiplier = this.amountMultiplier;
     const result = playRoundAndUpdateState({
       gameEvents: this.gameEvents,
       drawIndex: this.drawIndex,
       gameState: this.gameState,
       action,
-      amountMultiplier: this.amountMultiplier,
+      amountMultiplier,
     });
 
     this.drawIndex = result.drawIndex;
-    this.amountMultiplier = result.amountMultiplier || this.amountMultiplier;
+    this.amountMultiplier = result.amountMultiplier || amountMultiplier;
+
+    return this.bet.betAmount * (this.amountMultiplier - amountMultiplier);
   }
 
   private isPlayerTurnComplete(): boolean {
@@ -210,24 +216,29 @@ class BlackjackGame {
     );
   }
 
-  getPlayRoundResponse() {
+  getPlayRoundResponse(balance: string) {
     if (!this.active) {
-      return this.constructGameOverResponse();
+      return this.constructGameOverResponse(balance);
     }
-    return this.constructPlayRoundResponse();
+    return this.constructPlayRoundResponse(balance);
   }
 
-  private constructPlayRoundResponse() {
+  private constructPlayRoundResponse(
+    balance: string
+  ): BlackjackPlayRoundResponse {
     return {
       id: this.bet.id,
       active: this.active,
       state: getSafeGameState(this.gameState),
       betAmount: this.bet.betAmount / 100, // Convert back to dollars
       amountMultiplier: this.amountMultiplier,
+      balance: Number(balance) / 100,
     };
   }
 
-  private constructGameOverResponse() {
+  private constructGameOverResponse(
+    balance: string
+  ): BlackjackPlayRoundResponse {
     return {
       id: this.bet.id,
       active: this.active,
@@ -237,6 +248,7 @@ class BlackjackGame {
       payout: this.payout / 100, // Convert back to dollars
       payoutMultiplier:
         this.payout / (this.bet.betAmount * this.amountMultiplier),
+      balance: Number(balance) / 100,
     };
   }
 

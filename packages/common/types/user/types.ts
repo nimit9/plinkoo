@@ -23,6 +23,10 @@ export interface PaginatedBetData {
   payoutMultiplier: number;
   payout: number;
   id: string;
+  user?: {
+    id: string;
+    name: string | null;
+  };
 }
 
 export interface PaginatedBetsResponse {

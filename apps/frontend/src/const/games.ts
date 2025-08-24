@@ -27,6 +27,11 @@ export const GAME_VALUES_MAPPING = {
     // icon: DicesIcon,
     path: '/casino/games/keno',
   },
+  [Games.BLACKJACK]: {
+    label: 'Blackjack',
+    // icon: DicesIcon,
+    path: '/casino/games/blackjack',
+  },
 };
 
 export const GAMES_DROPDOWN_OPTIONS = [

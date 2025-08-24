@@ -6,10 +6,12 @@ import { cn } from '@/lib/utils';
 interface InputWithIconProps extends InputProps {
   icon: ReactNode;
   wrapperClassName?: string;
+  leftIcon?: ReactNode;
 }
 
 function InputWithIcon({
   icon,
+  leftIcon = null,
   wrapperClassName,
   ...inputProps
 }: InputWithIconProps): JSX.Element {
@@ -24,6 +26,7 @@ function InputWithIcon({
         wrapperClassName
       )}
     >
+      {leftIcon}
       <Input
         {...inputProps}
         className={cn(

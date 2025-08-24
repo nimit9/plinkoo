@@ -68,10 +68,12 @@
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 15%;
+    --muted-foreground: 210 15% 65%;
+    --accent: 270 100% 65%;
+    --accent-purple: 270 100% 65%;
+    --accent-foreground: 210 20% 95%;
+    --accent-glow: 270 100% 75%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
@@ -83,6 +85,38 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --primary-glow: 220 100% 70%; /* Lighter blue for glow */
+    --accent-glow: 270 100% 75%;
+
+    /* Success/Win - Cyan */
+    --success: 180 100% 50%;
+    --success-foreground: 210 100% 6%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(220 100% 60%),
+      hsl(270 100% 65%)
+    );
+    --gradient-subtle: linear-gradient(
+      180deg,
+      hsl(210 60% 12%),
+      hsl(210 100% 8%)
+    );
+    --gradient-glow: linear-gradient(
+      135deg,
+      hsl(220 100% 70% / 0.2),
+      hsl(270 100% 75% / 0.2)
+    );
+
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(220 100% 60% / 0.3);
+    --shadow-card: 0 10px 30px -10px hsl(210 100% 4% / 0.5);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow:
+      box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
   }
 
   .dark {

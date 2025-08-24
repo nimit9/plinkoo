@@ -33,9 +33,8 @@ class MinesManager {
   async getGame(userId: string) {
     if (!this.games.has(userId)) {
       const bet = await db.bet.findFirst({
-        where: { userId, active: true },
+        where: { userId, active: true, game: 'mines' },
       });
-
       if (!bet) {
         return null;
       }

@@ -23,6 +23,9 @@ function BettingControls(): JSX.Element {
 
   const selectedTiles = useSelectedTiles();
 
+  const queryClient = useQueryClient();
+  const balance = queryClient.getQueryData<number>(['balance']);
+
   const { mutate: placeBetMutation, isPending } = useMutation({
     mutationKey: ['keno-start-game'],
     mutationFn: () =>
@@ -47,10 +50,11 @@ function BettingControls(): JSX.Element {
       );
 
       await Promise.all(updatePromises);
+
+      queryClient.setQueryData(['balance'], data.balance);
     },
   });
-  const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']);
+
   const isDisabled =
     betAmount > (balance ?? 0) || betAmount <= 0 || selectedTiles.size === 0;
 
