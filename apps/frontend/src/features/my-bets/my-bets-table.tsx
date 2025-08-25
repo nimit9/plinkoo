@@ -3,12 +3,15 @@ import { useState } from 'react';
 import { fetchUserBetHistory } from '@/api/user';
 import { CommonDataTable } from '@/components/ui/common-data-table';
 import { columns } from './columns';
+import { useViewportType, ViewportType } from '@/common/hooks/useViewportType';
+import { BetsTableColumns, betsTableViewportWiseColumns } from '@/const/tables';
 
 function MyBetsTable(): JSX.Element {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const viewport = useViewportType();
 
   const { data } = useQuery({
     queryKey: ['my-bets', pagination],
@@ -19,9 +22,18 @@ function MyBetsTable(): JSX.Element {
       }),
     placeholderData: prev => prev,
   });
+
+  const usedColumns = betsTableViewportWiseColumns[viewport]
+    ? columns.filter(col =>
+        betsTableViewportWiseColumns[viewport]?.includes(
+          col.id as BetsTableColumns
+        )
+      )
+    : columns;
+
   return (
     <CommonDataTable
-      columns={columns}
+      columns={usedColumns}
       data={data?.data.bets || []}
       pageCount={data?.data.pagination.totalPages || 0}
       pagination={pagination}

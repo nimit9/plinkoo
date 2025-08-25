@@ -33,8 +33,8 @@ export function DiceGame(): JSX.Element {
   };
 
   return (
-    <>
-      <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
+    <div className="container">
+      <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <BettingControls
           betAmount={betAmount}
           isPending={isPending}
@@ -46,7 +46,7 @@ export function DiceGame(): JSX.Element {
         />
         <div className="flex-1 bg-brand-stronger p-3">
           <DiceResultPillsCarousel results={results} />
-          <div className="py-40 w-3/4 mx-auto flex flex-col gap-2">
+          <div className="py-16 lg:py-40 w-full lg:w-3/4 mx-auto flex flex-col gap-2">
             <DiceSlider
               handleValueChange={handleValueChange}
               showResultSlider={showResultSlider}
@@ -56,6 +56,6 @@ export function DiceGame(): JSX.Element {
         </div>
       </div>
       <GameSettingsBar game={Games.DICE} />
-    </>
+    </div>
   );
 }

@@ -25,9 +25,12 @@ export function FairnessModal({ game }: { game: Game }): JSX.Element {
         </p>
       </DialogTrigger>
       <DialogContent
-        className={cn('sm:max-w-md max-h-[80vh] overflow-y-auto p-0 border-0', {
-          'sm:max-w-lg': game === Games.KENO,
-        })}
+        className={cn(
+          'sm:max-w-md max-h-[80vh] overflow-y-auto p-0 border-0 max-w-sm sm:w-full',
+          {
+            'sm:max-w-lg': game === Games.KENO,
+          }
+        )}
       >
         <DialogHeader className="p-3">
           <DialogTitle className="text-sm font-semibold text-neutral-default flex items-center gap-2">

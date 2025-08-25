@@ -38,7 +38,7 @@ function Home(): JSX.Element {
             >
               <img
                 alt={game}
-                className="h-40 aspect-[3/4] rounded hover:-translate-y-2 transition-smooth"
+                className="h-40 aspect-[3/4] rounded lg:hover:-translate-y-2 transition-smooth"
                 src={`/games/illustration/${game}.png`}
               />
             </Link>
@@ -50,7 +50,7 @@ function Home(): JSX.Element {
           setActiveTab(value as TabsEnum);
         }}
       >
-        <TabsList className="grid w-52 grid-cols-2 h-[44px]">
+        <TabsList className="mx-auto lg:mx-0 grid w-52 grid-cols-2 h-[44px]">
           <TabsTrigger value={TabsEnum.MyBets}>My Bets</TabsTrigger>
           <TabsTrigger value={TabsEnum.AllBets}>All Bets</TabsTrigger>
         </TabsList>

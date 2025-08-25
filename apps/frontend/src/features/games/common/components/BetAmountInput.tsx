@@ -15,10 +15,10 @@ export function BetAmountInput({
   const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']) || 0;
   return (
-    <div>
+    <div className="w-full">
       <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
       <div className="flex h-10 rounded-r overflow-hidden shadow-md group">
-        <div className="bg-input-disabled rounded-l flex items-center gap-1">
+        <div className="bg-input-disabled rounded-l flex items-center gap-1 flex-1">
           <InputWithIcon
             disabled={isInputDisabled}
             icon={<BadgeDollarSign className="text-gray-500" />}
@@ -29,7 +29,7 @@ export function BetAmountInput({
             step={1}
             type="number"
             value={betAmount}
-            wrapperClassName="h-10 rounded-r-none rounded-none rounded-l"
+            wrapperClassName="h-10 rounded-r-none rounded-none rounded-l flex-1"
           />
         </div>
         <BetAmountButton

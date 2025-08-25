@@ -23,8 +23,14 @@ module.exports = {
   prefix: '',
   theme: {
     container: {
-      center: 'true',
-      padding: '2rem',
+      center: true,
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        md: '2rem',
+        lg: '2.5rem',
+        xl: '3rem',
+      },
       screens: {
         xl: '1200px',
         lg: '1024px',

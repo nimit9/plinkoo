@@ -86,7 +86,7 @@ export function BettingControls({
     (betAmount ?? 0) > (balance ?? 0) || (betAmount ?? 0) <= 0 || isPending;
 
   return (
-    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
+    <div className="w-full lg:w-1/4 bg-brand-weak flex flex-col gap-4 p-3 py-4">
       <BetAmountInput
         betAmount={betAmount}
         onBetAmountChange={onBetAmountChange}

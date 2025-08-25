@@ -63,7 +63,7 @@ export function Balance(): JSX.Element {
       disabled
       icon={<BadgeDollarSign className="text-gray-500" />}
       value={animatedBalance}
-      wrapperClassName="shadow-md w-60"
+      wrapperClassName="shadow-md w-32 sm:w-48 md:w-60"
     />
   );
 }

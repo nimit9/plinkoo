@@ -5,11 +5,13 @@ import { Link } from '@tanstack/react-router';
 import { format, isValid } from 'date-fns';
 import { GAME_VALUES_MAPPING } from '@/const/games';
 import { cn } from '@/lib/utils';
+import { BetsTableColumns } from '@/const/tables';
 
 export const columns: ColumnDef<PaginatedBetData>[] = [
   {
     header: 'Game',
-    accessorKey: 'game',
+    accessorKey: BetsTableColumns.GAME,
+    id: BetsTableColumns.GAME,
     cell: ({ row }) => {
       const game =
         GAME_VALUES_MAPPING[
@@ -30,7 +32,8 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
   },
   {
     header: 'User',
-    accessorKey: 'user',
+    accessorKey: BetsTableColumns.USER,
+    id: BetsTableColumns.USER,
     cell: ({ row }) => {
       const user = row.original.user;
       return (
@@ -40,7 +43,8 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
   },
   {
     header: 'Date',
-    accessorKey: 'date',
+    accessorKey: BetsTableColumns.DATE,
+    id: BetsTableColumns.DATE,
     cell: ({ row }) => {
       // Format the date using date-fns
       const date = new Date(row.original.date);
@@ -58,7 +62,8 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
   },
   {
     header: 'Bet Amount',
-    accessorKey: 'betAmount',
+    accessorKey: BetsTableColumns.BET_AMOUNT,
+    id: BetsTableColumns.BET_AMOUNT,
     cell: ({ row }) => {
       return (
         <div className="text-neutral-weak font-medium flex items-center gap-1 justify-end">
@@ -73,7 +78,8 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
   },
   {
     header: 'Multiplier',
-    accessorKey: 'payoutMultiplier',
+    accessorKey: BetsTableColumns.PAYOUT_MULTIPLIER,
+    id: BetsTableColumns.PAYOUT_MULTIPLIER,
     cell: ({ row }) => {
       return (
         <div className="text-neutral-weak font-medium">
@@ -87,7 +93,8 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
   },
   {
     header: 'Payout',
-    accessorKey: 'payout',
+    accessorKey: BetsTableColumns.PAYOUT,
+    id: BetsTableColumns.PAYOUT,
     cell: ({ row }) => {
       return (
         <div

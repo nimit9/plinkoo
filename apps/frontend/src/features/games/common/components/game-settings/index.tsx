@@ -6,7 +6,7 @@ import { FairnessModal } from '../fairness-modal';
 
 function GameSettingsBar({ game }: { game: Game }): JSX.Element {
   return (
-    <div className="bg-brand-stronger w-full pr-4 p-2 flex items-center justify-between rounded-b-md border-t-brand-weak border-t-2">
+    <div className="bg-brand-stronger container w-full pr-4 p-2 flex items-center justify-between rounded-b-md border-t-brand-weak border-t-2">
       <div className="flex items-center gap-2">
         <CommonTooltip content={<p>Game Settings</p>}>
           <Button className="hover:bg-transparent" size="icon" variant="ghost">

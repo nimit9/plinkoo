@@ -87,7 +87,7 @@ function RollControlInput({
         {control.label} {condition === 'above' ? 'Over' : 'Under'}
       </Label>
       <div
-        className="bg-background h-9 w-full rounded flex items-center justify-between px-3 text-sm cursor-pointer"
+        className="bg-background h-10 w-full rounded flex items-center justify-between px-3 text-sm cursor-pointer border-2 border-brand-weaker"
         onClick={() => {
           control.onToggle(state);
         }}
@@ -124,7 +124,7 @@ export function DiceGameControls({
   state,
 }: GameControlsProps): JSX.Element {
   return (
-    <div className="bg-brand-weak px-4 py-2 pb-3 rounded flex gap-4 w-full">
+    <div className="bg-brand-weak px-2 py-1 lg:px-4 lg:py-2 lg:pb-3 rounded flex gap-2 lg:gap-4 w-full">
       {controls.map(control => (
         <ControlInput control={control} key={control.id} state={state} />
       ))}
