@@ -27,7 +27,7 @@ function KenoTile({
   return (
     <div
       className={cn(
-        'size-20 bg-brand-weaker rounded-lg cursor-pointer flex items-center justify-center hover:-translate-y-0.5 text-2xl font-semibold hover:bg-brand-weakest shadow-lg p-3',
+        'size-8 sm:size-12 md:size-16 lg:size-20 bg-brand-weaker rounded-lg cursor-pointer flex items-center justify-center hover:-translate-y-0.5 text-xs sm:text-sm md:text-xl lg:text-2xl font-semibold hover:bg-brand-weakest shadow-lg p-3',
         {
           'bg-keno-selected-tile hover:bg-keno-selected-tile-hover shadow-[0_0.3em_rgb(113,0,199)]':
             isSelected && !isDrawn,

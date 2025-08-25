@@ -38,6 +38,12 @@ module.exports = {
         sm: '640px',
       },
     },
+    screens: {
+      sm: '400px',
+      md: '640px',
+      lg: '1024px',
+      xl: '1200px',
+    },
     extend: {
       colors: {
         border: 'hsl(var(--border))',

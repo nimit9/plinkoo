@@ -30,8 +30,8 @@ export function Keno(): JSX.Element {
   const drawnNumbers = useDrawnNumbers();
 
   return (
-    <>
-      <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
+    <div className="container">
+      <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <BettingControls />
 
         <div className="flex-1 bg-brand-stronger p-4 relative">
@@ -49,18 +49,18 @@ export function Keno(): JSX.Element {
             </div>
           </div>
           {selectedTiles.size === 0 ? (
-            <div className="bg-brand-weaker rounded-sm text-neutral-default font-medium text-sm w-full mt-12 h-12 flex items-center justify-center">
+            <div className="bg-brand-weaker rounded-sm text-neutral-default font-medium text-xs sm:text-sm w-full mt-12 h-12 flex items-center justify-center">
               Select 1-10 numbers to play
             </div>
           ) : (
-            <div className="flex flex-col gap-3">
-              <div className="flex w-full justify-between gap-3 mt-8">
+            <div className="text-[8px] sm:text-[10px] md:text-xs flex flex-col gap-1 sm:gap-1.5 md:gap-2 lg:gap-3">
+              <div className="flex w-full justify-between  gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mt-8">
                 {Array.from(
                   { length: selectedTiles.size + 1 },
                   (_, i) => i
                 ).map(tile => (
                   <div
-                    className="flex-1 flex items-center justify-center bg-brand-weaker rounded-sm text-neutral-default w-full h-12 font-semibold"
+                    className="flex-1 flex items-center justify-center bg-brand-weaker rounded-sm text-neutral-default w-full h-6 sm:h-8 md:h-10 lg:h-12 font-semibold"
                     key={tile}
                   >
                     {PAYOUT_MULTIPLIERS[kenoRisk][selectedTiles.size][
@@ -70,7 +70,7 @@ export function Keno(): JSX.Element {
                   </div>
                 ))}
               </div>
-              <div className="flex w-full justify-between gap-3 bg-brand-weaker relative">
+              <div className="flex w-full justify-evenly sm:justify-between gap-1 sm:gap-1.5 md:gap-3 bg-brand-weaker relative sm:px-2 md:px-3">
                 {hoveredTile !== null && (
                   <div className="absolute -top-24 bg-brand-strong px-4 py-2 pb-3 rounded flex gap-4 w-full">
                     <div className="flex-1 flex flex-col gap-1">
@@ -107,7 +107,7 @@ export function Keno(): JSX.Element {
                   (_, i) => i
                 ).map(tile => (
                   <div
-                    className="flex-1 flex items-center justify-center  rounded-sm text-neutral-default w-full h-12 font-medium gap-1 cursor-help"
+                    className="lg:flex-1 flex items-center justify-center rounded-sm text-neutral-default sm:w-full h-6 sm:h-8 md:h-10 lg:h-12 font-medium gap-px lg:gap-1 cursor-help"
                     key={tile}
                     onMouseEnter={() => {
                       setHoveredTile(tile);
@@ -116,10 +116,10 @@ export function Keno(): JSX.Element {
                       setHoveredTile(null);
                     }}
                   >
-                    {tile}x{' '}
+                    {tile}x
                     <img
                       alt="diamond"
-                      className="w-4 h-4 grayscale"
+                      className="size-2 md:size-3 lg:size-4 grayscale"
                       src="/games/keno/gem.svg"
                     />
                   </div>
@@ -143,6 +143,6 @@ export function Keno(): JSX.Element {
         </div>
       </div>
       <GameSettingsBar game={Games.KENO} />
-    </>
+    </div>
   );
 }
