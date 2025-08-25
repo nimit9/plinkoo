@@ -52,7 +52,7 @@ export function Mines(): JSX.Element {
       <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <BettingControls />
         <div className="lg:px-24 lg:flex-1 bg-brand-stronger p-2 flex justify-center relative">
-          <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5">
+          <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2 md:gap-2.5">
             {Array.from({ length: NO_OF_TILES }, (_, i) => i).map(number =>
               isGameActive || !gameState ? (
                 <ActiveGameTile
