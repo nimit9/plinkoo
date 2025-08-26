@@ -12,7 +12,13 @@ import {
 } from '../../store/rouletteStoreSelectors';
 import { useRouletteContext } from '../../context/RouletteContext';
 
-function ColumnBet({ column }: { column: number }): JSX.Element {
+function ColumnBet({
+  column,
+  className,
+}: {
+  column: number;
+  className?: string;
+}): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();
 
   const betId = `${RouletteBetTypes.COLUMN}-${column}`;
@@ -44,7 +50,8 @@ function ColumnBet({ column }: { column: number }): JSX.Element {
           : {}
       }
       className={cn(
-        'cursor-pointer relative rounded-sm flex items-center justify-center size-10 text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]'
+        'cursor-pointer relative rounded-sm flex items-center justify-center size-10 text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]',
+        className
       )}
       key={betKey}
       onClick={e => {

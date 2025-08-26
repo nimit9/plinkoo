@@ -75,11 +75,11 @@ export function Roulette({
   };
 
   return (
-    <>
+    <div className="container">
       <RouletteProvider
         isPreview={isSpinning || isPreview || Boolean(latestResult)}
       >
-        <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md select-none">
+        <div className="flex lg:flex-row flex-col-reverse w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md select-none">
           <BettingControls
             betButtonText={latestResult ? 'Spin Again' : 'Spin'}
             icon={latestResult ? <RefreshCcwIcon className="size-4" /> : null}
@@ -94,17 +94,17 @@ export function Roulette({
             isPending={isSpinning ? true : !isRouletteWheelStopped}
             onBet={onBet}
           />
-          <div className="flex-1 bg-brand-stronger p-3 relative">
-            <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[60%]">
+          <div className="flex-1 bg-brand-stronger p-0 lg:p-3 relative">
+            <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[60%] hidden lg:block">
               <RouletteWheel
                 isSpinning={isSpinning}
                 winningNumber={winningNumber}
               />
             </div>
-            <div className="absolute left-[15%] top-[20%] bg-brand-weaker size-12 rounded font-semibold text-2xl text-neutral-default flex items-center justify-center">
+            <div className="absolute left-[15%] top-[20%] bg-brand-weaker size-12 rounded font-semibold text-2xl text-neutral-default items-center justify-center hidden lg:flex">
               {isRouletteWheelStopped ? winningNumber : null}
             </div>
-            <div className="mt-60 relative">
+            <div className="py-8 grid grid-cols-3 lg:block lg:mt-60 lg:p-0 relative">
               <div className="absolute -top-16 left-1/2 -translate-x-1/2">
                 {latestResult?.payout && isRouletteWheelStopped ? (
                   <div className="border-4 border-[#00e600] rounded px-6 py-1.5 text-[#00e600] font-bold text-base flex items-center gap-1">
@@ -115,7 +115,12 @@ export function Roulette({
                   </div>
                 ) : null}
               </div>
-              <RouletteTable />
+              <div className="lg:hidden col-span-1 bg-brand-weaker size-12 rounded font-semibold text-2xl text-neutral-default flex items-center justify-center justify-self-center mt-8">
+                {isRouletteWheelStopped ? winningNumber : null}
+              </div>
+              <div className="col-span-2">
+                <RouletteTable />
+              </div>
             </div>
             <div className="flex justify-between mt-2">
               <Button
@@ -137,6 +142,6 @@ export function Roulette({
         </div>
       </RouletteProvider>
       <GameSettingsBar game={Games.ROULETTE} />
-    </>
+    </div>
   );
 }

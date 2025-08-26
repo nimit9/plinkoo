@@ -292,6 +292,10 @@ module.exports = {
       'fade-in': 'fade-in 0.3s ease-out',
     },
   },
+  safelist: [
+    ...Array.from({ length: 20 }, (_, i) => `row-start-${i + 1}`),
+    ...Array.from({ length: 20 }, (_, i) => `row-end-${i + 1}`),
+  ],
   plugins: [
     require('tailwindcss-animate'),
     plugin(({ matchUtilities }) => {

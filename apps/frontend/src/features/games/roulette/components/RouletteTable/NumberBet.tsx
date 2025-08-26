@@ -22,7 +22,13 @@ import {
 import { useRouletteContext } from '../../context/RouletteContext';
 import DroppableArea from './DroppableArea';
 
-function NumberBet({ number }: { number: number }): JSX.Element {
+function NumberBet({
+  number,
+  className,
+}: {
+  number: number;
+  className?: string;
+}): JSX.Element {
   const { hoverId } = useRouletteBoardHoverStore();
   const winningNumber = useWinningNumber();
   const betKey = useBetKey();
@@ -58,7 +64,8 @@ function NumberBet({ number }: { number: number }): JSX.Element {
         {
           'bg-roulette-red-hover': isRedNumber && isNumberHover,
           'bg-roulette-black-hover': !isRedNumber && isNumberHover,
-        }
+        },
+        className
       )}
       key={betKey}
       onClick={e => {

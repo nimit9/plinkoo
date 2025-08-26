@@ -18,8 +18,10 @@ import { useRouletteContext } from '../../context/RouletteContext';
 
 function BottomColorBets({
   action,
+  className,
 }: {
   action: RouletteBetTypes;
+  className?: string;
 }): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();
 
@@ -61,7 +63,8 @@ function BottomColorBets({
         'cursor-pointer relative col-span-2 w-full h-10 rounded-sm',
         action === RouletteBetTypes.RED
           ? 'bg-roulette-red hover:bg-roulette-red-hover'
-          : 'bg-roulette-black hover:bg-roulette-black-hover'
+          : 'bg-roulette-black hover:bg-roulette-black-hover',
+        className
       )}
       key={betKey}
       onClick={e => {

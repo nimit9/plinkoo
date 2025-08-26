@@ -2,7 +2,7 @@ import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.j
 import BottomNumberBets from './BottomNumberBets';
 import BottomColorBets from './BottomColorBets';
 
-const bottomBets = [
+export const bottomBets = [
   {
     action: RouletteBetTypes.LOW,
     label: '1 to 18',

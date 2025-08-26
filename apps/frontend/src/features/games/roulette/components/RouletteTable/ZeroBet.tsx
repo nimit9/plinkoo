@@ -14,7 +14,7 @@ import {
 import { useRouletteContext } from '../../context/RouletteContext';
 import DroppableArea from './DroppableArea';
 
-function ZeroBet(): JSX.Element {
+function ZeroBet({ className }: { className?: string }): JSX.Element {
   const { hoverId } = useRouletteBoardHoverStore();
   const referenceDiv = useRef<HTMLDivElement | null>(null);
 
@@ -33,18 +33,19 @@ function ZeroBet(): JSX.Element {
   const betKey = useBetKey();
   return (
     <motion.div
-      animate={
-        isWinning
-          ? {
-              backgroundColor: ['#419e3f', '#69c267', '#419e3f'],
-            }
-          : {}
-      }
+      // animate={
+      //   isWinning
+      //     ? {
+      //         backgroundColor: ['#419e3f', '#69c267', '#419e3f'],
+      //       }
+      //     : {}
+      // }
       className={cn(
-        'cursor-pointer select-none relative rounded-sm flex items-center justify-center w-10 text-sm font-semibold bg-roulette-green hover:bg-roulette-green-hover',
+        'cursor-pointer select-none relative rounded-sm flex items-center justify-center w-10 text-sm font-semibold bg-roulette-green lg:hover:bg-roulette-green-hover',
         {
-          'bg-roulette-green-hover': isNumberHover,
-        }
+          'lg:bg-roulette-green-hover': isNumberHover,
+        },
+        className
       )}
       key={betKey}
       onClick={e => {
