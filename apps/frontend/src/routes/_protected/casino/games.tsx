@@ -11,7 +11,7 @@ export const Route = createFileRoute('/_protected/casino/games')({
       <MatchRoute to="/casino/games">
         <Navigate to="/casino/home" />,
       </MatchRoute>
-      <div className="container mt-12 px-0">
+      <div className="container mt-4 lg:mt-12 px-0">
         <Outlet />
       </div>
     </>

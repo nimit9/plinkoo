@@ -15,6 +15,7 @@ import useRouletteStore from './store/rouletteStore';
 import { parseBetId } from './utils/helpers';
 import { RouletteProvider } from './context/RouletteContext';
 import { useWinningNumber } from './store/rouletteStoreSelectors';
+import { cn } from '@/lib/utils';
 
 export function Roulette({
   isPreview = false,
@@ -104,8 +105,8 @@ export function Roulette({
             <div className="absolute left-[15%] top-[20%] bg-brand-weaker size-12 rounded font-semibold text-2xl text-neutral-default items-center justify-center hidden lg:flex">
               {isRouletteWheelStopped ? winningNumber : null}
             </div>
-            <div className="py-8 grid grid-cols-3 lg:block lg:mt-60 lg:p-0 relative">
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2">
+            <div className="py-8 grid grid-cols-3 gap-4 lg:block lg:mt-60 lg:p-0 relative">
+              <div className="hidden lg:block absolute -top-16 left-1/2 -translate-x-1/2">
                 {latestResult?.payout && isRouletteWheelStopped ? (
                   <div className="border-4 border-[#00e600] rounded px-6 py-1.5 text-[#00e600] font-bold text-base flex items-center gap-1">
                     {latestResult.payoutMultiplier.toFixed(2)}x
@@ -120,6 +121,18 @@ export function Roulette({
               </div>
               <div className="col-span-2">
                 <RouletteTable />
+              </div>
+              <div
+                className={cn('lg:hidden mx-auto col-span-3 invisible', {
+                  visible: latestResult?.payout && isRouletteWheelStopped,
+                })}
+              >
+                <div className="border-4 border-[#00e600] rounded px-6 py-1.5 text-[#00e600] font-bold text-base flex items-center gap-1">
+                  {latestResult?.payoutMultiplier.toFixed(2)}x
+                  <span className="text-neutral-weaker mx-1">|</span>
+                  {latestResult?.payout}
+                  <BadgeDollarSignIcon className="size-4" />
+                </div>
               </div>
             </div>
             <div className="flex justify-between mt-2">

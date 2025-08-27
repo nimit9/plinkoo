@@ -30,20 +30,20 @@ export function LoginModal(): JSX.Element {
 
   return (
     <Dialog onOpenChange={hideLoginModal} open={isModalOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[320px] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">
+          <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-center">
             Welcome to SimCasino
           </DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col space-y-4 pt-4">
           <Button
-            className="w-full py-4 text-base font-medium"
+            className="w-full py-4 text-sm md:text-base font-medium"
             onClick={handleGoogleLogin}
             variant="outline"
           >
-            <SiGoogle className="mr-3 h-5 w-5" />
+            <SiGoogle className="mr-3 size-4 md:size-5" />
             Continue with Google
           </Button>
 

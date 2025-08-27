@@ -20,7 +20,7 @@ function BettingControls({
 }: BettingControlsProps): JSX.Element {
   const { betAmount, setBetAmount, multiplyBets } = useRouletteStore();
   return (
-    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
+    <div className="w-full lg:w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
       <ChipCarousel />
       <BetAmountInput
         betAmount={betAmount / 100}

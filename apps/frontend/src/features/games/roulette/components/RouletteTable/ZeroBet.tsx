@@ -33,13 +33,13 @@ function ZeroBet({ className }: { className?: string }): JSX.Element {
   const betKey = useBetKey();
   return (
     <motion.div
-      // animate={
-      //   isWinning
-      //     ? {
-      //         backgroundColor: ['#419e3f', '#69c267', '#419e3f'],
-      //       }
-      //     : {}
-      // }
+      animate={
+        isWinning
+          ? {
+              backgroundColor: ['#419e3f', '#69c267', '#419e3f'],
+            }
+          : {}
+      }
       className={cn(
         'cursor-pointer select-none relative rounded-sm flex items-center justify-center w-10 text-sm font-semibold bg-roulette-green lg:hover:bg-roulette-green-hover',
         {

@@ -84,8 +84,8 @@ function DroppableArea({
         top: typeof top === 'number' ? rect.top + top : top,
         left: typeof left === 'number' ? rect.left + left : left,
         transform: transform || undefined,
-        width: width || '20px',
-        height: height || '20px',
+        width: width || '12px',
+        height: height || '12px',
         zIndex: 10,
       });
     }
@@ -117,7 +117,7 @@ function DroppableArea({
       {/* Use a transparent div with the full size for the hit area */}
       <div className="w-full h-full relative">
         {isBet ? (
-          <div className="absolute w-full h-full -translate-y-[20%] -translate-x-[10%]">
+          <div className="absolute w-full h-full lg:-translate-y-[20%] lg:-translate-x-[10%] flex lg:block items-center justify-center">
             <Chip id={betId} size={6} value={betAmount} />
           </div>
         ) : null}

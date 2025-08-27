@@ -47,10 +47,10 @@ function RouletteTable(): JSX.Element {
         <div className="col-span-1" />
         <BottomBets />
       </div>
-      <div className="w-3/4 lg:w-fit grid-cols-5 grid-rows-[repeat(14,minmax(0,0.5fr)] mx-auto gap-1 grid lg:hidden grid-auto-rows-[5rem] grid-auto-cols-[5rem] items-stretch">
+      <div className="w-5/6 md:w-3/4 lg:w-fit grid-cols-5 grid-rows-[repeat(14,minmax(0,0.5fr)] mx-auto gap-1 grid lg:hidden grid-auto-rows-[5rem] grid-auto-cols-[5rem] items-stretch">
         <div className="col-span-2 row-[1/-1]" />
         <div className="col-span-3 row-[1/-1]">
-          <ZeroBet className="w-full h-8" />
+          <ZeroBet className="w-full h-9" />
         </div>
         {bottomBets.map(({ action, label }, index) => {
           return (
@@ -87,7 +87,7 @@ function RouletteTable(): JSX.Element {
           (colNum, index) => (
             <div
               className={cn(
-                'flex gap-1 col-span-3 h-8 w-full',
+                'flex gap-1 col-span-3 h-9 w-full',
                 `row-${index + 2}`
               )}
               key={colNum}
@@ -98,7 +98,7 @@ function RouletteTable(): JSX.Element {
                     <NumberBet
                       key={`${colNum}-${rowNum}`}
                       number={colNum * 3 + rowNum}
-                      className="h-8 flex-1"
+                      className="h-9 flex-1"
                     />
                   );
                 }
@@ -108,9 +108,9 @@ function RouletteTable(): JSX.Element {
         )}
         <div className="col-span-2" />
         <div className="flex col-span-3 w-full row-14 gap-1">
-          <ColumnBet column={1} className="flex-1 h-8" />
-          <ColumnBet column={2} className="flex-1 h-8" />
-          <ColumnBet column={3} className="flex-1 h-8" />
+          <ColumnBet column={1} className="flex-1 h-9" />
+          <ColumnBet column={2} className="flex-1 h-9" />
+          <ColumnBet column={3} className="flex-1 h-9" />
         </div>
       </div>
     </>
