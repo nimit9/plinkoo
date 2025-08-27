@@ -9,10 +9,15 @@ import useBlackjackStore from '../store/blackjackStore';
 import { FACE_DOWN_HIDDEN_DEALER_CARD } from '../const';
 import { getBlackjackGameResult } from '../utils';
 import HandValue from './HandValue';
+import { useViewportType } from '@/common/hooks/useViewportType';
+import { calculateCardPosition, getCardTopLeft } from '../utils/widthUtils';
+import { cn } from '@/lib/utils';
 
 function GameTable(): JSX.Element {
   const { gameState, gameOver, cardInDeck, flippedCards, incomingCards } =
     useBlackjackStore();
+
+  const viewportType = useViewportType();
 
   // Show dealer's hole card only when game is not active
   const showDealerHoleCard =
@@ -34,16 +39,17 @@ function GameTable(): JSX.Element {
       (!showDealerHoleCard && incomingCards.has(FACE_DOWN_HIDDEN_DEALER_CARD)
         ? 1
         : 0);
-    const centerOffset = -48 - (totalCards - 1) * 20;
-    const rightmostCardLeft = (totalCards - 1) * 40 + centerOffset;
-    const cardWidth = 96; // Assuming standard card width
-    const rightmostCardRight = rightmostCardLeft + cardWidth;
+
+    const { rightPosition, centerOffset } = calculateCardPosition({
+      totalCards,
+      viewportType,
+    });
 
     return (
       <div className="flex flex-col items-center">
         <div className="relative">
           <HandValue
-            rightPosition={rightmostCardRight}
+            rightPosition={rightPosition}
             value={calculateHandValueWithSoft(
               gameState.state.dealer.cards.filter(card =>
                 flippedCards.has(card.id)
@@ -62,8 +68,7 @@ function GameTable(): JSX.Element {
                 className="absolute"
                 key={card.id}
                 style={{
-                  top: index * 20,
-                  left: index * 40 + centerOffset,
+                  ...getCardTopLeft({ viewportType, index, centerOffset }),
                 }}
               >
                 <PlayingCard
@@ -77,7 +82,12 @@ function GameTable(): JSX.Element {
           })}
           {!showDealerHoleCard &&
           incomingCards.has(FACE_DOWN_HIDDEN_DEALER_CARD) ? (
-            <div className="absolute" style={{ top: 20, left: -28 }}>
+            <div
+              className="absolute"
+              style={{
+                ...getCardTopLeft({ viewportType, index: 1, centerOffset }),
+              }}
+            >
               <PlayingCard faceDown layoutId={FACE_DOWN_HIDDEN_DEALER_CARD} />
             </div>
           ) : null}
@@ -96,10 +106,10 @@ function GameTable(): JSX.Element {
       hand.cards.filter(card => incomingCards.has(card.id)).length,
       1
     );
-    const centerOffset = -48 - (totalCards - 1) * 20;
-    const rightmostCardLeft = (totalCards - 1) * 40 + centerOffset;
-    const cardWidth = 96; // Assuming standard card width
-    const rightmostCardRight = rightmostCardLeft + cardWidth;
+    const { rightPosition, centerOffset } = calculateCardPosition({
+      totalCards,
+      viewportType,
+    });
 
     const result =
       gameState !== null
@@ -121,7 +131,7 @@ function GameTable(): JSX.Element {
         <div className="relative">
           <HandValue
             background={result}
-            rightPosition={rightmostCardRight}
+            rightPosition={rightPosition}
             value={calculateHandValueWithSoft(
               hand.cards.filter(card => flippedCards.has(card.id))
             )}
@@ -138,8 +148,11 @@ function GameTable(): JSX.Element {
                 className="absolute"
                 key={card.id}
                 style={{
-                  top: cardIndex * 20,
-                  left: cardIndex * 40 + centerOffset,
+                  ...getCardTopLeft({
+                    viewportType,
+                    index: cardIndex,
+                    centerOffset,
+                  }),
                 }}
               >
                 <PlayingCard
@@ -158,7 +171,7 @@ function GameTable(): JSX.Element {
   };
 
   const renderDeck = (): JSX.Element => (
-    <div className="absolute -top-12 right-32 transform">
+    <div className="absolute -top-12 right-20 lg:right-32 transform">
       <div className="relative">
         {/* Stack effect with multiple card backs */}
         {[0, 1, 2, 3].map(offset => (
@@ -190,22 +203,24 @@ function GameTable(): JSX.Element {
 
   return (
     <LayoutGroup>
+      {renderDeck()}
       <div
-        className="relative w-full h-full min-h-[600px] flex flex-col items-center py-8 bg-[url('/games/blackjack/background.svg')] bg-center bg-no-repeat justify-evenly"
+        className="w-full h-full min-h-[360px] lg:min-h-[600px] flex flex-col items-center lg:py-8 bg-[url('/games/blackjack/background.svg')] bg-center bg-no-repeat justify-evenly"
         style={{ backgroundSize: '40%' }}
       >
         {/* Deck positioned on the top right */}
-        {renderDeck()}
 
         {/* Dealer's hand at the top */}
-        <div className="flex h-full justify-center w-full pt-16">
+        <div className="flex pt-12 flex-1 lg:flex-initial h-full justify-center w-full lg:pt-16">
           {renderDealerHand()}
         </div>
 
         {/* Player's hand(s) at the bottom */}
-        <div className="flex justify-center pb-4 h-full w-full pt-16">
+        <div className="flex pt-12 flex-1 lg:flex-initial justify-center pb-4 h-full w-full lg:pt-16">
           <div
-            className={`flex ${(gameState?.state.player.length || 0) > 1 ? 'gap-40' : ''} justify-center`}
+            className={cn('flex justify-center', {
+              'gap-20 lg:gap-40': (gameState?.state.player.length || 0) > 1,
+            })}
           >
             {gameState?.state.player.map((hand, index) =>
               renderPlayerHand(hand, index)

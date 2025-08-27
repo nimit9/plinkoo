@@ -1,17 +1,21 @@
+import { byteGenerator, getGeneratedFloats } from '@/lib/crypto';
+import { convertFloatsToGameEvents } from '@repo/common/game-utils/blackjack/utils.js';
 import { useQuery } from '@tanstack/react-query';
 import React, { Fragment, useMemo } from 'react';
-import { convertFloatsToGameEvents } from '@repo/common/game-utils/mines/utils.js';
+import chunk from 'lodash/chunk';
 import { HashLoader } from 'react-spinners';
-import { chunk } from 'lodash';
-import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
-import { calculateSelectedGems } from '@repo/common/game-utils/keno/utils.js';
-import {
-  byteGenerator,
-  getFisherYatesShuffle,
-  getGeneratedFloats,
-} from '@/lib/crypto';
-import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import {
+  CARD_DECK,
+  SUIT_TEXT,
+} from '@repo/common/game-utils/cards/constants.js';
+
+interface BlackjackResultBreakdownProps {
+  clientSeed?: string;
+  nonce?: string;
+  serverSeed?: string;
+}
 
 const generateUniqueId = (
   prefix: string,
@@ -20,33 +24,28 @@ const generateUniqueId = (
   return `${prefix}-${parts.join('-')}`;
 };
 
-interface KenoResultBreakdownProps {
-  clientSeed?: string;
-  nonce?: string;
-  serverSeed?: string;
-}
-function KenoResultBreakdown({
+const BlackjackResultBreakdown: React.FC<BlackjackResultBreakdownProps> = ({
   clientSeed,
   nonce,
   serverSeed,
-}: KenoResultBreakdownProps): JSX.Element {
+}) => {
   const { data: hmacArray = [] } = useQuery({
     queryKey: ['hmacBuffer', serverSeed, clientSeed, nonce],
     queryFn: async () => {
       const bytes = await byteGenerator(
         serverSeed ?? '',
         `${clientSeed}:${nonce}`,
-        2
+        7
       );
       return bytes;
     },
   });
 
   const { data: floats } = useQuery({
-    queryKey: ['result-keno', serverSeed, clientSeed, nonce],
+    queryKey: ['result-blackjack', serverSeed, clientSeed, nonce],
     queryFn: async () => {
       const result = await getGeneratedFloats({
-        count: 10,
+        count: 52,
         seed: serverSeed ?? '',
         message: `${clientSeed}:${nonce}`,
       });
@@ -54,16 +53,7 @@ function KenoResultBreakdown({
     },
   });
 
-  const gameEvents = convertFloatsToGameEvents(floats, NO_OF_TILES_KENO);
-
-  const drawnNumbers = calculateSelectedGems(gameEvents, 10);
-  const finalDrawnNumbers = drawnNumbers.map(num => num + 1);
-
-  const fisherYatesShuffle = getFisherYatesShuffle({
-    gameEvents,
-    stopCount: 10,
-    totalEventsPossible: NO_OF_TILES_KENO,
-  });
+  const gameEvents = convertFloatsToGameEvents(floats);
 
   // Create unique identifiers for each byte in the hmacArray
   const hmacByteIds = useMemo(() => {
@@ -75,7 +65,7 @@ function KenoResultBreakdown({
 
   const chunkedHmacByteIds = chunk(
     hmacByteIds,
-    Math.ceil(hmacByteIds.length / 2)
+    Math.ceil(hmacByteIds.length / 7)
   );
 
   //   Create unique identifiers for selected bytes
@@ -96,14 +86,22 @@ function KenoResultBreakdown({
     <div className="flex flex-col gap-3">
       <div>
         <Label>Final Result</Label>
-        <p className="font-semibold text-sm tracking-wider">
-          <span className="tracking-widest">( {drawnNumbers.join(', ')} )</span>
+        <p className="font-semibold text-sm tracking-wider flex gap-2.5 overflow-x-auto">
+          {gameEvents.map(event => (
+            <div className="flex flex-col gap-1 items-center">
+              <p>{event}</p>
+              <span>
+                {SUIT_TEXT[CARD_DECK[event].suit]}
+                {CARD_DECK[event].rank}
+              </span>
+            </div>
+          ))}
+          {/* <span className="tracking-widest">( {drawnNumbers.join(', ')} )</span> */}
         </p>
-        <div className="font-semibold tracking-widest">+ 1 =</div>
         <p className="font-semibold text-sm tracking-wider">
-          <span className="tracking-widest">
+          {/* <span className="tracking-widest">
             ( {finalDrawnNumbers.join(', ')} )
-          </span>
+          </span> */}
         </p>
       </div>
 
@@ -121,7 +119,7 @@ function KenoResultBreakdown({
                     className={cn(
                       'text-neutral-default flex flex-col gap-1 items-center font-medium',
                       {
-                        'text-neutral-weak': chunkIndex >= 8 && index === 1,
+                        'text-neutral-weak': chunkIndex >= 16 && index === 6,
                       }
                     )}
                     key={id}
@@ -140,11 +138,11 @@ function KenoResultBreakdown({
         <Label>Bytes to Number</Label>
         <div className="overflow-x-auto no-scrollba">
           <div className="flex gap-6 w-max text-sm r">
-            {chunkedSelectedByteIds.slice(0, 10).map((selectedBytes, index) => {
+            {chunkedSelectedByteIds.slice(0, 52).map((selectedBytes, index) => {
               return (
                 <div className="flex-1" key={generateUniqueId('chunk', index)}>
                   <div className="grid grid-cols-11">
-                    <div className="col-span-11 font-semibold tracking-widest">{`(${selectedBytes.map(({ byte }) => byte).join(', ')}) -> [0, ..., ${NO_OF_TILES_KENO - 1 - index}] = ${Math.floor(floats[index] * (NO_OF_TILES_KENO - index))}`}</div>
+                    <div className="col-span-11 font-semibold tracking-widest">{`(${selectedBytes.map(({ byte }) => byte).join(', ')}) -> [0, ..., ${52 - 1 - index}] = ${Math.floor(floats[index] * (52 - index))}`}</div>
                     {selectedBytes.map(({ byte, id }, i) => (
                       <Fragment key={id}>
                         <span className="col-span-1 font-medium">
@@ -194,27 +192,14 @@ function KenoResultBreakdown({
                         ))}
                     </span>
                     <span className="text-neutral-weak col-span-5 place-self-end tracking-wider">
-                      (&#215; {NO_OF_TILES_KENO - index})
+                      (&#215; {52})
                     </span>
                     <span className="col-span-1 font-medium">=</span>
                     <span className="font-semibold col-span-5 place-self-start tracking-widest">
-                      {
-                        String(
-                          (floats[index] * (NO_OF_TILES_KENO - index)).toFixed(
-                            12
-                          )
-                        ).split('.')[0]
-                      }
+                      {String((floats[index] * 52).toFixed(12)).split('.')[0]}
                       <span className="text-neutral-weak">
                         .
-                        {
-                          String(
-                            (
-                              floats[index] *
-                              (NO_OF_TILES_KENO - index)
-                            ).toFixed(12)
-                          ).split('.')[1]
-                        }
+                        {String((floats[index] * 52).toFixed(12)).split('.')[1]}
                       </span>
                     </span>
                   </div>
@@ -224,29 +209,8 @@ function KenoResultBreakdown({
           </div>
         </div>
       </div>
-      <div>
-        <Label>Numbers to Shuffle</Label>
-        <div className="flex flex-col gap-1 my-1 w-full text-neutral-default font-medium overflow-x-auto no-scrollbar">
-          {fisherYatesShuffle.map(({ array, chosenIndex }, index) => (
-            <div key={generateUniqueId('fisher-yates-shuffle', index)}>
-              <div className="flex gap-2 w-full justify-stretch text-sm">
-                {array.map((byte, idx) => (
-                  <div
-                    className={cn('flex-1 px-px text-center', {
-                      'bg-blue-500': idx === chosenIndex,
-                    })}
-                    key={generateUniqueId('byte', byte, idx, Date.now())}
-                  >
-                    {byte}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
-}
+};
 
-export default KenoResultBreakdown;
+export default BlackjackResultBreakdown;

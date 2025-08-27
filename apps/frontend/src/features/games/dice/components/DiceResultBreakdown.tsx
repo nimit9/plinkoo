@@ -38,7 +38,7 @@ function DiceResultBreakdown({
   });
 
   const { data: outcome } = useQuery({
-    queryKey: ['result', serverSeed, clientSeed, nonce],
+    queryKey: ['result-dice', serverSeed, clientSeed, nonce],
     queryFn: async () => {
       const result = await getGeneratedFloats({
         count: 1,

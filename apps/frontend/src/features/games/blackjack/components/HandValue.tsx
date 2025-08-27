@@ -18,7 +18,7 @@ function HandValue({
   return (
     <Badge
       className={cn(
-        'absolute -top-8 transform rounded-full px-4 font-bold text-sm text-black transition-all duration-300 ease-in-out min-w-max',
+        'absolute -top-6 lg:-top-8 transform rounded-full px-2 lg:px-4 font-bold text-[10px] lg:text-sm text-black transition-all duration-300 ease-in-out min-w-max',
         {
           'bg-roulette-red hover:bg-roulette-red':
             background === CardBorders.ERROR,

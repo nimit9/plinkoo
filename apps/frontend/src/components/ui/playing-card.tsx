@@ -25,7 +25,7 @@ function PlayingCard({
 }): JSX.Element {
   return (
     <motion.div
-      className="w-24 rounded shadow-[0_0_0.25em_#0710174d] aspect-[2/3]"
+      className="w-12 lg:w-24 rounded shadow-[0_0_0.25em_#0710174d] aspect-[3/5] lg:aspect-[2/3] "
       layout
       layoutId={layoutId}
       style={{
@@ -42,7 +42,7 @@ function PlayingCard({
       >
         <div
           className={cn(
-            'absolute inset-0 w-full h-full rounded bg-white select-none border-[5px]',
+            'absolute inset-0 w-full h-full rounded bg-white select-none border-2 lg:border-[5px]',
             {
               'border-roulette-red': border === CardBorders.ERROR,
               'border-[#1fff20]': border === CardBorders.SUCCESS,
@@ -57,9 +57,9 @@ function PlayingCard({
           }}
         >
           {rank && suit ? (
-            <div className="w-1/2 ml-[5%] flex flex-col gap-1 items-center justify-center pt-2">
+            <div className="w-1/2 ml-[5%] flex flex-col lg:gap-1 items-center justify-center lg:pt-2">
               <span
-                className={cn('font-bold text-4xl', {
+                className={cn('font-bold text-xl lg:text-4xl', {
                   'text-[#e9113c]': [
                     CardSuits.HEARTS,
                     CardSuits.DIAMONDS,
@@ -74,7 +74,7 @@ function PlayingCard({
               </span>
               <img
                 alt={`${suit} icon`}
-                className="p-0 scale-[80%]"
+                className="p-0 scale-[70%] lg:scale-[80%]"
                 src={`/games/cards/${suit}.png`}
               />
             </div>

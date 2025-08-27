@@ -26,7 +26,7 @@ export function FairnessModal({ game }: { game: Game }): JSX.Element {
       </DialogTrigger>
       <DialogContent
         className={cn(
-          'sm:max-w-md max-h-[80vh] overflow-y-auto p-0 border-0 max-w-sm sm:w-full',
+          'sm:max-w-md max-h-[80vh] overflow-y-auto p-0 border-0 max-w-sm sm:w-full flex flex-col',
           {
             'sm:max-w-lg': game === Games.KENO,
           }

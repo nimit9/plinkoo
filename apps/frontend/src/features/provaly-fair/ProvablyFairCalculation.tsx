@@ -8,12 +8,15 @@ import DiceResultBreakdown from '../games/dice/components/DiceResultBreakdown';
 import RouletteResultBreakdown from '../games/roulette/components/RouletteResultBreakdown';
 import MinesResultBreakdown from '../games/mines/components/MinesResultBreakdown';
 import KenoResultBreakdown from '../games/keno/components/KenoResultBreakdown';
+import BlackjackResultBreakdown from '../games/blackjack/components/BlackjackResultBreakdown';
 
 function ProvablyFairCalculation(): JSX.Element {
   const [outcome, setOutcome] = useState<string | number[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<Game>(
     GAMES_DROPDOWN_OPTIONS[0].value
   );
+
+  console.log('outcome', outcome);
   const [verificationInputs, setVerificationInputs] =
     useState<VerificationInputsState | null>(null);
 
@@ -53,12 +56,20 @@ function ProvablyFairCalculation(): JSX.Element {
             serverSeed={verificationInputs?.serverSeed}
           />
         );
+      case Games.BLACKJACK:
+        return (
+          <BlackjackResultBreakdown
+            clientSeed={verificationInputs?.clientSeed}
+            nonce={verificationInputs?.nonce}
+            serverSeed={verificationInputs?.serverSeed}
+          />
+        );
       default:
         return <div>Unknown game</div>;
     }
   };
   return (
-    <div className="w-3/5 mx-auto">
+    <div className="w-full md:w-3/5 mx-auto">
       <div className="flex flex-col gap-2">
         <CommonSelect
           label="Game"

@@ -8,6 +8,13 @@ const SUIT_ORDER = [
   CardSuits.CLUBS,
 ];
 
+const SUIT_TEXT = {
+  [CardSuits.DIAMONDS]: '♦',
+  [CardSuits.HEARTS]: '♥',
+  [CardSuits.SPADES]: '♠',
+  [CardSuits.CLUBS]: '♣',
+};
+
 const RANK_VALUE_MAP: Record<string, number> = {
   [CardRanks.TWO]: 2,
   [CardRanks.THREE]: 3,
@@ -83,4 +90,10 @@ const CARD_DECK: CardDeck[] = [
   },
 ].map(card => ({ ...card, id: crypto.randomUUID() }));
 
-export { BLACKJACK_RANK_VALUE_MAP, CARD_DECK, RANK_VALUE_MAP, VALUE_RANK_MAP };
+export {
+  BLACKJACK_RANK_VALUE_MAP,
+  CARD_DECK,
+  RANK_VALUE_MAP,
+  SUIT_TEXT,
+  VALUE_RANK_MAP,
+};

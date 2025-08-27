@@ -66,7 +66,6 @@ class MinesManager {
       userInstance,
     });
     const game = new Mines(transaction.bet);
-    console.log('Game created:', game);
     this.games.set(userInstance.getUserId(), game);
     return transaction;
   }
@@ -169,8 +168,6 @@ export class Mines {
     const userInstance = await userManager.getUser(userId);
     const payoutMultiplier = this.rounds.at(-1)?.payoutMultiplier || 0;
     const payoutAmount = payoutMultiplier * this.bet.betAmount;
-
-    console.log('Payout amount:', payoutAmount);
 
     const { newBalance } = await editBetAndUpdateBalance({
       betId: this.bet.id,

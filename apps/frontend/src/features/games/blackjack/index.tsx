@@ -6,17 +6,15 @@ import GameTable from './components/GameTable';
 import useBlackjackStore from './store/blackjackStore';
 
 export default function Blackjack(): JSX.Element {
-  const { gameState } = useBlackjackStore();
-
   return (
-    <>
-      <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
+    <div className="container">
+      <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <BettingControls />
-        <div className="flex-1 bg-brand-stronger relative">
-          <GameTable isGameActive={gameState?.active || false} />
+        <div className="lg:flex-1 bg-brand-stronger relative">
+          <GameTable />
         </div>
       </div>
       <GameSettingsBar game={Games.BLACKJACK} />
-    </>
+    </div>
   );
 }

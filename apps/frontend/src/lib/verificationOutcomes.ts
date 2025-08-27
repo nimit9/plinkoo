@@ -3,6 +3,8 @@ import {
   convertFloatsToGameEvents,
   calculateMines,
 } from '@repo/common/game-utils/mines/utils.js';
+import { convertFloatsToGameEvents as convertFloatsToGameEventsForBlackjack } from '@repo/common/game-utils/blackjack/utils.js';
+
 import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
 import { calculateSelectedGems } from '@repo/common/game-utils/keno/utils.js';
 import { Games } from '@/const/games';
@@ -93,6 +95,24 @@ const kenoVerificationOutcomes = async ({
   return drawnNumbers;
 };
 
+const blackjackVerificationOutcomes = async ({
+  clientSeed,
+  serverSeed,
+  nonce,
+}: {
+  clientSeed: string;
+  serverSeed: string;
+  nonce: string;
+}): Promise<number[]> => {
+  const floats = await getGeneratedFloats({
+    count: 52,
+    seed: serverSeed,
+    message: `${clientSeed}:${nonce}`,
+  });
+  console.log('calculateHandValueWithSoft', floats);
+  return convertFloatsToGameEventsForBlackjack(floats);
+};
+
 export const getVerificationOutcome = async ({
   game,
   clientSeed,
@@ -115,6 +135,8 @@ export const getVerificationOutcome = async ({
       return minesVerificationOutcomes({ clientSeed, serverSeed, nonce, meta });
     case Games.KENO:
       return kenoVerificationOutcomes({ clientSeed, serverSeed, nonce });
+    case Games.BLACKJACK:
+      return blackjackVerificationOutcomes({ clientSeed, serverSeed, nonce });
     default:
       return '';
   }

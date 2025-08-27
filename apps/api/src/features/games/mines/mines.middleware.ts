@@ -30,8 +30,6 @@ export const validatePlayRoundRequest = async (
 
   const game = await minesManager.getGame(user.id);
 
-  console.log('game', game);
-
   if (!game?.getBet().active) {
     throw new BadRequestError('Game not found');
   }

@@ -38,8 +38,8 @@ function ProvablyFair(): JSX.Element {
         <ScaleIcon className="size-4 icon-neutral-weak" />
         <h2 className="font-semibold">Provably Fair</h2>
       </div>
-      <div className="grid grid-cols-12 gap-4 my-4 items-start">
-        <div className="flex flex-col col-span-2 bg-brand-stronger rounded-md py-2">
+      <div className="lg:grid grid-cols-6 gap-4 my-4 items-start">
+        <div className="lg:flex flex-col col-span-1 bg-brand-stronger rounded-md py-2 hidden">
           {provablyFairRoutes.map(route => (
             <Link key={route.path} to={route.path}>
               <p
@@ -56,7 +56,7 @@ function ProvablyFair(): JSX.Element {
             </Link>
           ))}
         </div>
-        <div className="w-full flex flex-col col-span-10 p-4 bg-brand-stronger rounded-md">
+        <div className="w-full flex flex-col col-span-5 p-2 lg:p-4 bg-brand-stronger rounded-md">
           <Outlet />
         </div>
       </div>

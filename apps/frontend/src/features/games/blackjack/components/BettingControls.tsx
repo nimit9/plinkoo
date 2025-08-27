@@ -92,7 +92,7 @@ function BettingControls(): JSX.Element {
   });
 
   return (
-    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
+    <div className="w-full lg:w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
       <div className="flex flex-col gap-2">
         <BetAmountInput
           betAmount={betAmount}

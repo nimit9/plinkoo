@@ -37,7 +37,7 @@ function RouletteResultBreakdown({
   });
 
   const { data: outcome } = useQuery({
-    queryKey: ['result', serverSeed, clientSeed, nonce],
+    queryKey: ['result-roulette', serverSeed, clientSeed, nonce],
     queryFn: async () => {
       const result = await getGeneratedFloats({
         count: 1,
@@ -133,7 +133,7 @@ function RouletteResultBreakdown({
             <span className="col-span-1 font-medium">=</span>
             <span className="font-semibold col-span-5 place-self-end grid grid-cols-14 gap-[0.5px]">
               {outcome
-                .toFixed(12)
+                ?.toFixed(12)
                 .split('')
                 .map((char, charIndex) => (
                   <div

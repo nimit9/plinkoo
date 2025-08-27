@@ -51,4 +51,8 @@ export const GAMES_DROPDOWN_OPTIONS = [
     label: GAME_VALUES_MAPPING[Games.KENO].label,
     value: Games.KENO,
   },
+  {
+    label: GAME_VALUES_MAPPING[Games.BLACKJACK].label,
+    value: Games.BLACKJACK,
+  },
 ];

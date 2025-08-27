@@ -47,7 +47,7 @@ function MinesResultBreakdown({
   });
 
   const { data: floats } = useQuery({
-    queryKey: ['result', serverSeed, clientSeed, nonce, minesCount],
+    queryKey: ['result-mines', serverSeed, clientSeed, nonce, minesCount],
     queryFn: async () => {
       const result = await getGeneratedFloats({
         count: NO_OF_TILES - 1,
