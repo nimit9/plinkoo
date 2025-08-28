@@ -1,7 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { Balance } from './Balance';
+import { getAuthState } from '@/features/auth/store/authStore';
 
 export function Header(): JSX.Element {
+  const { user } = getAuthState();
   return (
     <header className="w-full bg-brand-default lg:px-4 py-2.5 shadow-xl">
       <div className="container mx-auto flex items-center justify-between">
@@ -17,7 +19,7 @@ export function Header(): JSX.Element {
             src="/sim-casino-mini-logo.png"
           />
         </Link>
-        <Balance />
+        {user ? <Balance /> : null}
       </div>
     </header>
   );

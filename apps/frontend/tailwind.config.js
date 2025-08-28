@@ -1,7 +1,7 @@
 const plugin = require('tailwindcss/plugin');
 
 const iconTokens = {
-  'neutral-weak': '#557086',
+  'neutral-weakest': '#557086',
   'neutral-weaker': '#2f4553',
   'neutral-weak': '#b1b4d3',
   'neutral-default': '#fff',

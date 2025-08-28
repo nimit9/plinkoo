@@ -16,7 +16,6 @@ function ProvablyFairCalculation(): JSX.Element {
     GAMES_DROPDOWN_OPTIONS[0].value
   );
 
-  console.log('outcome', outcome);
   const [verificationInputs, setVerificationInputs] =
     useState<VerificationInputsState | null>(null);
 
@@ -69,7 +68,7 @@ function ProvablyFairCalculation(): JSX.Element {
     }
   };
   return (
-    <div className="w-full md:w-3/5 mx-auto">
+    <div className="w-full px-2 lg:w-3/5 mx-auto">
       <div className="flex flex-col gap-2">
         <CommonSelect
           label="Game"

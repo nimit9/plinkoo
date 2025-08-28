@@ -22,11 +22,11 @@ const Slider = React.forwardRef<
           asChild
           className="focus-visible:outline-none mr-2"
         >
-          <div className="relative min-w-[60px] min-h-[60px]">
+          <div className="relative size-[48px] lg:size-[60px]">
             <img alt="Result Dice" src="/games/dice/result-dice.png" />
             <div
               className={cn(
-                'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-sm',
+                'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xs lg:text-sm',
                 success ? 'text-green-600' : 'text-red-600'
               )}
             >

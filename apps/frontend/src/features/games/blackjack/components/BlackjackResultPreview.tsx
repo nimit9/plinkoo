@@ -12,8 +12,6 @@ const BlackjackResultPreview = ({ result }: { result: number[] }) => {
   const dealerCards = [CARD_DECK[result[2]], CARD_DECK[result[3]]];
   const remainingCards = result.slice(4).map(index => CARD_DECK[index]);
 
-  console.log('BlackjackResultPreview', dealerCards, result);
-
   const { rightPosition, centerOffset } = calculateCardPosition({
     totalCards: 2,
     viewportType,

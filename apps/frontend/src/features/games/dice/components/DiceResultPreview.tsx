@@ -3,7 +3,7 @@ import { Slider as ResultSlider } from '@/components/ui/dice-result-slider';
 
 function DiceResultPreview({ result }: { result: number }): JSX.Element {
   return (
-    <div className="w-full">
+    <div className="w-full py-6">
       <div className="flex items-center justify-between w-full gap-2 pl-6 pr-4">
         {[0, 25, 50, 75, 100].map(value => (
           <div className="font-semibold text-xs" key={value}>

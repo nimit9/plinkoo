@@ -8,6 +8,7 @@ import InactiveGameTile from '@/features/games/mines/components/InactiveGameTile
 import VerificationResultKenoTile from '@/features/games/keno/components/VerificationResultKenoTile';
 import BlackjackResultPreview from '@/features/games/blackjack/components/BlackjackResultPreview';
 import { cn } from '@/lib/utils';
+import { ViewportType } from '@/common/hooks/useViewportType';
 function VerificationResult({
   game,
   outcome,
@@ -70,7 +71,11 @@ function VerificationResult({
         );
       }
       case Games.BLACKJACK:
-        if (typeof outcome === 'string' || !outcome || outcome.length === 52)
+        if (
+          typeof outcome === 'string' ||
+          !outcome ||
+          (Array.isArray(outcome) && outcome.length !== 52)
+        )
           return <>{null}</>;
         return <BlackjackResultPreview result={outcome} />;
 
