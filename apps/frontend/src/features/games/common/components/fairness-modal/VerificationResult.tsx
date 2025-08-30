@@ -57,7 +57,7 @@ function VerificationResult({
       case Games.KENO: {
         if (typeof outcome === 'string' || !outcome) return <>{null}</>;
         return (
-          <div className="inline-grid grid-cols-8 mx-auto justify-items-center gap-2.5 -my-12 py-2">
+          <div className="grid grid-cols-8 mx-auto justify-items-center gap-2.5 py-2">
             {Array.from({ length: NO_OF_TILES_KENO }, (_, i) => i).map(
               number => (
                 <VerificationResultKenoTile
@@ -89,6 +89,7 @@ function VerificationResult({
       className={cn(
         'border border-brand-weaker border-dashed rounded-lg p-3 lg:py-12 relative overflow-hidden flex justify-center',
         { 'lg:py-6': game === Games.BLACKJACK }
+        // {''}
       )}
     >
       {outcome ? (

@@ -177,7 +177,10 @@ export class Mines {
       data: {
         payoutAmount,
         active: false,
-        state: this.bet.state || {},
+        state: {
+          ...(this.bet.state as unknown as MinesRevealedState),
+          rounds: this.rounds,
+        },
       },
     });
     return {

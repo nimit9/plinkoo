@@ -1,6 +1,20 @@
-export const KenoRiskDropdown = [
-  { value: 'classic', label: 'Classic' },
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
-];
+export enum KenoRisk {
+  CLASSIC = 'classic',
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+}
+
+export const KenoRiskLabels: Record<KenoRisk, string> = {
+  [KenoRisk.CLASSIC]: 'Classic',
+  [KenoRisk.LOW]: 'Low',
+  [KenoRisk.MEDIUM]: 'Medium',
+  [KenoRisk.HIGH]: 'High',
+};
+
+export const KenoRiskDropdown = Object.entries(KenoRiskLabels).map(
+  ([value, label]) => ({
+    value: value as KenoRisk,
+    label,
+  })
+);
