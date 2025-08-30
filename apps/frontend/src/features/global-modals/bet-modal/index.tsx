@@ -28,6 +28,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import ProvablyFair from './provably-fair';
+import GameViz from './game-viz';
 
 const BetModal = ({ iid, modal }: { iid?: number; modal?: GLOBAL_MODAL }) => {
   const [open, setOpen] = React.useState(!!(iid && modal === GLOBAL_MODAL.BET));
@@ -161,6 +162,7 @@ const BetModal = ({ iid, modal }: { iid?: number; modal?: GLOBAL_MODAL }) => {
                   </span>
                 </div>
               </div>
+              <GameViz bet={bet} />
               <Link to={`/casino/games/${bet.game}`}>
                 <Button className="rounded-sm bg-brand-weaker text-primary hover:bg-brand-weakest px-5 py-4 h-10 font-medium text-xs">
                   Play {GAME_VALUES_MAPPING[bet.game as Game].label}

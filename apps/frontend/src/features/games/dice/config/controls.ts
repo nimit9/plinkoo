@@ -28,9 +28,15 @@ export interface RollControl extends BaseControl {
 
 export type GameControl = NumericControl | RollControl;
 
+export enum GameControlIds {
+  MULTIPLIER = 'multiplier',
+  WIN_CHANCE = 'winChance',
+  ROLL = 'roll',
+}
+
 export const diceGameControls: GameControl[] = [
   {
-    id: 'multiplier',
+    id: GameControlIds.MULTIPLIER,
     type: 'numeric',
     label: 'Multiplier',
     icon: XIcon,
@@ -47,7 +53,7 @@ export const diceGameControls: GameControl[] = [
       }`,
   },
   {
-    id: 'roll',
+    id: GameControlIds.ROLL,
     type: 'roll',
     label: 'Roll',
     icon: RefreshCw,
@@ -58,7 +64,7 @@ export const diceGameControls: GameControl[] = [
     },
   },
   {
-    id: 'winChance',
+    id: GameControlIds.WIN_CHANCE,
     type: 'numeric',
     label: 'Win chance',
     icon: Percent,

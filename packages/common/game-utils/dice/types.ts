@@ -5,7 +5,7 @@ export type DiceCondition = 'above' | 'below';
 
 export type DicePlaceBetRequestBody = z.infer<typeof placeBetSchema>;
 
-export interface DicePlaceBetResponseState {
+export interface DiceState {
   target: number;
   condition: DiceCondition;
   result: number;
@@ -13,7 +13,7 @@ export interface DicePlaceBetResponseState {
 
 export interface DicePlaceBetResponse {
   id: string;
-  state: DicePlaceBetResponseState;
+  state: DiceState;
   payoutMultiplier: number;
   payout: number;
   balance: number;

@@ -1,6 +1,8 @@
 import { Slider as ResultSlider } from '@/components/ui/dice-result-slider';
 import { Slider } from '@/components/ui/dice-slider';
 import useDiceStore from '../store/diceStore';
+import DiceSlideNumbers from './DiceSlideNumbers';
+import DiceResultSlide from './DiceResultSlide';
 
 interface DiceSliderProps {
   handleValueChange: (value: number[]) => void;
@@ -12,15 +14,11 @@ function DiceSlider({
   showResultSlider,
 }: DiceSliderProps): JSX.Element {
   const { target, condition, results } = useDiceStore();
+  const lastResult = results.at(-1);
+
   return (
     <>
-      <div className="flex items-center justify-between w-full gap-2 pl-6 pr-4">
-        {[0, 25, 50, 75, 100].map(value => (
-          <div className="font-semibold" key={value}>
-            {value}
-          </div>
-        ))}
-      </div>
+      <DiceSlideNumbers />
       <div className="border-input-disabled border-[10px] p-2 rounded-full relative">
         <Slider
           condition={condition}
@@ -28,19 +26,11 @@ function DiceSlider({
           step={1}
           value={[target]}
         />
-        {showResultSlider && results.at(-1)?.state.result ? (
-          <div className="absolute w-full -top-6 transition-transform animate-slideInLeft">
-            {(() => {
-              const lastResult = results.at(-1);
-              if (!lastResult) return null;
-              return (
-                <ResultSlider
-                  success={lastResult.payoutMultiplier > 0}
-                  value={[lastResult.state.result]}
-                />
-              );
-            })()}
-          </div>
+        {showResultSlider && lastResult?.state.result ? (
+          <DiceResultSlide
+            success={lastResult.payoutMultiplier > 0}
+            value={[lastResult.state.result]}
+          />
         ) : null}
       </div>
     </>

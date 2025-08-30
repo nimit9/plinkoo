@@ -12,6 +12,8 @@ import type {
   RollControl,
 } from '../config/controls';
 import type { DiceStore } from '../store/diceStore';
+import RollInput from './RollInput';
+import NumericInput from './NumericInput';
 
 interface GameControlsProps {
   controls: GameControl[];
@@ -30,43 +32,23 @@ function NumericControlInput({
   const Icon = control.icon;
 
   return (
-    <div className="flex-1">
-      <Label className="pl-px text-xs font-semibold">{control.label}</Label>
-      <TooltipProvider>
-        <Tooltip delayDuration={0}>
-          {!isValid && (
-            <TooltipTrigger>
-              <InputWithIcon
-                icon={<Icon className="text-gray-500 w-5 h-5" />}
-                min={control.min}
-                onChange={e => {
-                  control.setValue(state, Number(e.target.value));
-                }}
-                step={control.step}
-                type="number"
-                value={value}
-                wrapperClassName="border-red-500 hover:border-red-500"
-              />
-            </TooltipTrigger>
-          )}
-          <TooltipContent className="text-xs p-3 font-semibold" sideOffset={10}>
-            <p>{control.getValidationMessage(value)}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      {isValid ? (
-        <InputWithIcon
-          icon={<Icon className="text-gray-500 w-5 h-5" />}
-          min={control.min}
-          onChange={e => {
-            control.setValue(state, Number(e.target.value));
-          }}
-          step={control.step}
-          type="number"
-          value={value}
-        />
-      ) : null}
-    </div>
+    <NumericInput
+      isValid={isValid}
+      label={control.label}
+      min={control.min}
+      max={control.max}
+      step={control.step}
+      value={value}
+      onChange={e => {
+        control.setValue(state, Number(e.target.value));
+      }}
+      icon={Icon}
+      tooltipContent={
+        <TooltipContent className="text-xs p-3 font-semibold" sideOffset={10}>
+          <p>{control.getValidationMessage(value)}</p>
+        </TooltipContent>
+      }
+    />
   );
 }
 
@@ -82,27 +64,20 @@ function RollControlInput({
   const Icon = control.icon;
 
   return (
-    <div className="flex-1">
-      <Label className="pl-px font-semibold">
-        {control.label} {condition === 'above' ? 'Over' : 'Under'}
-      </Label>
-      <div
-        className="bg-background h-10 w-full rounded flex items-center justify-between px-3 text-sm cursor-pointer border-2 border-brand-weaker"
-        onClick={() => {
+    <RollInput
+      label={control.label}
+      condition={condition}
+      onClick={() => {
+        control.onToggle(state);
+      }}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
           control.onToggle(state);
-        }}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            control.onToggle(state);
-          }
-        }}
-        role="button"
-        tabIndex={0}
-      >
-        <span>{value}</span>
-        <Icon className="text-gray-500 w-5 h-5 cursor-pointer" />
-      </div>
-    </div>
+        }
+      }}
+      value={value}
+      icon={Icon}
+    />
   );
 }
 
