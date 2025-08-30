@@ -61,7 +61,7 @@ class MinesManager {
     const transaction = await createBetTransaction({
       active: true,
       betAmount,
-      game: 'dice',
+      game: 'mines',
       gameState: { mines, minesCount, rounds: [] },
       userInstance,
     });

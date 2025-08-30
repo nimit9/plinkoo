@@ -4,6 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface CommonTooltipProps {
   children: React.ReactNode;
@@ -11,6 +12,8 @@ interface CommonTooltipProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   forceHide?: boolean;
+  contentClassName?: string;
+  arrowClassName?: string;
 }
 
 function CommonTooltip({
@@ -21,6 +24,8 @@ function CommonTooltip({
     void 0;
   },
   forceHide = false,
+  contentClassName,
+  arrowClassName,
 }: CommonTooltipProps): JSX.Element {
   if (forceHide) {
     return <>{children}</>;
@@ -33,7 +38,13 @@ function CommonTooltip({
         }}
       >
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className="font-medium bg-brand-weak text-neutral-default">
+        <TooltipContent
+          className={cn(
+            'font-medium bg-brand-weak text-neutral-default',
+            contentClassName
+          )}
+          arrowClassName={arrowClassName}
+        >
           {content}
         </TooltipContent>
       </Tooltip>

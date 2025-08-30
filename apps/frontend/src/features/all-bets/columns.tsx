@@ -6,6 +6,7 @@ import { format, isValid } from 'date-fns';
 import { GAME_VALUES_MAPPING } from '@/const/games';
 import { cn } from '@/lib/utils';
 import { BetsTableColumns } from '@/const/tables';
+import { GLOBAL_MODAL } from '../global-modals/types';
 
 export const columns: ColumnDef<PaginatedBetData>[] = [
   {
@@ -19,7 +20,13 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
         ];
 
       return (
-        <Link to={game.path}>
+        <Link
+          to={window.location.pathname}
+          search={{
+            modal: GLOBAL_MODAL.BET,
+            iid: Number(row.original.betId),
+          }}
+        >
           <div className="flex items-center gap-2 font-semibold group hover:cursor-pointer">
             {'icon' in game && (
               <game.icon className="size-3 icon-neutral-weak group-hover:icon-neutral-default" />
@@ -101,7 +108,7 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
           className={cn(
             'text-neutral-weak font-medium flex items-center gap-1 justify-end',
             {
-              'text-green-500': row.original.payout > 0,
+              'text-[#00e701]': row.original.payout > 0,
             }
           )}
         >

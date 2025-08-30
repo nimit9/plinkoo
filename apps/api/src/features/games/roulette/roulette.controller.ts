@@ -35,7 +35,7 @@ export const placeBetAndSpin = async (
   const transaction = await createBetTransaction({
     betAmount: betAmountInCents,
     userInstance,
-    game: 'dice',
+    game: 'roulette',
     gameState,
     payoutAmount: payoutInCents, // Convert to dollars
     active: false,

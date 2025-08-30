@@ -1,8 +1,8 @@
-import type { PaginatedBetData } from '@repo/common/types';
+import type { BetData, PaginatedBetData } from '@repo/common/types';
 import { ApiResponse } from '@repo/common/types';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { getTopBets } from './bets.service';
+import { getBetById, getTopBets } from './bets.service';
 
 export const getBets = async (
   req: Request,
@@ -14,4 +14,15 @@ export const getBets = async (
   res
     .status(StatusCodes.OK)
     .json(new ApiResponse(StatusCodes.OK, paginatedBets));
+};
+
+export const getBet = async (
+  req: Request,
+  res: Response<ApiResponse<{ bet: BetData | null }>>
+) => {
+  const { betId } = req.params;
+
+  const bet = await getBetById(betId);
+
+  res.status(StatusCodes.OK).json(new ApiResponse(StatusCodes.OK, { bet }));
 };

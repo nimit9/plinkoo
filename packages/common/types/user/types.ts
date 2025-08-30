@@ -29,6 +29,27 @@ export interface PaginatedBetData {
   };
 }
 
+export interface BetData {
+  betId: string;
+  game: string;
+  date: Date;
+  betAmount: number;
+  payoutMultiplier: number;
+  payout: number;
+  id: string;
+  user?: {
+    id: string;
+    name: string | null;
+  };
+  provablyFairState?: {
+    clientSeed: string;
+    hashedServerSeed: string;
+    serverSeed?: string;
+    nonce: number;
+  };
+  gameState: any;
+}
+
 export interface PaginatedBetsResponse {
   bets: PaginatedBetData[];
   pagination: {

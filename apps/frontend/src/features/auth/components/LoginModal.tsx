@@ -32,7 +32,7 @@ export function LoginModal(): JSX.Element {
 
   return (
     <Dialog onOpenChange={hideLoginModal} open={isModalOpen}>
-      <DialogContent className="max-w-[320px] sm:max-w-md">
+      <DialogContent className="max-w-[320px] sm:max-w-md flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-center">
             Welcome to SimCasino

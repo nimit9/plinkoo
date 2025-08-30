@@ -13,6 +13,8 @@ function MyBetsTable(): JSX.Element {
   });
   const viewport = useViewportType();
 
+  const tableColumns = columns(viewport);
+
   const { data } = useQuery({
     queryKey: ['my-bets', pagination],
     queryFn: () =>
@@ -24,12 +26,12 @@ function MyBetsTable(): JSX.Element {
   });
 
   const usedColumns = betsTableViewportWiseColumns[viewport]
-    ? columns.filter(col =>
+    ? tableColumns.filter(col =>
         betsTableViewportWiseColumns[viewport]?.includes(
           col.id as BetsTableColumns
         )
       )
-    : columns;
+    : tableColumns;
 
   return (
     <CommonDataTable

@@ -30,7 +30,7 @@ export const placeBet = async (
   const transaction = await createBetTransaction({
     betAmount: betAmountInCents,
     userInstance,
-    game: 'dice',
+    game: 'keno',
     gameState: result.state,
     payoutAmount: payoutInCents, // Convert to dollars
     active: false,
