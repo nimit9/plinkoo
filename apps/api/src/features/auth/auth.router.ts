@@ -81,7 +81,7 @@ router.post('/register', async (req, res) => {
 router.get('/logout', (req, res, next) => {
   req.logout(err => {
     if (err) next(err);
-    res.redirect('/auth');
+    res.json({ message: 'Logged out successfully' });
   });
 });
 

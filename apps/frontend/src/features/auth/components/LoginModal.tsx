@@ -18,7 +18,9 @@ export function LoginModal(): JSX.Element {
     localStorage.setItem('auth_redirect', currentUrl);
 
     // Redirect to Google OAuth endpoint
-    window.location.href = 'http://localhost:5000/api/v1/auth/google';
+    window.location.href =
+      'http://localhost:5000/api/v1/auth/google?redirect_to=' +
+      encodeURIComponent(currentUrl);
   };
 
   // Close the modal when user becomes authenticated

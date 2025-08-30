@@ -15,7 +15,7 @@ const CARD_TOP_OFFSET = {
 const CARD_LEFT_OFFSET = {
   [ViewportType.Mobile]: 24,
   [ViewportType.Tablet]: 24,
-  [ViewportType.Desktop]: 40,
+  [ViewportType.Desktop]: 50,
 };
 
 export const calculateCardPosition = ({

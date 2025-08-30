@@ -16,6 +16,7 @@ import { Route as ProtectedImport } from './routes/_protected'
 import { Route as PublicIndexImport } from './routes/_public/index'
 import { Route as PublicProvablyFairImport } from './routes/_public/provably-fair'
 import { Route as PublicLoginImport } from './routes/_public/login'
+import { Route as ProtectedMyBetsImport } from './routes/_protected/my-bets'
 import { Route as ProtectedCasinoImport } from './routes/_protected/casino'
 import { Route as PublicProvablyFairIndexImport } from './routes/_public/provably-fair/index'
 import { Route as PublicProvablyFairUnhashServerSeedImport } from './routes/_public/provably-fair/unhash-server-seed'
@@ -24,7 +25,6 @@ import { Route as PublicProvablyFairImplementationImport } from './routes/_publi
 import { Route as PublicProvablyFairGameEventsImport } from './routes/_public/provably-fair/game-events'
 import { Route as PublicProvablyFairConversionsImport } from './routes/_public/provably-fair/conversions'
 import { Route as PublicProvablyFairCalculationImport } from './routes/_public/provably-fair/calculation'
-import { Route as ProtectedCasinoMyBetsImport } from './routes/_protected/casino/my-bets'
 import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino/home'
 import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino/games'
 import { Route as ProtectedCasinoGamesGameIdImport } from './routes/_protected/casino/games/$gameId'
@@ -57,6 +57,12 @@ const PublicLoginRoute = PublicLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
+} as any)
+
+const ProtectedMyBetsRoute = ProtectedMyBetsImport.update({
+  id: '/my-bets',
+  path: '/my-bets',
+  getParentRoute: () => ProtectedRoute,
 } as any)
 
 const ProtectedCasinoRoute = ProtectedCasinoImport.update({
@@ -114,12 +120,6 @@ const PublicProvablyFairCalculationRoute =
     getParentRoute: () => PublicProvablyFairRoute,
   } as any)
 
-const ProtectedCasinoMyBetsRoute = ProtectedCasinoMyBetsImport.update({
-  id: '/my-bets',
-  path: '/my-bets',
-  getParentRoute: () => ProtectedCasinoRoute,
-} as any)
-
 const ProtectedCasinoHomeRoute = ProtectedCasinoHomeImport.update({
   id: '/home',
   path: '/home',
@@ -165,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedCasinoImport
       parentRoute: typeof ProtectedImport
     }
+    '/_protected/my-bets': {
+      id: '/_protected/my-bets'
+      path: '/my-bets'
+      fullPath: '/my-bets'
+      preLoaderRoute: typeof ProtectedMyBetsImport
+      parentRoute: typeof ProtectedImport
+    }
     '/_public/login': {
       id: '/_public/login'
       path: '/login'
@@ -198,13 +205,6 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/casino/home'
       preLoaderRoute: typeof ProtectedCasinoHomeImport
-      parentRoute: typeof ProtectedCasinoImport
-    }
-    '/_protected/casino/my-bets': {
-      id: '/_protected/casino/my-bets'
-      path: '/my-bets'
-      fullPath: '/casino/my-bets'
-      preLoaderRoute: typeof ProtectedCasinoMyBetsImport
       parentRoute: typeof ProtectedCasinoImport
     }
     '/_public/provably-fair/calculation': {
@@ -282,13 +282,11 @@ const ProtectedCasinoGamesRouteWithChildren =
 interface ProtectedCasinoRouteChildren {
   ProtectedCasinoGamesRoute: typeof ProtectedCasinoGamesRouteWithChildren
   ProtectedCasinoHomeRoute: typeof ProtectedCasinoHomeRoute
-  ProtectedCasinoMyBetsRoute: typeof ProtectedCasinoMyBetsRoute
 }
 
 const ProtectedCasinoRouteChildren: ProtectedCasinoRouteChildren = {
   ProtectedCasinoGamesRoute: ProtectedCasinoGamesRouteWithChildren,
   ProtectedCasinoHomeRoute: ProtectedCasinoHomeRoute,
-  ProtectedCasinoMyBetsRoute: ProtectedCasinoMyBetsRoute,
 }
 
 const ProtectedCasinoRouteWithChildren = ProtectedCasinoRoute._addFileChildren(
@@ -297,10 +295,12 @@ const ProtectedCasinoRouteWithChildren = ProtectedCasinoRoute._addFileChildren(
 
 interface ProtectedRouteChildren {
   ProtectedCasinoRoute: typeof ProtectedCasinoRouteWithChildren
+  ProtectedMyBetsRoute: typeof ProtectedMyBetsRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedCasinoRoute: ProtectedCasinoRouteWithChildren,
+  ProtectedMyBetsRoute: ProtectedMyBetsRoute,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
@@ -349,12 +349,12 @@ const PublicRouteWithChildren =
 export interface FileRoutesByFullPath {
   '': typeof PublicRouteWithChildren
   '/casino': typeof ProtectedCasinoRouteWithChildren
+  '/my-bets': typeof ProtectedMyBetsRoute
   '/login': typeof PublicLoginRoute
   '/provably-fair': typeof PublicProvablyFairRouteWithChildren
   '/': typeof PublicIndexRoute
   '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
   '/casino/home': typeof ProtectedCasinoHomeRoute
-  '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute
   '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
   '/provably-fair/conversions': typeof PublicProvablyFairConversionsRoute
   '/provably-fair/game-events': typeof PublicProvablyFairGameEventsRoute
@@ -368,11 +368,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '': typeof ProtectedRouteWithChildren
   '/casino': typeof ProtectedCasinoRouteWithChildren
+  '/my-bets': typeof ProtectedMyBetsRoute
   '/login': typeof PublicLoginRoute
   '/': typeof PublicIndexRoute
   '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
   '/casino/home': typeof ProtectedCasinoHomeRoute
-  '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute
   '/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
   '/provably-fair/conversions': typeof PublicProvablyFairConversionsRoute
   '/provably-fair/game-events': typeof PublicProvablyFairGameEventsRoute
@@ -388,12 +388,12 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_protected/casino': typeof ProtectedCasinoRouteWithChildren
+  '/_protected/my-bets': typeof ProtectedMyBetsRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/provably-fair': typeof PublicProvablyFairRouteWithChildren
   '/_public/': typeof PublicIndexRoute
   '/_protected/casino/games': typeof ProtectedCasinoGamesRouteWithChildren
   '/_protected/casino/home': typeof ProtectedCasinoHomeRoute
-  '/_protected/casino/my-bets': typeof ProtectedCasinoMyBetsRoute
   '/_public/provably-fair/calculation': typeof PublicProvablyFairCalculationRoute
   '/_public/provably-fair/conversions': typeof PublicProvablyFairConversionsRoute
   '/_public/provably-fair/game-events': typeof PublicProvablyFairGameEventsRoute
@@ -409,12 +409,12 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/casino'
+    | '/my-bets'
     | '/login'
     | '/provably-fair'
     | '/'
     | '/casino/games'
     | '/casino/home'
-    | '/casino/my-bets'
     | '/provably-fair/calculation'
     | '/provably-fair/conversions'
     | '/provably-fair/game-events'
@@ -427,11 +427,11 @@ export interface FileRouteTypes {
   to:
     | ''
     | '/casino'
+    | '/my-bets'
     | '/login'
     | '/'
     | '/casino/games'
     | '/casino/home'
-    | '/casino/my-bets'
     | '/provably-fair/calculation'
     | '/provably-fair/conversions'
     | '/provably-fair/game-events'
@@ -445,12 +445,12 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_public'
     | '/_protected/casino'
+    | '/_protected/my-bets'
     | '/_public/login'
     | '/_public/provably-fair'
     | '/_public/'
     | '/_protected/casino/games'
     | '/_protected/casino/home'
-    | '/_protected/casino/my-bets'
     | '/_public/provably-fair/calculation'
     | '/_public/provably-fair/conversions'
     | '/_public/provably-fair/game-events'
@@ -489,7 +489,8 @@ export const routeTree = rootRoute
     "/_protected": {
       "filePath": "_protected.tsx",
       "children": [
-        "/_protected/casino"
+        "/_protected/casino",
+        "/_protected/my-bets"
       ]
     },
     "/_public": {
@@ -505,9 +506,12 @@ export const routeTree = rootRoute
       "parent": "/_protected",
       "children": [
         "/_protected/casino/games",
-        "/_protected/casino/home",
-        "/_protected/casino/my-bets"
+        "/_protected/casino/home"
       ]
+    },
+    "/_protected/my-bets": {
+      "filePath": "_protected/my-bets.tsx",
+      "parent": "/_protected"
     },
     "/_public/login": {
       "filePath": "_public/login.tsx",
@@ -539,10 +543,6 @@ export const routeTree = rootRoute
     },
     "/_protected/casino/home": {
       "filePath": "_protected/casino/home.tsx",
-      "parent": "/_protected/casino"
-    },
-    "/_protected/casino/my-bets": {
-      "filePath": "_protected/casino/my-bets.tsx",
       "parent": "/_protected/casino"
     },
     "/_public/provably-fair/calculation": {

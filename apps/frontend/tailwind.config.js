@@ -8,6 +8,7 @@ const iconTokens = {
   'neutral-strong': '#1a2c38',
   'neutral-stronger': '#0f212e',
   'neutral-strongest': '#071824',
+  'primary-foreground': 'hsl(var(--primary-foreground))',
 };
 
 /** @type {import('tailwindcss').Config} */
