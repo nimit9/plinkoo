@@ -13,6 +13,7 @@ import type {
 import db from '@repo/db';
 import { userManager } from '../../user/user.service';
 import { blackjackManager } from './blackjack.service';
+import { NotFoundError } from '../../../errors';
 
 export const placeBet = async (
   req: Request,
@@ -91,9 +92,7 @@ export const getActiveGame = async (
   const balance = userInstance.getBalance();
 
   if (!game || !game.getBet().active) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json(new ApiResponse(StatusCodes.NOT_FOUND, {}, 'Game not found'));
+    throw new NotFoundError('Game not found');
   }
 
   return res
@@ -110,9 +109,7 @@ export const blackjackNext = async (
   const game = await blackjackManager.getGame(userId);
 
   if (!game?.getBet().active) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Game not found'));
+    throw new NotFoundError('Game not found');
   }
 
   const moneySpent = game.playRound(action as BlackjackActions);

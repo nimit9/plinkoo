@@ -8,10 +8,8 @@ import type {
   MinesHiddenState,
   MinesPlayRoundResponse,
 } from '@repo/common/game-utils/mines/types.js';
-import { userManager } from '../../user/user.service';
 import { minesManager } from './mines.service';
-import { formatGameResponse } from '../../../utils/game.utils';
-import { BadRequestError } from '../../../errors';
+import { BadRequestError, NotFoundError } from '../../../errors';
 import { minorToAmount } from '../../../utils/bet.utils';
 
 export const startGame = async (
@@ -73,9 +71,7 @@ export const cashOut = async (
   const userId = (req.user as User).id;
   const game = await minesManager.getGame(userId);
   if (!game?.getBet().active) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json(new ApiResponse(StatusCodes.BAD_REQUEST, {}, 'Game not found'));
+    throw new NotFoundError('Game not found');
   }
 
   const gameState = await game.cashOut(userId);
@@ -95,17 +91,13 @@ export const getActiveGame = async (
   const game = await minesManager.getGame(userId);
 
   if (!game) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json(new ApiResponse(StatusCodes.NOT_FOUND, {}, 'Game not found'));
+    throw new NotFoundError('Game not found');
   }
 
   const activeBet = game.getBet();
 
   if (!activeBet.active || !activeBet.state) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json(new ApiResponse(StatusCodes.NOT_FOUND, {}, 'Game not found'));
+    throw new NotFoundError('Game not found');
   }
 
   return res.status(StatusCodes.OK).json(
