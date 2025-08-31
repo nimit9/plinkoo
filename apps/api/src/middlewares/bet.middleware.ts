@@ -20,20 +20,6 @@ export interface BetValidationMiddlewareOptions {
 }
 
 /**
- * Middleware to validate user authentication
- */
-export const requireAuth = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (!req.user) {
-    throw new UnAuthenticatedError('Authentication required');
-  }
-  next();
-};
-
-/**
  * Middleware to validate bet amount and user balance
  */
 export const validateBet = async (

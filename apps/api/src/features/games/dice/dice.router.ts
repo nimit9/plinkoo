@@ -1,16 +1,16 @@
 import { Router } from 'express';
 import {
   validateBet,
-  requireAuth,
   validateGameConstraints,
 } from '../../../middlewares/bet.middleware';
 import { placeBet } from './dice.controller';
+import { isAuthenticated } from '../../../middlewares/auth.middleware';
 
 const diceRouter: Router = Router();
 
 diceRouter.post(
   '/place-bet',
-  requireAuth,
+  isAuthenticated,
   validateBet,
   validateGameConstraints({ minBetAmount: 0.01 }),
   placeBet
