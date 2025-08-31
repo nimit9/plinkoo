@@ -225,6 +225,7 @@ export const getUserBets = async ({
   const bets = await db.bet.findMany({
     where: {
       userId,
+      active: false,
     },
     orderBy: {
       createdAt: 'desc',

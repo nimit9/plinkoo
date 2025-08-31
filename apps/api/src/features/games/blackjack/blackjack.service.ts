@@ -16,6 +16,7 @@ import type {
 } from '@repo/common/game-utils/blackjack/types.js';
 import type { UserInstance } from '../../user/user.service';
 import { userManager } from '../../user/user.service';
+import { InputJsonObject } from '@prisma/client/runtime/library';
 
 interface GameCreationParams {
   userId: string;
@@ -55,7 +56,7 @@ class BlackjackManager {
     const gameEvents = this.generateGameEvents(userInstance);
 
     const bet = await this.createBetTransaction(userInstance, betAmount);
-    const game = new BlackjackGame({ bet, gameEvents });
+    const game = new BlackjackGame({ bet, gameEvents, isNew: true });
 
     this.games.set(bet.userId, game);
     return game;
@@ -70,7 +71,7 @@ class BlackjackManager {
   private async createGameFromBet(bet: Bet): Promise<BlackjackGame> {
     const userInstance = await userManager.getUser(bet.userId);
     const gameEvents = this.generateGameEvents(userInstance);
-    return new BlackjackGame({ bet, gameEvents });
+    return new BlackjackGame({ bet, gameEvents, isNew: false });
   }
 
   private generateGameEvents(userInstance: UserInstance): number[] {
@@ -114,10 +115,22 @@ class BlackjackGame {
   private payout = 0;
   private active = false;
 
-  constructor({ bet, gameEvents }: { bet: Bet; gameEvents: number[] }) {
+  constructor({
+    bet,
+    gameEvents,
+    isNew,
+  }: {
+    bet: Bet;
+    gameEvents: number[];
+    isNew: boolean;
+  }) {
     this.bet = bet;
     this.gameEvents = gameEvents;
-    this.gameState = createInitialGameState(gameEvents);
+    if (isNew) {
+      this.gameState = createInitialGameState(gameEvents);
+    } else {
+      this.gameState = bet.state as unknown as BlackjackGameState;
+    }
     this.active = true;
     if (this.isPlayerTurnComplete()) {
       this.resolveGame();
@@ -154,12 +167,12 @@ class BlackjackGame {
     where: { id: string };
     data:
       | {
-          state: BlackjackActions[][];
+          state: InputJsonObject;
         }
       | {
           active: false;
           payoutAmount: number;
-          state: BlackjackActions[][];
+          state: InputJsonObject;
         };
   } {
     const playerActions = this.gameState.player.map(hand => hand.actions);
@@ -172,7 +185,7 @@ class BlackjackGame {
       return {
         where: { id: this.bet.id },
         data: {
-          state: playerActions,
+          state: this.gameState as unknown as InputJsonObject,
         },
       };
     }
@@ -181,7 +194,7 @@ class BlackjackGame {
       data: {
         active: false,
         payoutAmount: this.payout,
-        state: playerActions,
+        state: this.gameState as unknown as InputJsonObject,
       },
     };
   }

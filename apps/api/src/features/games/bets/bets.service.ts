@@ -8,6 +8,7 @@ export const getTopBets = async () => {
     orderBy: {
       createdAt: 'desc',
     },
+    where: { active: false },
     include: {
       user: {
         select: {
