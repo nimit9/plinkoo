@@ -1,6 +1,8 @@
 import { CardSuits } from '@repo/common/game-utils/cards/types.js';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { ViewportType } from '@/common/hooks/useViewportType';
+import { CARD_WIDTH } from '@/features/games/blackjack/utils/widthUtils';
 
 export enum CardBorders {
   SUCCESS = 'success',
@@ -11,21 +13,34 @@ export enum CardBorders {
 }
 
 function PlayingCard({
+  border = CardBorders.TRANSPARENT,
+  cardClassName,
+  className,
   faceDown = false,
   layoutId,
   rank,
+  rankClassName,
   suit,
-  border = CardBorders.TRANSPARENT,
+  suitClassName,
+  suitAndRankClassName,
 }: {
-  rank?: string;
-  suit?: CardSuits;
+  border?: CardBorders;
+  cardClassName?: string;
+  className?: string;
   faceDown?: boolean;
   layoutId?: string;
-  border?: CardBorders;
+  rank?: string;
+  rankClassName?: string;
+  suit?: CardSuits;
+  suitClassName?: string;
+  suitAndRankClassName?: string;
 }): JSX.Element {
   return (
     <motion.div
-      className="w-12 lg:w-24 rounded shadow-[0_0_0.25em_#0710174d] aspect-[3/5] lg:aspect-[2/3] "
+      className={cn(
+        'w-12 lg:w-24 rounded shadow-[0_0_0.25em_#0710174d] aspect-[3/5] lg:aspect-[2/3]',
+        className
+      )}
       layout
       layoutId={layoutId}
       style={{
@@ -49,7 +64,8 @@ function PlayingCard({
               'border-[#ff9d00]': border === CardBorders.WARNING,
               'border-[#1475e1]': border === CardBorders.INFO,
               'border-transparent': border === CardBorders.TRANSPARENT,
-            }
+            },
+            cardClassName
           )}
           style={{
             backfaceVisibility: 'hidden',
@@ -57,24 +73,33 @@ function PlayingCard({
           }}
         >
           {rank && suit ? (
-            <div className="w-1/2 ml-[5%] flex flex-col lg:gap-1 items-center justify-center lg:pt-2">
+            <div
+              className={cn(
+                'w-1/2 ml-[5%] flex flex-col lg:gap-1 items-center justify-center lg:pt-2',
+                suitAndRankClassName
+              )}
+            >
               <span
-                className={cn('font-bold text-xl lg:text-4xl', {
-                  'text-[#e9113c]': [
-                    CardSuits.HEARTS,
-                    CardSuits.DIAMONDS,
-                  ].includes(suit),
-                  'text-brand-default': [
-                    CardSuits.SPADES,
-                    CardSuits.CLUBS,
-                  ].includes(suit),
-                })}
+                className={cn(
+                  'font-bold text-xl lg:text-4xl',
+                  {
+                    'text-[#e9113c]': [
+                      CardSuits.HEARTS,
+                      CardSuits.DIAMONDS,
+                    ].includes(suit),
+                    'text-brand-default': [
+                      CardSuits.SPADES,
+                      CardSuits.CLUBS,
+                    ].includes(suit),
+                  },
+                  rankClassName
+                )}
               >
                 {rank}
               </span>
               <img
                 alt={`${suit} icon`}
-                className="p-0 scale-[70%] lg:scale-[80%]"
+                className={cn('p-0 scale-[70%] lg:scale-[80%]', suitClassName)}
                 src={`/games/cards/${suit}.png`}
               />
             </div>

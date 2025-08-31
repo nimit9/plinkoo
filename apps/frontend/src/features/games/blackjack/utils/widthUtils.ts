@@ -1,6 +1,6 @@
 import { ViewportType } from '@/common/hooks/useViewportType';
 
-const CARD_WIDTH = {
+export const CARD_WIDTH = {
   [ViewportType.Mobile]: 48,
   [ViewportType.Tablet]: 48,
   [ViewportType.Desktop]: 96,

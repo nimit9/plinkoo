@@ -7,10 +7,12 @@ function HandValue({
   value,
   rightPosition,
   background = CardBorders.TRANSPARENT,
+  className,
 }: {
   value: number | string;
   rightPosition: number;
   background?: CardBorders;
+  className?: string;
 }): JSX.Element | null {
   if (!value) {
     return null;
@@ -27,7 +29,8 @@ function HandValue({
           'bg-[#1475e1] hover:bg-[#1475e1]': background === CardBorders.INFO,
           'bg-brand-weakest hover:bg-brand-weakest text-primary':
             background === CardBorders.TRANSPARENT,
-        }
+        },
+        className
       )}
       style={{
         right: -rightPosition,
