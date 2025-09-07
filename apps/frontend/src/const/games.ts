@@ -1,4 +1,5 @@
 import { DicesIcon, ShipWheelIcon } from 'lucide-react';
+import { z } from 'zod';
 
 export enum Games {
   DICE = 'dice',
@@ -7,6 +8,14 @@ export enum Games {
   KENO = 'keno',
   BLACKJACK = 'blackjack',
 }
+
+export const gameSchema = z.enum([
+  Games.DICE,
+  Games.ROULETTE,
+  Games.MINES,
+  Games.KENO,
+  Games.BLACKJACK,
+]);
 
 export type Game = (typeof Games)[keyof typeof Games];
 

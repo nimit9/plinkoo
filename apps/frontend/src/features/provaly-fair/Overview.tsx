@@ -14,7 +14,11 @@ const Overview = () => {
         <Paragraph>
           The underlying concept of provable fairness is that players have the
           ability to prove and verify that their results are fair and
-          unmanipulated. This is achieved through the use of a commitment scheme
+          unmanipulated. This is achieved through the use of a{' '}
+          <Link
+            text="commitment scheme"
+            link="https://en.wikipedia.org/wiki/Commitment_scheme"
+          />
           , along with cryptographic hashing.
         </Paragraph>
         <Paragraph>

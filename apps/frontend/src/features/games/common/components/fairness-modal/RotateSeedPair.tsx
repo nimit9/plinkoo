@@ -6,24 +6,25 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { generateRandomString } from '@/lib/crypto';
+import { Link } from '@tanstack/react-router';
 
 interface RotateSeedPairProps {
-  rotateSeedPair: (clientSeed: string) => void;
-  activeSeeds: ProvablyFairStateResponse | null;
+  activeSeeds?: ProvablyFairStateResponse;
   isLoading: boolean;
+  rotateSeedPair: (clientSeed: string) => void;
 }
 
 function RotateSeedPair({
-  rotateSeedPair,
   activeSeeds,
   isLoading,
+  rotateSeedPair,
 }: RotateSeedPairProps): JSX.Element {
   const [nextClientSeed, setNextClientSeed] = useState<string>(
     generateRandomString(10)
   );
 
   return (
-    <div className="flex flex-col gap-2 p-3 bg-brand-stronger">
+    <div className="flex flex-col gap-3 p-3 bg-brand-stronger">
       <div className="text-center text-sm font-semibold">Rotate Seed Pair</div>
       <div>
         <Label className="pl-px text-xs text-neutral-weak font-medium">
@@ -46,7 +47,7 @@ function RotateSeedPair({
 
           <Button
             className="text-xs rounded-none h-8 hover:bg-opacity-80 bg-[#00e600] hover:bg-[#1fff20] shadow-none"
-            disabled={!nextClientSeed}
+            disabled={!nextClientSeed || !activeSeeds?.canRotate}
             onClick={() => {
               rotateSeedPair(nextClientSeed);
               setNextClientSeed(generateRandomString(10));
@@ -83,6 +84,26 @@ function RotateSeedPair({
           </Button>
         </div>
       </div>
+      {!activeSeeds?.canRotate && (
+        <div className="text-xs text-neutral-weak">
+          You need to finish the following game(s) before you can rotate your
+          seed pair:
+          <span className="ml-1 inline-flex items-center font-medium text-neutral-default">
+            {activeSeeds?.activeGames?.map((game, index) => (
+              <span key={game}>
+                <Link
+                  key={game}
+                  params={{ gameId: game }}
+                  to="/casino/games/$gameId"
+                >
+                  {game.charAt(0).toUpperCase() + game.slice(1)}
+                </Link>
+                {}
+              </span>
+            ))}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

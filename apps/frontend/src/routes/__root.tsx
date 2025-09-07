@@ -9,15 +9,31 @@ import { Header } from '@/components/Header';
 import { z } from 'zod';
 import { GLOBAL_MODAL } from '@/features/global-modals/types';
 import GlobalModals from '@/features/global-modals';
+import { gameSchema, type Game, type Games } from '@/const/games';
 
 interface RouterContext {
   authStore: AuthState | undefined;
 }
 
-export const rootSearchSchema = z.object({
+// Types for each modal's search params
+export const betModalSearchSchema = z.object({
   iid: z.number().optional(),
-  modal: z.enum([GLOBAL_MODAL.BET]).optional(),
+  modal: z.literal(GLOBAL_MODAL.BET).optional(),
 });
+
+export const fairnessModalSearchSchema = z.object({
+  game: gameSchema.optional(),
+  modal: z.literal(GLOBAL_MODAL.FAIRNESS).optional(),
+  tab: z.enum(['seeds', 'verify', 'overview']).default('seeds').optional(),
+  clientSeed: z.string().optional(),
+  serverSeed: z.string().optional(),
+  nonce: z.number().optional(),
+});
+
+// Union type for all modals
+export const rootSearchSchema = z
+  .union([betModalSearchSchema, fairnessModalSearchSchema])
+  .optional();
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   validateSearch: rootSearchSchema,
@@ -26,7 +42,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootLayout(): JSX.Element {
   const { setUser, showLoginModal } = useAuthStore();
-  const { iid, modal } = Route.useSearch();
 
   // Setup interceptors to show login modal on auth errors
   React.useEffect(() => {
@@ -43,7 +58,7 @@ function RootLayout(): JSX.Element {
       <Header />
       <Outlet />
       <LoginModal />
-      <GlobalModals iid={iid} modal={modal} />
+      <GlobalModals />
       {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
     </>
   );

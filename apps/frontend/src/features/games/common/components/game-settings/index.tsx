@@ -2,7 +2,8 @@ import { SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CommonTooltip from '@/components/ui/common-tooltip';
 import type { Game } from '@/const/games';
-import { FairnessModal } from '../fairness-modal';
+import { Link } from '@tanstack/react-router';
+import { GLOBAL_MODAL } from '@/features/global-modals/types';
 
 function GameSettingsBar({ game }: { game: Game }): JSX.Element {
   return (
@@ -14,7 +15,17 @@ function GameSettingsBar({ game }: { game: Game }): JSX.Element {
           </Button>
         </CommonTooltip>
       </div>
-      <FairnessModal game={game} />
+      <Link
+        to={window.location.pathname}
+        search={{
+          modal: GLOBAL_MODAL.FAIRNESS,
+          game,
+        }}
+      >
+        <p className="text-neutral-weak text-sm font-medium hover:text-neutral-default">
+          Fairness
+        </p>
+      </Link>
     </div>
   );
 }

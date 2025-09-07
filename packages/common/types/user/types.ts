@@ -1,3 +1,4 @@
+import type { Game } from '@prisma/client';
 export interface IUser {
   createdAt: string;
   email: string;
@@ -13,6 +14,8 @@ export interface ProvablyFairStateResponse {
   hashedServerSeed: string;
   hashedNextServerSeed: string;
   nonce: number;
+  canRotate?: boolean;
+  activeGames?: Game[];
 }
 
 export interface PaginatedBetData {
@@ -48,6 +51,7 @@ export interface BetData {
     nonce: number;
   };
   gameState: any;
+  isMyBet: boolean;
 }
 
 export interface PaginatedBetsResponse {

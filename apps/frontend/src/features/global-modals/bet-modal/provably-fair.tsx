@@ -6,17 +6,23 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import React from 'react';
+import { GLOBAL_MODAL } from '../types';
+import { Games } from '@/const/games';
 
 const ProvablyFair = ({
   serverSeed,
   hashedServerSeed,
   clientSeed,
   nonce,
+  isMyBet,
+  game,
 }: {
   serverSeed?: string;
   hashedServerSeed: string;
   clientSeed: string;
   nonce: number;
+  isMyBet: boolean;
+  game: Games;
 }) => {
   const activeSeedInputs = [
     {
@@ -100,8 +106,36 @@ const ProvablyFair = ({
         </div>
       ))}
       <div className="w-full text-neutral-weak text-xs text-center mt-1 flex flex-col gap-2">
-        {!serverSeed && (
-          <span>Server seed needs to be changed to verify bet...</span>
+        {!serverSeed ? (
+          isMyBet ? (
+            <Link
+              to={window.location.pathname}
+              search={{
+                modal: GLOBAL_MODAL.FAIRNESS,
+                game,
+              }}
+              className="font-semibold hover:text-primary"
+            >
+              Rotate your seed pair in order to verify this bet
+            </Link>
+          ) : (
+            <span>Server seed needs to be changed to verify bet...</span>
+          )
+        ) : (
+          <Link
+            to={window.location.pathname}
+            search={{
+              modal: GLOBAL_MODAL.FAIRNESS,
+              game,
+              tab: 'verify',
+              clientSeed,
+              serverSeed,
+              nonce,
+            }}
+            className="font-semibold hover:text-primary"
+          >
+            Verify
+          </Link>
         )}
         <Link to="/provably-fair" className="font-semibold hover:text-primary">
           What is Provable Fairness?

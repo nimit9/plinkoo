@@ -1,9 +1,23 @@
+import { cn } from '@/lib/utils';
 import { ExternalLink } from 'lucide-react';
 import React from 'react';
 
-const Link = ({ link, text }: { link: string; text: string }) => {
+const Link = ({
+  link,
+  text,
+  className,
+}: {
+  link: string;
+  text: string;
+  className?: string;
+}) => {
   return (
-    <span className="font-semibold text-primary inline-flex gap-1.5 pr-2 text-sm items-center">
+    <span
+      className={cn(
+        'font-semibold text-primary inline-flex gap-1.5 pr-2 text-sm items-center',
+        className
+      )}
+    >
       <a href={link} target="_blank" rel="noopener noreferrer">
         {text}
       </a>

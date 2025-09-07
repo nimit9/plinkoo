@@ -1,4 +1,4 @@
-import type { Prisma, ProvablyFairState, User } from '@prisma/client';
+import type { Bet, Prisma, ProvablyFairState, User } from '@prisma/client';
 import db from '@repo/db';
 import type { ProvablyFairStateResponse } from '@repo/common/types';
 import {
@@ -12,7 +12,8 @@ import { generateClientSeed, generateServerSeed } from './user.utils';
 export class UserInstance {
   constructor(
     private user: User,
-    private provablyFairState: ProvablyFairState
+    private provablyFairState: ProvablyFairState,
+    private activeBets: Bet[] = []
   ) {}
 
   setBalance(amount: string) {
@@ -22,6 +23,10 @@ export class UserInstance {
 
   getUser() {
     return this.user;
+  }
+
+  getActiveBets() {
+    return this.activeBets;
   }
 
   getUserId() {
@@ -102,7 +107,7 @@ export class UserInstance {
     return getHashedSeed(this.provablyFairState.serverSeed);
   }
 
-  getHashedNextServerSeed() {
+  getHashedNextServerSeed(): string {
     const nextServerSeed = this.generateNextServerSeed();
     return getHashedSeed(nextServerSeed);
   }
@@ -150,7 +155,11 @@ class UserManager {
     return UserManager.instance;
   }
 
-  async getUser(userId: string): Promise<UserInstance> {
+  async getUser(
+    userId: string,
+    includeActiveBets: boolean = false
+  ): Promise<UserInstance> {
+    let activeBets: Bet[] = [];
     if (!this.users.has(userId)) {
       const user = await db.user.findUnique({
         where: { id: userId },
@@ -164,6 +173,13 @@ class UserManager {
             },
             take: 1,
           },
+          ...(includeActiveBets && {
+            bets: {
+              where: {
+                active: true,
+              },
+            },
+          }),
         },
       });
       if (!user) {
@@ -184,8 +200,9 @@ class UserManager {
       }
       this.users.set(
         userId,
-        new UserInstance(user, user.provablyFairStates[0])
+        new UserInstance(user, user.provablyFairStates[0], user.bets || [])
       );
+      activeBets = user.bets;
     }
     const user = this.users.get(userId);
     if (!user) {

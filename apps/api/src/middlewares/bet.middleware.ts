@@ -11,6 +11,7 @@ declare module 'express' {
       userBalanceInCents: number;
       userInstance: any;
     };
+    isMyBet?: boolean;
   }
 }
 
@@ -160,6 +161,11 @@ export const validateGameConstraints = (constraints: {
       next(error);
     }
   };
+};
+
+export const verifyMe = (req: Request, res: Response, next: NextFunction) => {
+  req.isMyBet = req.isAuthenticated();
+  next();
 };
 
 /**

@@ -13,18 +13,25 @@ import CommonSelect from '@/components/ui/common-select';
 export interface VerificationInputsState {
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
   meta?: GameMeta;
+}
+export interface MaybeVerificationInputsState {
+  clientSeed?: string;
+  serverSeed?: string;
+  nonce?: number;
 }
 
 function VerificationInputs({
   setOutcome,
   onSetVerificationInputs,
   game,
+  initialInputState,
 }: {
   setOutcome: (outcome: string | number[] | null) => void;
   onSetVerificationInputs?: (inputs: VerificationInputsState | null) => void;
   game: Game;
+  initialInputState?: MaybeVerificationInputsState;
 }): JSX.Element {
   const { pathname } = useLocation();
 
@@ -34,8 +41,18 @@ function VerificationInputs({
     useState<VerificationInputsState>({
       clientSeed: '',
       serverSeed: '',
-      nonce: '0',
+      nonce: 0,
     });
+
+  useEffect(() => {
+    if (initialInputState) {
+      setVerificationInputs({
+        clientSeed: initialInputState.clientSeed ?? '',
+        serverSeed: initialInputState.serverSeed ?? '',
+        nonce: initialInputState.nonce ?? 0,
+      });
+    }
+  }, [initialInputState]);
 
   const handleInputChange = (
     input: keyof VerificationInputsState,
@@ -47,14 +64,14 @@ function VerificationInputs({
   const incrementNonce = (): void => {
     setVerificationInputs(prev => ({
       ...prev,
-      nonce: String(Number(prev.nonce) + 1),
+      nonce: Number(prev.nonce) + 1,
     }));
   };
 
   const decrementNonce = (): void => {
     setVerificationInputs(prev => ({
       ...prev,
-      nonce: Math.max(0, Number(prev.nonce) - 1).toString(),
+      nonce: Math.max(0, Number(prev.nonce) - 1),
     }));
   };
 

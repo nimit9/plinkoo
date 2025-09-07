@@ -9,6 +9,7 @@ import type {
 import db from '@repo/db';
 import { BadRequestError } from '../../errors';
 import { userManager, getUserBets } from './user.service';
+import { use } from 'passport';
 
 export const getBalance = async (req: Request, res: Response) => {
   const userInstance = await userManager.getUser((req.user as User).id);
@@ -46,13 +47,21 @@ export const getProvablyFairState = async (
   req: Request,
   res: Response<ApiResponse<ProvablyFairStateResponse>>
 ) => {
-  const userInstance = await userManager.getUser((req.user as User).id);
+  const userInstance = await userManager.getUser((req.user as User).id, true);
+
+  const activeGames = new Set(
+    userInstance.getActiveBets().map(bet => bet.game)
+  );
+  const canRotate = activeGames.size === 0;
+
   return res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       clientSeed: userInstance.getClientSeed(),
       hashedServerSeed: userInstance.getHashedServerSeed(),
       hashedNextServerSeed: userInstance.getHashedNextServerSeed(),
       nonce: userInstance.getNonce(),
+      canRotate,
+      activeGames: Array.from(activeGames),
     })
   );
 };

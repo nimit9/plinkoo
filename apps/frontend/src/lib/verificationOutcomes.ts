@@ -23,7 +23,7 @@ const diceVerificationOutcomes = async ({
 }: {
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
 }): Promise<string> => {
   const [float] = await getGeneratedFloats({
     count: 1,
@@ -42,7 +42,7 @@ const minesVerificationOutcomes = async ({
 }: {
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
   meta?: MinesGameMeta;
 }): Promise<number[]> => {
   const minesCount = meta?.minesCount ?? 3;
@@ -63,7 +63,7 @@ const rouletteVerificationOutcomes = async ({
 }: {
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
 }): Promise<string> => {
   const [float] = await getGeneratedFloats({
     count: 1,
@@ -81,7 +81,7 @@ const kenoVerificationOutcomes = async ({
 }: {
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
 }): Promise<number[]> => {
   const floats = await getGeneratedFloats({
     count: 10,
@@ -102,7 +102,7 @@ const blackjackVerificationOutcomes = async ({
 }: {
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
 }): Promise<number[]> => {
   const floats = await getGeneratedFloats({
     count: 52,
@@ -123,7 +123,7 @@ export const getVerificationOutcome = async ({
   game: Game;
   clientSeed: string;
   serverSeed: string;
-  nonce: string;
+  nonce: number;
   meta?: GameMeta;
 }): Promise<string | number[]> => {
   switch (game) {

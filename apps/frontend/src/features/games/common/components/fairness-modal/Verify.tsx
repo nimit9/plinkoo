@@ -1,12 +1,28 @@
 import { useState } from 'react';
 import CommonSelect from '@/components/ui/common-select';
-import { GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
+import { Games, GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
 import VerificationResult from './VerificationResult';
 import VerificationInputs from './VerificationInputs';
+import { Route } from '@/routes/__root';
+import { useSearch } from '@tanstack/react-router';
+import { GLOBAL_MODAL } from '@/features/global-modals/types';
 
 function Verify({ game }: { game: Game }): JSX.Element {
   const [outcome, setOutcome] = useState<string | number[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<Game>(game);
+
+  const search = useSearch({
+    from: '__root__',
+    select: state => {
+      if (state?.modal === GLOBAL_MODAL.FAIRNESS) {
+        return {
+          clientSeed: state.clientSeed,
+          serverSeed: state.serverSeed,
+          nonce: state.nonce,
+        };
+      }
+    },
+  });
 
   return (
     <>
@@ -22,7 +38,11 @@ function Verify({ game }: { game: Game }): JSX.Element {
           options={GAMES_DROPDOWN_OPTIONS}
           value={selectedGame}
         />
-        <VerificationInputs game={selectedGame} setOutcome={setOutcome} />
+        <VerificationInputs
+          game={selectedGame}
+          setOutcome={setOutcome}
+          initialInputState={search}
+        />
       </div>
     </>
   );

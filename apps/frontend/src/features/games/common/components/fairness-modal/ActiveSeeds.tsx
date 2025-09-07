@@ -9,7 +9,7 @@ function ActiveSeeds({
   activeSeeds,
   isLoading,
 }: {
-  activeSeeds: ProvablyFairStateResponse | null;
+  activeSeeds?: ProvablyFairStateResponse;
   isLoading: boolean;
 }): JSX.Element {
   const activeSeedInputs = [

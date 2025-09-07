@@ -13,7 +13,7 @@ import { Route } from '@/routes/__root';
 import BetIcon from '@/assets/icons/bet';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAllBets, fetchBetById } from '@/api/games/bets';
-import { Game, GAME_VALUES_MAPPING } from '@/const/games';
+import { Game, GAME_VALUES_MAPPING, Games } from '@/const/games';
 import chunk from 'lodash/chunk';
 import CopyIcon from '@/assets/icons/copy';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -52,8 +52,10 @@ const BetModal = ({ iid, modal }: { iid?: number; modal?: GLOBAL_MODAL }) => {
     // Remove 'iid' and 'modal' from the search params object before navigating
     router.navigate({
       search: () => {
-        const { iid, modal, ...rest } = currentSearchParams;
-        return rest as never;
+        return {
+          iid: undefined,
+          modal: undefined,
+        } as never;
       },
     });
   };
@@ -79,7 +81,7 @@ const BetModal = ({ iid, modal }: { iid?: number; modal?: GLOBAL_MODAL }) => {
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent
         className={cn(
-          'sm:max-w-md max-h-[80vh] overflow-y-auto p-0 border-0 max-w-sm sm:w-full flex flex-col'
+          'sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto p-0 border-0 max-w-sm sm:w-full flex flex-col'
         )}
       >
         <DialogHeader className="p-3 fixed w-full h-12 z-20 bg-brand-default">
@@ -179,7 +181,11 @@ const BetModal = ({ iid, modal }: { iid?: number; modal?: GLOBAL_MODAL }) => {
                     Provable Fairness
                   </AccordionTrigger>
                   <AccordionContent className="px-3">
-                    <ProvablyFair {...bet.provablyFairState} />
+                    <ProvablyFair
+                      {...bet.provablyFairState}
+                      isMyBet={bet.isMyBet}
+                      game={bet.game as Games}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

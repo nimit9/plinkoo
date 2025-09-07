@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "5.19.0",
     "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "crypto-browserify": "^3.12.0",

@@ -21,5 +21,5 @@ export const fetchBetById = async (
       success: true,
     });
   }
-  return fetchGet(`/api/v1/games/bets/${betId}`);
+  return fetchGet(`/api/v1/games/bets/${betId}`, { withCredentials: true });
 };

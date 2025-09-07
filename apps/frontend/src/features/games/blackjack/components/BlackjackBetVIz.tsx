@@ -15,6 +15,8 @@ import { getBlackjackGameResult } from '../utils';
 const BlackjackBetViz = ({ bet }: { bet: BetData }) => {
   const viewportType = ViewportType.Mobile;
   const gameState: BlackjackGameState = bet.gameState;
+
+  console.log('BlackjackBetViz render', { bet, gameState });
   const { dealer, player } = gameState;
 
   const { rightPosition, centerOffset } = calculateCardPosition({

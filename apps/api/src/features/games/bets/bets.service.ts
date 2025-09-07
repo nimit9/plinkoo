@@ -38,7 +38,10 @@ export const getTopBets = async () => {
   };
 };
 
-export const getBetById = async (betId: string): Promise<BetData | null> => {
+export const getBetById = async (
+  betId: string,
+  isMyBet: boolean = false
+): Promise<BetData | null> => {
   const bet = await db.bet.findUnique({
     where: {
       betId: Number(betId),
@@ -85,5 +88,6 @@ export const getBetById = async (betId: string): Promise<BetData | null> => {
       id: bet.user.id,
       name: bet.user.name,
     },
+    isMyBet,
   };
 };

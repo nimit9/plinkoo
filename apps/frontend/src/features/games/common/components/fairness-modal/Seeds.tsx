@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ProvablyFairStateResponse } from '@repo/common/types';
 import { toast } from 'react-hot-toast';
 import { isAxiosError } from 'axios';
@@ -7,18 +7,14 @@ import { fetchActiveSeeds, fetchRotateSeedPair } from '@/api/user';
 import ActiveSeeds from './ActiveSeeds';
 import RotateSeedPair from './RotateSeedPair';
 
-function Seeds({ isEnabled }: { isEnabled: boolean }): JSX.Element {
-  const [activeSeeds, setActiveSeeds] =
-    useState<ProvablyFairStateResponse | null>(null);
-  const { isPending } = useQuery({
-    queryKey: ['active-seeds'],
-    queryFn: async () => {
-      const apiResponse = await fetchActiveSeeds();
-      setActiveSeeds(apiResponse.data);
-      return apiResponse.data;
-    },
-    enabled: isEnabled,
-  });
+function Seeds({
+  isPending,
+  activeSeeds,
+}: {
+  activeSeeds?: ProvablyFairStateResponse;
+  isPending: boolean;
+}): JSX.Element {
+  const queryClient = useQueryClient();
 
   const { mutate: rotateSeedPair, isPending: isRotating } = useMutation({
     mutationFn: async (clientSeed: string) => {
@@ -26,7 +22,7 @@ function Seeds({ isEnabled }: { isEnabled: boolean }): JSX.Element {
       return apiResponse.data;
     },
     onSuccess: data => {
-      setActiveSeeds(data);
+      queryClient.setQueryData(['active-seeds'], data);
     },
     onError: (error: Error) => {
       if (isAxiosError(error)) {

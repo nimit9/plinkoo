@@ -22,7 +22,7 @@ export const getBet = async (
 ) => {
   const { betId } = req.params;
 
-  const bet = await getBetById(betId);
+  const bet = await getBetById(betId, req.isMyBet);
 
   res.status(StatusCodes.OK).json(new ApiResponse(StatusCodes.OK, { bet }));
 };
