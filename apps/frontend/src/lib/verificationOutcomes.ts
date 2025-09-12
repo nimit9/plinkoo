@@ -129,8 +129,8 @@ export const getVerificationOutcome = async ({
   switch (game) {
     case Games.DICE:
       return diceVerificationOutcomes({ clientSeed, serverSeed, nonce });
-    case Games.ROULETTE:
-      return rouletteVerificationOutcomes({ clientSeed, serverSeed, nonce });
+    // case Games.ROULETTE:
+    //   return rouletteVerificationOutcomes({ clientSeed, serverSeed, nonce });
     case Games.MINES:
       return minesVerificationOutcomes({ clientSeed, serverSeed, nonce, meta });
     case Games.KENO:

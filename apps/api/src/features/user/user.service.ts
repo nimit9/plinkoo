@@ -12,8 +12,7 @@ import { generateClientSeed, generateServerSeed } from './user.utils';
 export class UserInstance {
   constructor(
     private user: User,
-    private provablyFairState: ProvablyFairState,
-    private activeBets: Bet[] = []
+    private provablyFairState: ProvablyFairState
   ) {}
 
   setBalance(amount: string) {
@@ -23,10 +22,6 @@ export class UserInstance {
 
   getUser() {
     return this.user;
-  }
-
-  getActiveBets() {
-    return this.activeBets;
   }
 
   getUserId() {
@@ -84,7 +79,6 @@ export class UserInstance {
       where: { id: this.provablyFairState.id },
       data: { nonce: this.provablyFairState.nonce },
     });
-    this.provablyFairState.nonce += 1;
   }
 
   getProvablyFairStateId() {
@@ -117,6 +111,7 @@ export class UserInstance {
   }
 
   generateFloats(count: number): number[] {
+    this.provablyFairState.nonce += 1;
     return getGeneratedFloats({
       count,
       seed: this.provablyFairState.serverSeed,
@@ -155,11 +150,7 @@ class UserManager {
     return UserManager.instance;
   }
 
-  async getUser(
-    userId: string,
-    includeActiveBets: boolean = false
-  ): Promise<UserInstance> {
-    let activeBets: Bet[] = [];
+  async getUser(userId: string): Promise<UserInstance> {
     if (!this.users.has(userId)) {
       const user = await db.user.findUnique({
         where: { id: userId },
@@ -173,25 +164,22 @@ class UserManager {
             },
             take: 1,
           },
-          ...(includeActiveBets && {
-            bets: {
-              where: {
-                active: true,
-              },
-            },
-          }),
         },
       });
       if (!user) {
         throw new BadRequestError('User not found');
       }
       if (!user.provablyFairStates[0]) {
+        const serverSeed = generateServerSeed();
+        const clientSeed = generateClientSeed();
+        const hashedServerSeed = getHashedSeed(serverSeed);
         // Create initial provably fair state if it doesn't exist
         const provablyFairState = await db.provablyFairState.create({
           data: {
             userId: user.id,
-            serverSeed: generateServerSeed(),
-            clientSeed: generateClientSeed(),
+            serverSeed,
+            clientSeed,
+            hashedServerSeed,
             nonce: 0,
             revealed: false,
           },
@@ -200,15 +188,21 @@ class UserManager {
       }
       this.users.set(
         userId,
-        new UserInstance(user, user.provablyFairStates[0], user.bets || [])
+        new UserInstance(user, user.provablyFairStates[0])
       );
-      activeBets = user.bets;
     }
     const user = this.users.get(userId);
     if (!user) {
       throw new BadRequestError('User not found in manager');
     }
     return user;
+  }
+
+  async getActiveBets(userId: string): Promise<Bet[]> {
+    const bets = await db.bet.findMany({
+      where: { userId, active: true },
+    });
+    return bets;
   }
 
   removeUser(userId: string) {

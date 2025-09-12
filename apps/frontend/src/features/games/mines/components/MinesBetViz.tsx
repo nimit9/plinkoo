@@ -24,6 +24,7 @@ const MinesBetViz = ({ bet }: { bet: BetData }) => {
             ),
             lastRound: bet.gameState.rounds.at(-1) || null,
           }}
+          className="size-16 md:size-16 lg:size-16"
         />
       ))}
     </MinesContainer>

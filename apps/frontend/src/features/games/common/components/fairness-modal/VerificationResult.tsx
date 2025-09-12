@@ -20,25 +20,26 @@ function VerificationResult({
     switch (game) {
       case Games.DICE:
         return <DiceResultPreview result={Number(outcome)} />;
-      case Games.ROULETTE:
-        return (
-          <div className="lg:h-24">
-            <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[80%] hidden lg:block">
-              <RouletteWheel
-                isPreview
-                isSpinning={false}
-                winningNumber={String(outcome)}
-              />
-            </div>
-            <div className="lg:absolute left-5 bottom-5 bg-brand-weaker size-12 rounded font-semibold text-2xl text-neutral-default flex items-center justify-center">
-              {outcome}
-            </div>
-          </div>
-        );
+      // case Games.ROULETTE:
+      //   return (
+      //     <div className="lg:h-24">
+      //       <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[80%] hidden lg:block">
+      //         <RouletteWheel
+      //           isPreview
+      //           isSpinning={false}
+      //           winningNumber={String(outcome)}
+      //         />
+      //       </div>
+      //       <div className="lg:absolute left-5 bottom-5 bg-brand-weaker size-12 rounded font-semibold text-2xl text-neutral-default flex items-center justify-center">
+      //         {outcome}
+      //       </div>
+      //     </div>
+      //   );
+
       case Games.MINES: {
         if (typeof outcome === 'string' || !outcome) return <>{null}</>;
         return (
-          <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5 -my-12 py-2">
+          <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5 lg:-my-8 py-2">
             {Array.from({ length: NO_OF_TILES }, (_, i) => i).map(number => (
               <InactiveGameTile
                 index={number}
@@ -48,7 +49,7 @@ function VerificationResult({
                   isGameLost: false,
                   mines: new Set(outcome),
                 }}
-                className="size-16"
+                className="size-16 md:size-16 lg:size-16"
               />
             ))}
           </div>

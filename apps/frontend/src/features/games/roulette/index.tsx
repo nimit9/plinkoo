@@ -154,7 +154,7 @@ export function Roulette({
           </div>
         </div>
       </RouletteProvider>
-      <GameSettingsBar game={Games.ROULETTE} />
+      {/* <GameSettingsBar game={Games.ROULETTE} /> */}
     </div>
   );
 }

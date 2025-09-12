@@ -47,11 +47,10 @@ export const getProvablyFairState = async (
   req: Request,
   res: Response<ApiResponse<ProvablyFairStateResponse>>
 ) => {
-  const userInstance = await userManager.getUser((req.user as User).id, true);
+  const userInstance = await userManager.getUser((req.user as User).id);
+  const activeBets = await userManager.getActiveBets(userInstance.getUserId());
 
-  const activeGames = new Set(
-    userInstance.getActiveBets().map(bet => bet.game)
-  );
+  const activeGames = new Set(activeBets.map(bet => bet.game));
   const canRotate = activeGames.size === 0;
 
   return res.status(StatusCodes.OK).json(

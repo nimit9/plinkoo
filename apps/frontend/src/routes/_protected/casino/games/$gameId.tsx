@@ -16,8 +16,6 @@ function GamePage(): JSX.Element {
   switch (gameId) {
     case 'dice':
       return <DiceGame />;
-    case 'roulette':
-      return <Roulette />;
     case 'mines':
       return <Mines />;
     case 'plinkoo':

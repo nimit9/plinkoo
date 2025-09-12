@@ -181,11 +181,7 @@ const BetModal = ({ iid, modal }: { iid?: number; modal?: GLOBAL_MODAL }) => {
                     Provable Fairness
                   </AccordionTrigger>
                   <AccordionContent className="px-3">
-                    <ProvablyFair
-                      {...bet.provablyFairState}
-                      isMyBet={bet.isMyBet}
-                      game={bet.game as Games}
-                    />
+                    <ProvablyFair bet={bet} />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

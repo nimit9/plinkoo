@@ -41,6 +41,12 @@ export function FairnessModal({
     enabled: open,
   });
 
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
+
   const handleRemoveParams = () => {
     // Navigate to the current route's path but with the specified search params removed.
     // Remove 'iid' and 'modal' from the search params object before navigating

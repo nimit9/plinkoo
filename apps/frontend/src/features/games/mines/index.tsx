@@ -47,10 +47,27 @@ export function Mines(): JSX.Element {
   const lastRound = useLastRound();
   const payoutMultiplier = usePayoutMultiplier();
   const payout = useTotalPayout();
+
+  const pickRandomTile = () => {
+    if (!gameState) return;
+    const availableTiles = Array.from(
+      { length: NO_OF_TILES },
+      (_, i) => i
+    ).filter(index => !selectedTiles?.has(index) && !loadingTiles.has(index));
+    if (availableTiles.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * availableTiles.length);
+    const tileToPick = availableTiles[randomIndex];
+    setLoadingTiles(prev => {
+      const newSet = new Set(prev);
+      newSet.add(tileToPick);
+      return newSet;
+    });
+    play(tileToPick);
+  };
   return (
     <div className="container">
       <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
-        <BettingControls />
+        <BettingControls pickRandomTile={pickRandomTile} />
 
         <div className="lg:px-24 lg:flex-1 bg-brand-stronger p-2 flex justify-center relative">
           <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2 md:gap-2.5">

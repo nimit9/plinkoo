@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CommonSelect from '@/components/ui/common-select';
-import { Games, GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
+import { GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
 import VerificationResult from './VerificationResult';
 import VerificationInputs from './VerificationInputs';
 import { Route } from '@/routes/__root';

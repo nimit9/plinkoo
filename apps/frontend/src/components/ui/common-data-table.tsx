@@ -131,7 +131,7 @@ export function CommonDataTable<TData, TValue>({
       </TableUI>
 
       {/* Pagination controls */}
-      {pagination ? (
+      {pagination && (table.getCanPreviousPage() || table.getCanNextPage()) ? (
         <div className="flex justify-center mt-4 gap-4 items-center">
           <Button
             className="flex items-center"

@@ -22,7 +22,7 @@ const generateUniqueId = (
 
 interface KenoResultBreakdownProps {
   clientSeed?: string;
-  nonce?: string;
+  nonce?: number;
   serverSeed?: string;
 }
 function KenoResultBreakdown({

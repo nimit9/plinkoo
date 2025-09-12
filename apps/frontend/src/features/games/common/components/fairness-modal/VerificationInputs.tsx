@@ -31,7 +31,7 @@ function VerificationInputs({
   setOutcome: (outcome: string | number[] | null) => void;
   onSetVerificationInputs?: (inputs: VerificationInputsState | null) => void;
   game: Game;
-  initialInputState?: MaybeVerificationInputsState;
+  initialInputState?: MaybeVerificationInputsState | null;
 }): JSX.Element {
   const { pathname } = useLocation();
 
@@ -41,7 +41,7 @@ function VerificationInputs({
     useState<VerificationInputsState>({
       clientSeed: '',
       serverSeed: '',
-      nonce: 0,
+      nonce: 1,
     });
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function VerificationInputs({
       setVerificationInputs({
         clientSeed: initialInputState.clientSeed ?? '',
         serverSeed: initialInputState.serverSeed ?? '',
-        nonce: initialInputState.nonce ?? 0,
+        nonce: initialInputState.nonce ?? 1,
       });
     }
   }, [initialInputState]);
@@ -201,7 +201,16 @@ function VerificationInputs({
       </div>
       <div>{getGameMeta()}</div>
       {!pathname.includes('/provably-fair/calculation') && (
-        <Link target="_blank" to="/provably-fair/calculation">
+        <Link
+          target="_blank"
+          to="/provably-fair/calculation"
+          search={{
+            game,
+            clientSeed: verificationInputs.clientSeed,
+            serverSeed: verificationInputs.serverSeed,
+            nonce: verificationInputs.nonce,
+          }}
+        >
           <p className="text-xs text-center font-medium my-2">
             View calculation breakdown
           </p>

@@ -14,7 +14,7 @@ const generateUniqueId = (
 };
 
 interface RouletteResultBreakdownProps {
-  nonce?: string;
+  nonce?: number;
   serverSeed?: string;
   clientSeed?: string;
 }

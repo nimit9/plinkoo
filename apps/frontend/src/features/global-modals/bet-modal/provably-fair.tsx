@@ -8,22 +8,11 @@ import { Link } from '@tanstack/react-router';
 import React from 'react';
 import { GLOBAL_MODAL } from '../types';
 import { Games } from '@/const/games';
+import { BetData } from '@repo/common/types';
 
-const ProvablyFair = ({
-  serverSeed,
-  hashedServerSeed,
-  clientSeed,
-  nonce,
-  isMyBet,
-  game,
-}: {
-  serverSeed?: string;
-  hashedServerSeed: string;
-  clientSeed: string;
-  nonce: number;
-  isMyBet: boolean;
-  game: Games;
-}) => {
+const ProvablyFair = ({ bet }: { bet: BetData }) => {
+  const { provablyFairState, isMyBet, game, betNonce } = bet;
+  const { serverSeed, hashedServerSeed, clientSeed } = provablyFairState || {};
   const activeSeedInputs = [
     {
       key: 'serverSeed',
@@ -47,7 +36,7 @@ const ProvablyFair = ({
     {
       key: 'nonce',
       label: 'Nonce',
-      value: nonce,
+      value: betNonce,
       isCopyActive: true,
     },
   ];
@@ -113,6 +102,7 @@ const ProvablyFair = ({
               search={{
                 modal: GLOBAL_MODAL.FAIRNESS,
                 game,
+                tab: 'seeds',
               }}
               className="font-semibold hover:text-primary"
             >
@@ -130,7 +120,7 @@ const ProvablyFair = ({
               tab: 'verify',
               clientSeed,
               serverSeed,
-              nonce,
+              nonce: betNonce,
             }}
             className="font-semibold hover:text-primary"
           >

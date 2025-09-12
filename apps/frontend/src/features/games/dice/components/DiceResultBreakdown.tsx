@@ -15,7 +15,7 @@ const generateUniqueId = (
 };
 
 interface DiceResultBreakdownProps {
-  nonce?: string;
+  nonce?: number;
   serverSeed?: string;
   clientSeed?: string;
 }

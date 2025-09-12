@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export enum Games {
   DICE = 'dice',
-  ROULETTE = 'roulette',
+  // ROULETTE = 'roulette',
   MINES = 'mines',
   KENO = 'keno',
   BLACKJACK = 'blackjack',
@@ -11,7 +11,7 @@ export enum Games {
 
 export const gameSchema = z.enum([
   Games.DICE,
-  Games.ROULETTE,
+  // Games.ROULETTE,
   Games.MINES,
   Games.KENO,
   Games.BLACKJACK,
@@ -21,11 +21,11 @@ export type Game = (typeof Games)[keyof typeof Games];
 
 export const GAME_VALUES_MAPPING = {
   [Games.DICE]: { label: 'Dice', icon: DicesIcon, path: '/casino/games/dice' },
-  [Games.ROULETTE]: {
-    label: 'Roulette',
-    icon: ShipWheelIcon,
-    path: '/casino/games/roulette',
-  },
+  // [Games.ROULETTE]: {
+  //   label: 'Roulette',
+  //   icon: ShipWheelIcon,
+  //   path: '/casino/games/roulette',
+  // },
   [Games.MINES]: {
     label: 'Mines',
     // icon: DicesIcon,
@@ -48,10 +48,10 @@ export const GAMES_DROPDOWN_OPTIONS = [
     label: GAME_VALUES_MAPPING[Games.DICE].label,
     value: Games.DICE,
   },
-  {
-    label: GAME_VALUES_MAPPING[Games.ROULETTE].label,
-    value: Games.ROULETTE,
-  },
+  // {
+  //   label: GAME_VALUES_MAPPING[Games.ROULETTE].label,
+  //   value: Games.ROULETTE,
+  // },
   {
     label: GAME_VALUES_MAPPING[Games.MINES].label,
     value: Games.MINES,

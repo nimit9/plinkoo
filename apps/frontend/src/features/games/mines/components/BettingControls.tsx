@@ -12,7 +12,11 @@ import { BetAmountInput } from '../../common/components/BetAmountInput';
 import useMinesStore from '../store/minesStore';
 import { useIsGameActive, useLastRound } from '../store/minesSelectors';
 
-function BettingControls(): JSX.Element {
+function BettingControls({
+  pickRandomTile,
+}: {
+  pickRandomTile: () => void;
+}): JSX.Element {
   const { betAmount, setBetAmount, minesCount, setMinesCount, setGameState } =
     useMinesStore();
 
@@ -79,14 +83,14 @@ function BettingControls(): JSX.Element {
         {isGameActive ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <div>
+              <div className="flex-1">
                 <Label className="pl-px text-xs text-neutral-weak font-medium">
                   Mines
                 </Label>
                 <div className="flex h-8 rounded-sm overflow-hidden group">
                   <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
                     <InputWithIcon
-                      className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text select-none"
+                      className="text-neutral-default disabled:opacity-100 font-medium text-sm disabled:cursor-text select-none"
                       disabled={isGameActive}
                       icon={null}
                       value={minesCount}
@@ -97,14 +101,14 @@ function BettingControls(): JSX.Element {
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="flex-1">
                 <Label className="pl-px text-xs text-neutral-weak font-medium">
                   Gems
                 </Label>
                 <div className="flex h-8 rounded-sm overflow-hidden group">
                   <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
                     <InputWithIcon
-                      className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text"
+                      className="text-neutral-default disabled:opacity-100 font-medium text-sm disabled:cursor-text"
                       disabled={isGameActive}
                       icon={null}
                       value={NO_OF_TILES - minesCount}
@@ -123,7 +127,7 @@ function BettingControls(): JSX.Element {
               <div className="flex h-8 rounded-sm overflow-hidden group">
                 <div className="rounded-l-sm flex items-center bg-brand-weaker w-full">
                   <InputWithIcon
-                    className="text-neutral-default disabled:opacity-100 font-medium text-xs disabled:cursor-text select-none"
+                    className="text-neutral-default disabled:opacity-100 font-medium text-sm disabled:cursor-text select-none"
                     disabled
                     icon={null}
                     value={(
@@ -136,7 +140,10 @@ function BettingControls(): JSX.Element {
                 </div>
               </div>
             </div>
-            <Button className="bg-brand-weaker rounded-sm text-neutral-default font-semibold hover:bg-brand-weakest text-xs mt-1">
+            <Button
+              className="bg-brand-weaker rounded-sm text-neutral-default font-semibold hover:bg-brand-weakest text-sm mt-2 h-10"
+              onClick={pickRandomTile}
+            >
               Pick random tile
             </Button>
           </div>

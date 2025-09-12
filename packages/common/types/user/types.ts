@@ -50,6 +50,7 @@ export interface BetData {
     serverSeed?: string;
     nonce: number;
   };
+  betNonce: number;
   gameState: any;
   isMyBet: boolean;
 }

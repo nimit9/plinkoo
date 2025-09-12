@@ -73,6 +73,7 @@ export const getBetById = async (
 
   return {
     betId: bet.betId.toString().padStart(12, '0'),
+    betNonce: bet.betNonce,
     game: bet.game,
     date: bet.createdAt,
     gameState: bet.state,

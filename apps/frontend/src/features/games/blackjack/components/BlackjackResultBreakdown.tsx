@@ -13,7 +13,7 @@ import {
 
 interface BlackjackResultBreakdownProps {
   clientSeed?: string;
-  nonce?: string;
+  nonce?: number;
   serverSeed?: string;
 }
 

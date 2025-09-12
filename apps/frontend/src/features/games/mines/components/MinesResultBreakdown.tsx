@@ -24,7 +24,7 @@ const generateUniqueId = (
 
 interface MinesResultBreakdownProps {
   clientSeed?: string;
-  nonce?: string;
+  nonce?: number;
   serverSeed?: string;
   minesCount?: number;
 }
@@ -123,7 +123,7 @@ function MinesResultBreakdown({
         <div className="flex flex-col gap-4 my-1">
           {chunkedHmacByteIds.map((chunkedHmacByteId, index) => (
             <div key={generateUniqueId('chunk', index)}>
-              <p className="text-sm mb-0.5 font-semibold tracking-wider">
+              <p className="text-sm mb-0.5 break-words font-semibold tracking-wider">
                 {`HMAC_SHA256(${serverSeed}, ${clientSeed}:${nonce}:${index})`}
               </p>
               <div className="flex gap-2 text-sm overflow-x-auto no-scrollbar">
@@ -229,7 +229,7 @@ function MinesResultBreakdown({
         <div className="flex flex-col gap-1 my-1 w-full text-neutral-default font-medium">
           {fisherYatesShuffle.map(({ array, chosenIndex }, index) => (
             <div key={generateUniqueId('fisher-yates-shuffle', index)}>
-              <div className="flex gap-2 w-full justify-stretch text-sm">
+              <div className="flex gap-1.5 w-full justify-stretch text-sm">
                 {array.map((byte, idx) => (
                   <div
                     className={cn('flex-1 px-px text-center', {
