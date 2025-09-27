@@ -1,95 +1,35 @@
-# Use an ARG to allow for easy version upgrades
-ARG NODE_VERSION=22
+FROM node:22-slim
 
-# =================================================================================================
-# 1. Builder Stage: Installs all dependencies and builds the source code.
-# =================================================================================================
-FROM node:${NODE_VERSION}-slim AS builder
+# 🛠 Install OpenSSL 1.1 (needed by Prisma) and other required packages
+RUN apt-get update && apt-get install -y \
+    openssl \
+    libssl-dev \
+    libstdc++6 \
+    zlib1g \
+    bash \
+ && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for pnpm
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g pnpm@9.9.0
 
 WORKDIR /usr/src/app
 
-# Install build tools needed for native modules (like Prisma)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssl \
-    libssl-dev \
-    pkg-config \
-    build-essential \
-    python3 \
- && rm -rf /var/lib/apt/lists/*
+COPY ./packages ./packages
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 
-# Copy files required to install dependencies to maximize layer caching
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY package.json ./
-COPY packages/ packages/
-COPY apps/api/package.json apps/api/
+COPY ./package.json ./package.json
+COPY ./tsconfig.json ./tsconfig.json
+COPY ./turbo.json ./turbo.json
 
-# Use `pnpm fetch` to download all dependencies into a shared store.
-RUN pnpm fetch
+COPY ./apps/api ./apps/api
 
-# Install all dependencies (including devDependencies) using the fetched packages
-RUN pnpm install --frozen-lockfile --offline
-
-# Copy the rest of the source code
-COPY . .
+RUN pnpm install --frozen-lockfile
 
 # Generate Prisma client
 RUN pnpm db:generate
 
-# Build the specific 'api' application
 RUN pnpm build --filter=api
 
-# =================================================================================================
-# 2. Production Stage: Creates the final, small, and secure image.
-# =================================================================================================
-FROM node:${NODE_VERSION}-slim AS production
-
-ENV NODE_ENV=production
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-WORKDIR /usr/src/app
-
-# Install only the runtime dependency for Prisma (OpenSSL)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssl \
- && rm -rf /var/lib/apt/lists/*
-
-# Create a non-root user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nodejs
-
-# === THE KEY CHANGE IS HERE ===
-# Instead of copying the pruned node_modules, we will reinstall only production dependencies.
-
-# First, copy over the necessary package manifests and lockfile from the builder
-COPY --from=builder /usr/src/app/pnpm-lock.yaml ./
-COPY --from=builder /usr/src/app/pnpm-workspace.yaml ./
-COPY --from=builder /usr/src/app/package.json ./
-COPY --from=builder /usr/src/app/packages/ packages/
-COPY --from=builder /usr/src/app/apps/api/package.json apps/api/
-
-# Now, install ONLY production dependencies using the packages already fetched by the builder stage.
-# This creates a clean, production-only node_modules folder.
-RUN pnpm install --prod --frozen-lockfile --offline
-
-# Copy the built application code and Prisma schema from the builder stage
-COPY --from=builder --chown=nodejs:nodejs /usr/src/app/apps/api/dist ./apps/api/dist
-COPY --from=builder --chown=nodejs:nodejs /usr/src/app/packages/db/prisma ./apps/api/prisma
-
-# Switch to the non-root user
-USER nodejs
-
-# Change to the app-specific directory
 WORKDIR /usr/src/app/apps/api
 
-# Expose the port your app runs on
-EXPOSE 5000
-
-# Start the application
-CMD ["node", "dist/index.js"]
+CMD ["pnpm", "start"]
