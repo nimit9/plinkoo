@@ -1,23 +1,20 @@
-# This workflow deploys the backend application to a DigitalOcean Droplet.
-# It builds a simple Docker image (without PM2) and runs it on the server.
-
-name: Deploy Backend to Production (DigitalOcean - Simple)
+name: Deploy Backend to Production (AWS EC2)
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'apps/api/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/backend-deploy.yml'
-      - 'Docker/Dockerfile.api'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'apps/api/**'
+  #     - 'packages/**'
+  #     - 'pnpm-lock.yaml'
+  #     - '.github/workflows/backend-deploy.yml'
+  #     - 'Docker/Dockerfile.api'
   workflow_dispatch: # Allow manual triggering
 
 jobs:
   deploy:
-    name: Build and Deploy Backend to DigitalOcean Droplet
+    name: Build and Deploy Backend to AWS EC2
     runs-on: ubuntu-latest
 
     steps:
@@ -37,33 +34,45 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          # This should point to your simplified Dockerfile
           file: ./Docker/Dockerfile.api
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
             ${{ secrets.DOCKER_USERNAME }}/simcasino-api:${{ github.sha }}
 
-      - name: Deploy to DigitalOcean Droplet
+      - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DO_SSH_HOST }}
-          username: ${{ secrets.DO_SSH_USERNAME }}
-          key: ${{ secrets.DO_SSH_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            set -e
-            echo "🚀 Starting simple deployment on the server..."
-
-            # 1. Pull the latest image
-            echo "1/3: Pulling latest Docker image..."
+            # Pull the latest Docker image from Docker Hub
             docker pull ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
 
-            # 2. Stop and remove the existing container
-            echo "2/3: Stopping and removing existing container..."
+            # Stop and remove the existing container to prevent conflicts
+            # '|| true' ensures the script doesn't fail if the container doesn't exist
             docker stop simcasino-api || true
             docker rm simcasino-api || true
 
-            # 3. Run the new container
-            echo "3/3: Starting new container..."
+            # Run the new container with environment variables from GitHub Secrets
             docker run -d \
               --name simcasino-api \
+              --restart always \
+              -p 5000:5000 \
+              -e NODE_ENV=production \
+              -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              -e COOKIE_SECRET="${{ secrets.COOKIE_SECRET }}" \
+              -e CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}" \
+              -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
+              -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+              -e CLIENT_URL="${{ secrets.CLIENT_URL }}" \
+              -e REDIRECT_URL="${{ secrets.REDIRECT_URL }}" \
+              ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
+
+      - name: Deployment Notification
+        if: success()
+        run: |
+          echo "✅ Backend successfully deployed to AWS EC2."
+          echo "   Commit: ${{ github.sha }}"
+          echo "   Image Tag: ${{ secrets.DOCKER_USERNAME }}/simcasino-api:${{ github.sha }}"
