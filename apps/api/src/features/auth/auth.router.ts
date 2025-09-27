@@ -44,39 +44,39 @@ router.get(
   }
 );
 
-// Local authentication routes
-router.post(
-  '/login',
-  passport.authenticate('local', {
-    failureRedirect: `${process.env.CLIENT_URL}/login`,
-  }) as RequestHandler,
-  (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}`);
-  }
-);
+// // Local authentication routes
+// router.post(
+//   '/login',
+//   passport.authenticate('local', {
+//     failureRedirect: `${process.env.CLIENT_URL}/login`,
+//   }) as RequestHandler,
+//   (req, res) => {
+//     res.redirect(`${process.env.CLIENT_URL}`);
+//   }
+// );
 
-router.post('/register', async (req, res) => {
-  const { email, password, name } = req.body as RegisterRequestBody;
+// router.post('/register', async (req, res) => {
+//   const { email, password, name } = req.body as RegisterRequestBody;
 
-  const hashedPassword = await hash(password, 10);
-  const user = await db.user.upsert({
-    where: { email },
-    update: {
-      password: hashedPassword,
-      name,
-    },
-    create: {
-      email,
-      password: hashedPassword,
-      name,
-    },
-  });
+//   const hashedPassword = await hash(password, 10);
+//   const user = await db.user.upsert({
+//     where: { email },
+//     update: {
+//       password: hashedPassword,
+//       name,
+//     },
+//     create: {
+//       email,
+//       password: hashedPassword,
+//       name,
+//     },
+//   });
 
-  req.login(user, err => {
-    if (err) throw new BadRequestError('Error logging in');
-    res.redirect(`${process.env.CLIENT_URL}`);
-  });
-});
+//   req.login(user, err => {
+//     if (err) throw new BadRequestError('Error logging in');
+//     res.redirect(`${process.env.CLIENT_URL}`);
+//   });
+// });
 
 router.get('/logout', (req, res, next) => {
   req.logout(err => {
