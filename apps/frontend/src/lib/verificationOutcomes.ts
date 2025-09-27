@@ -109,7 +109,6 @@ const blackjackVerificationOutcomes = async ({
     seed: serverSeed,
     message: `${clientSeed}:${nonce}`,
   });
-  console.log('calculateHandValueWithSoft', floats);
   return convertFloatsToGameEventsForBlackjack(floats);
 };
 

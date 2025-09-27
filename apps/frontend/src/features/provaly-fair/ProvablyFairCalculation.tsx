@@ -19,8 +19,6 @@ function ProvablyFairCalculation(): JSX.Element {
     game || GAMES_DROPDOWN_OPTIONS[0].value
   );
 
-  console.log('clientSeed', clientSeed, serverSeed, nonce);
-
   const [verificationInputs, setVerificationInputs] =
     useState<VerificationInputsState | null>({
       clientSeed: clientSeed || '',
@@ -28,7 +26,6 @@ function ProvablyFairCalculation(): JSX.Element {
       nonce: nonce || 1,
     });
 
-  console.log('verificationInputs', verificationInputs);
   useEffect(() => {
     if (game) {
       setSelectedGame(game);

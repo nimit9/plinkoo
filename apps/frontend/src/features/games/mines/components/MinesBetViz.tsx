@@ -5,7 +5,6 @@ import InactiveGameTile from './InactiveGameTile';
 import { BetData } from '@repo/common/types';
 
 const MinesBetViz = ({ bet }: { bet: BetData }) => {
-  console.log();
   return (
     <MinesContainer>
       {Array.from({ length: NO_OF_TILES }, (_, i) => i).map(number => (
