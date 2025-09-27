@@ -73,8 +73,7 @@ COPY --from=builder --chown=nodejs:nodejs /usr/src/app/pnpm-lock.yaml ./pnpm-loc
 COPY --from=builder --chown=nodejs:nodejs /usr/src/app/apps/api/dist ./apps/api/dist
 COPY --from=builder --chown=nodejs:nodejs /usr/src/app/apps/api/package.json ./apps/api/package.json
 # Prisma client also needs access to the schema file at runtime
-COPY --from=builder --chown=nodejs:nodejs /usr/src/app/apps/api/prisma ./apps/api/prisma
-
+COPY --from=builder --chown=nodejs:nodejs /usr/src/app/packages/db/prisma ./apps/api/prisma
 # Switch to the non-root user
 USER nodejs
 
