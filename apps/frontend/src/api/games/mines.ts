@@ -36,9 +36,13 @@ export const playRound = async (
 export const cashOut = async (): Promise<
   ApiResponse<MinesGameOverResponse>
 > => {
-  return fetchPost('/api/v1/games/mines/cash-out', {
-    withCredentials: true,
-  });
+  return fetchPost(
+    '/api/v1/games/mines/cash-out',
+    {},
+    {
+      withCredentials: true,
+    }
+  );
 };
 
 export const getActiveGame = async (): Promise<
