@@ -20,23 +20,20 @@ passport.use(
       };
 
       try {
-        // Find the user by email
-        let user = await db.user.findFirst({
-          where: { email: profile.emails?.[0].value || '' },
+        const user = db.user.upsert({
+          where: {
+            email: profile.emails?.[0].value || '',
+          },
+          create: {
+            ...profileInfo,
+            email: profile.emails?.[0].value || '',
+            emailVerified: true, // Google OAuth users are pre-verified
+          },
+          update: {
+            ...profileInfo,
+            emailVerified: true, // Ensure Google OAuth users are marked as verified
+          },
         });
-        if (!user) {
-          user = await db.user.create({
-            data: {
-              ...profileInfo,
-              email: profile.emails?.[0].value || '',
-            },
-          });
-        } else {
-          user = await db.user.update({
-            where: { id: user.id },
-            data: profileInfo,
-          });
-        }
 
         done(null, user);
       } catch (err) {
@@ -59,6 +56,14 @@ passport.use(
 
         if (!user || !(await compare(password, user.password || ''))) {
           done(null, false, { message: 'Invalid email or password' });
+          return;
+        }
+
+        // Check if email is verified
+        if (!user.emailVerified) {
+          done(null, false, {
+            message: 'Please verify your email before logging in',
+          });
           return;
         }
 

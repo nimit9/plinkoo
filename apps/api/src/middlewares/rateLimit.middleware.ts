@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { User } from '@prisma/client';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 // NOTE: Using the default in-memory store from `express-rate-limit`.
 // This is intended for single-instance or development environments only.
@@ -19,7 +19,8 @@ export const rateLimitBets = (options: {
     // Rate limiter configuration
     windowMs: 15 * 60 * 1000, // 15 minutes
     max,
-    keyGenerator: (req: Request) => String((req.user as User)?.id || req.ip),
+    keyGenerator: (req: Request) =>
+      String((req.user as User)?.id || ipKeyGenerator(req.ip || '')),
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 
@@ -51,7 +52,8 @@ export const rateLimitRequests = (options?: {
   return rateLimit({
     windowMs,
     max,
-    keyGenerator: (req: Request) => String((req.user as User)?.id || req.ip),
+    keyGenerator: (req: Request) =>
+      String((req.user as User)?.id || ipKeyGenerator(req.ip || '')),
     standardHeaders: true,
     legacyHeaders: false,
     // Using default in-memory store (suitable for single-instance / dev only).

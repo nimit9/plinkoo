@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { isAuthenticated } from '../../../middlewares/auth.middleware';
+import { requireEmailVerification } from '../../../middlewares/auth.middleware';
 import {
   cashOut,
   getActiveGame,
@@ -14,18 +14,18 @@ const minesRouter: Router = Router();
 
 minesRouter.post(
   '/start',
-  isAuthenticated,
+  requireEmailVerification,
   rateLimitBets({ maxBetsPerMinute: 30 }),
   validateBet,
   startGame
 );
 minesRouter.post(
   '/play-round',
-  isAuthenticated,
+  requireEmailVerification,
   validatePlayRoundRequest,
   playRound
 );
-minesRouter.post('/cash-out', isAuthenticated, cashOut);
-minesRouter.get('/active', isAuthenticated, getActiveGame);
+minesRouter.post('/cash-out', requireEmailVerification, cashOut);
+minesRouter.get('/active', requireEmailVerification, getActiveGame);
 
 export default minesRouter;
