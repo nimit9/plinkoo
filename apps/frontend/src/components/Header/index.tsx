@@ -1,4 +1,4 @@
-import { Link, useNavigate, useRouter } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Balance } from './Balance';
 import { getAuthState } from '@/features/auth/store/authStore';
 import { Button } from '../ui/button';
@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { Settings, User2, UserCog, UserRound } from 'lucide-react';
 import BetsIcon from '@/assets/icons/bets';
 import LogoutIcon from '@/assets/icons/logout';
 import UserIcon from '@/assets/icons/user';
@@ -45,10 +44,13 @@ const settingsDropdownItemsOrder = [
   SettingsDropdownItems.LOGOUT,
 ];
 
-export function Header(): JSX.Element {
-  const { user, showLoginModal } = getAuthState();
+export function Header({
+  openLoginModal = true,
+}: {
+  openLoginModal?: boolean;
+}): JSX.Element {
+  const { user, showLoginModal, setUser } = getAuthState();
   const navigate = useNavigate();
-  const router = useRouter();
 
   const handleDropdownItemClick = async (item: SettingsDropdownItems) => {
     switch (item) {
@@ -56,8 +58,16 @@ export function Header(): JSX.Element {
         navigate({ to: '/my-bets' });
         break;
       case SettingsDropdownItems.LOGOUT:
-        await fetchGet('/api/v1/auth/logout');
-        window.location.reload();
+        try {
+          await fetchGet('/api/v1/auth/logout', { withCredentials: true });
+        } catch (error) {
+          console.error('Logout error:', error);
+        } finally {
+          // Clear user state regardless of API response
+          setUser(null);
+          // Navigate to home page instead of reload for better UX
+          navigate({ to: '/' });
+        }
         break;
     }
   };
@@ -104,7 +114,11 @@ export function Header(): JSX.Element {
         ) : (
           <Button
             className="bg-brand-weaker hover:bg-brand-weakest rounded-sm text-xs text-primary"
-            onClick={showLoginModal}
+            onClick={() => {
+              openLoginModal
+                ? showLoginModal()
+                : navigate({ to: '/casino/home' });
+            }}
           >
             Login
           </Button>

@@ -19,8 +19,11 @@ const router: Router = Router();
 
 // Google authentication routes
 router.get('/google', (req, res, next) => {
-  const state = JSON.stringify({ redirect: req.query.redirect_to });
-  // Store the redirect URL in session if provided
+  // Get redirect URL from query parameter or use default
+  const redirectUrl =
+    (req.query.redirect_to as string) || process.env.CLIENT_URL;
+  const state = JSON.stringify({ redirect: redirectUrl });
+
   (
     passport.authenticate('google', {
       scope: ['profile', 'email'],
@@ -80,8 +83,27 @@ router.get(
 
 router.get('/logout', (req, res, next) => {
   req.logout(err => {
-    if (err) next(err);
-    res.json({ message: 'Logged out successfully' });
+    if (err) {
+      console.log('Logout error:', err);
+      return next(err);
+    }
+
+    // Destroy the session
+    req.session.destroy(sessionErr => {
+      if (sessionErr) {
+        console.log('Session destroy error:', sessionErr);
+        return next(sessionErr);
+      }
+
+      // Clear the session cookie
+      res.clearCookie('connect.sid', {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
+
+      res.json({ message: 'Logged out successfully' });
+    });
   });
 });
 

@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useAuthStore } from '../store/authStore';
+import { LOGIN_URL } from '../const/immutableConst';
 
 export function LoginModal(): JSX.Element {
   const { user, isModalOpen, hideLoginModal } = useAuthStore();
@@ -15,12 +16,9 @@ export function LoginModal(): JSX.Element {
   const handleGoogleLogin = (): void => {
     // Save current URL to redirect back after login
     const currentUrl = window.location.href;
-    localStorage.setItem('auth_redirect', currentUrl);
 
     // Redirect to Google OAuth endpoint
-    window.location.href =
-      'http://localhost:5000/api/v1/auth/google?redirect_to=' +
-      encodeURIComponent(currentUrl);
+    window.location.href = `${LOGIN_URL}?redirect_to=${encodeURIComponent(currentUrl)}`;
   };
 
   // Close the modal when user becomes authenticated

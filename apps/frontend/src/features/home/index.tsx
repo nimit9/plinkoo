@@ -6,6 +6,8 @@ import { Games } from '@/const/games';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MyBetsTable from '../my-bets/my-bets-table';
 import AllBetsTable from '../all-bets/all-bets-table';
+import { getAuthState } from '../auth/store/authStore';
+import { cn } from '@/lib/utils';
 
 enum TabsEnum {
   MyBets = 'myBets',
@@ -14,7 +16,10 @@ enum TabsEnum {
 
 function Home(): JSX.Element {
   const [searchText, setSearchText] = useState('');
-  const [activeTab, setActiveTab] = useState<TabsEnum>(TabsEnum.MyBets);
+  const { user } = getAuthState();
+  const [activeTab, setActiveTab] = useState<TabsEnum>(
+    user ? TabsEnum.MyBets : TabsEnum.AllBets
+  );
   return (
     <div className="container py-8 flex flex-col gap-8">
       <InputWithIcon
@@ -45,19 +50,30 @@ function Home(): JSX.Element {
           ))}
       </div>
       <Tabs
-        defaultValue={TabsEnum.MyBets}
+        value={activeTab}
         onValueChange={value => {
           setActiveTab(value as TabsEnum);
         }}
       >
-        <TabsList className="mx-auto lg:mx-0 grid w-52 grid-cols-2 h-[44px]">
-          <TabsTrigger value={TabsEnum.MyBets}>My Bets</TabsTrigger>
-          <TabsTrigger value={TabsEnum.AllBets}>All Bets</TabsTrigger>
+        <TabsList
+          className={cn('mx-auto lg:mx-0 grid w-52 grid-cols-2 h-[44px]', {
+            'w-24 grid-cols-1': !user,
+          })}
+        >
+          {user && <TabsTrigger value={TabsEnum.MyBets}>My Bets</TabsTrigger>}
+          <TabsTrigger
+            value={TabsEnum.AllBets}
+            className={cn({ 'col-span-2': !user })}
+          >
+            All Bets
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value={TabsEnum.MyBets}>
-          <MyBetsTable />
-        </TabsContent>
+        {user && (
+          <TabsContent value={TabsEnum.MyBets}>
+            <MyBetsTable />
+          </TabsContent>
+        )}
         <TabsContent value={TabsEnum.AllBets}>
           <AllBetsTable />
         </TabsContent>

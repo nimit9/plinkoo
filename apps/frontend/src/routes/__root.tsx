@@ -41,21 +41,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootLayout(): JSX.Element {
-  const { setUser, showLoginModal } = useAuthStore();
-
-  // Setup interceptors to show login modal on auth errors
-  React.useEffect(() => {
-    setupInterceptors({
-      authErrCb: () => {
-        setUser(null);
-        showLoginModal();
-      },
-    });
-  }, [setUser, showLoginModal]);
-
   return (
     <>
-      <Header />
       <Outlet />
       <LoginModal />
       <GlobalModals />

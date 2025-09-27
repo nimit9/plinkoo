@@ -30,8 +30,11 @@ export const Route = createFileRoute('/_protected')({
 
 function ProtectedLayout(): JSX.Element {
   return (
-    <div className="min-h-screen">
-      <Outlet />
-    </div>
+    <>
+      <Header />
+      <div className="min-h-screen">
+        <Outlet />
+      </div>
+    </>
   );
 }

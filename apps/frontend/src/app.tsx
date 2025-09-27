@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 
 const router = createRouter({
   routeTree,
-  defaultPreload: 'intent',
+  defaultPreload: false,
   context: {
     authStore: undefined,
   } as { authStore: AuthState | undefined },

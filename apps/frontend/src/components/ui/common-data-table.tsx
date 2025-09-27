@@ -19,6 +19,7 @@ import {
   TableRow,
 } from './table';
 import { Button } from './button';
+import { EmptyState } from './empty-state';
 
 interface CommonDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -27,6 +28,15 @@ interface CommonDataTableProps<TData, TValue> {
   setPagination?: (updater: Updater<PaginationState>) => void;
   pagination?: PaginationState;
   rowCount?: number;
+  emptyState?: {
+    icon?: React.ReactNode;
+    title: string;
+    description?: string;
+    action?: {
+      label: string;
+      onClick: () => void;
+    };
+  };
 }
 
 // Type declaration to extend ColumnDef with our custom meta properties
@@ -44,6 +54,7 @@ export function CommonDataTable<TData, TValue>({
   setPagination,
   pagination,
   rowCount,
+  emptyState,
 }: CommonDataTableProps<TData, TValue>): JSX.Element {
   const table = useReactTable({
     columns,
@@ -76,6 +87,17 @@ export function CommonDataTable<TData, TValue>({
       pagination,
     },
   });
+
+  if (table.getRowModel().rows.length === 0) {
+    return (
+      <EmptyState
+        icon={emptyState?.icon}
+        title={emptyState?.title || 'No data available'}
+        description={emptyState?.description}
+        action={emptyState?.action}
+      />
+    );
+  }
 
   return (
     <div>
