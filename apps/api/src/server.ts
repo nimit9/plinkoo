@@ -16,6 +16,10 @@ import { rateLimitRequests } from './middlewares/rateLimit.middleware';
 
 export const createServer = (): Express => {
   const app = express();
+
+  // Trust proxy (CRITICAL for Nginx reverse proxy)
+  app.set('trust proxy', 1);
+
   app
     .disable('x-powered-by')
     .use(morgan('dev'))
@@ -33,9 +37,12 @@ export const createServer = (): Express => {
         cookie: {
           secure: process.env.NODE_ENV === 'production',
           httpOnly: true,
-          maxAge: 2 * 24 * 60 * 60 * 1000,
+          maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-          domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
+          domain:
+            process.env.NODE_ENV === 'production'
+              ? process.env.COOKIE_DOMAIN
+              : undefined,
         },
         resave: false,
         saveUninitialized: false,
