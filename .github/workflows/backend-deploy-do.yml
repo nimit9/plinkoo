@@ -63,7 +63,24 @@ jobs:
             docker stop simcasino-api || true
             docker rm simcasino-api || true
 
-            # 3. Run the new container
-            echo "3/3: Starting new container..."
+            # Run the new container with environment variables from GitHub Secrets
             docker run -d \
               --name simcasino-api \
+              --restart always \
+              -p 5000:5000 \
+              -e NODE_ENV=production \
+              -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              -e COOKIE_SECRET="${{ secrets.COOKIE_SECRET }}" \
+              -e CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}" \
+              -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
+              -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+              -e CLIENT_URL="${{ secrets.CLIENT_URL }}" \
+              -e REDIRECT_URL="${{ secrets.REDIRECT_URL }}" \
+              ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
+
+      - name: Deployment Notification
+        if: success()
+        run: |
+          echo "✅ Backend successfully deployed to AWS EC2."
+          echo "   Commit: ${{ github.sha }}"
+          echo "   Image Tag: ${{ secrets.DOCKER_USERNAME }}/simcasino-api:${{ github.sha }}"
