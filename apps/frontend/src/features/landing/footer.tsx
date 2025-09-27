@@ -28,7 +28,7 @@ export function Footer(): JSX.Element {
             <div className="space-y-2 text-sm">
               <a
                 className="block text-muted-foreground hover:text-foreground transition-colors"
-                href="/"
+                href="/casino/home"
               >
                 Games
               </a>
@@ -65,7 +65,7 @@ export function Footer(): JSX.Element {
               </a>
               <a
                 className="block text-muted-foreground hover:text-foreground transition-colors"
-                href="/"
+                href="/provably-fair"
               >
                 Provably Fair
               </a>
@@ -77,9 +77,15 @@ export function Footer(): JSX.Element {
               </a>
               <a
                 className="block text-muted-foreground hover:text-foreground transition-colors"
-                href="/"
+                href="/terms-and-conditions"
               >
                 Terms of Service
+              </a>
+              <a
+                className="block text-muted-foreground hover:text-foreground transition-colors"
+                href="/privacy-policy"
+              >
+                Privacy Policy
               </a>
             </div>
           </div>
@@ -88,27 +94,30 @@ export function Footer(): JSX.Element {
           <div className="space-y-4">
             <h4 className="font-semibold">Community</h4>
             <div className="flex gap-2">
-              <Button
+              {/* <Button
                 className="text-muted-foreground hover:text-foreground"
                 size="icon"
                 variant="ghost"
               >
                 <Twitter className="w-4 h-4" />
-              </Button>
+              </Button> */}
               <Button
                 className="text-muted-foreground hover:text-foreground"
                 size="icon"
                 variant="ghost"
+                onClick={() =>
+                  window.open('https://github.com/nimit9/plinkoo', '_blank')
+                }
               >
                 <Github className="w-4 h-4" />
               </Button>
-              <Button
+              {/* <Button
                 className="text-muted-foreground hover:text-foreground"
                 size="icon"
                 variant="ghost"
               >
                 <MessageCircle className="w-4 h-4" />
-              </Button>
+              </Button> */}
             </div>
             <p className="text-xs text-muted-foreground">
               Join our community of strategy testers and learn from the best.
