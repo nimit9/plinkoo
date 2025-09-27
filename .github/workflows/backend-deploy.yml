@@ -1,9 +1,9 @@
-name: Deploy Backend to Production
+name: Deploy Backend to Production (AWS EC2)
 
 on:
   push:
     branches:
-      - dont-deploy
+      - main
     paths:
       - 'apps/api/**'
       - 'packages/**'
@@ -14,7 +14,7 @@ on:
 
 jobs:
   deploy:
-    name: Build and Deploy Backend
+    name: Build and Deploy Backend to AWS EC2
     runs-on: ubuntu-latest
 
     steps:
@@ -40,21 +40,22 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
             ${{ secrets.DOCKER_USERNAME }}/simcasino-api:${{ github.sha }}
 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@master
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Pull the latest image
+            # Pull the latest Docker image from Docker Hub
             docker pull ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
 
-            # Stop and remove the old container
+            # Stop and remove the existing container to prevent conflicts
+            # '|| true' ensures the script doesn't fail if the container doesn't exist
             docker stop simcasino-api || true
             docker rm simcasino-api || true
 
-            # Run the new container
+            # Run the new container with environment variables from GitHub Secrets
             docker run -d \
               --name simcasino-api \
               --restart always \
@@ -72,6 +73,6 @@ jobs:
       - name: Deployment Notification
         if: success()
         run: |
-          echo "Backend successfully deployed to production."
-          echo "Commit: ${GITHUB_SHA::7}"
-          echo "Branch: ${GITHUB_REF#refs/heads/}"
+          echo "✅ Backend successfully deployed to AWS EC2."
+          echo "   Commit: ${{ github.sha }}"
+          echo "   Image Tag: ${{ secrets.DOCKER_USERNAME }}/simcasino-api:${{ github.sha }}"
