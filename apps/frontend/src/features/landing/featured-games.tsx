@@ -1,4 +1,4 @@
-import { TrendingUp, Target, Dice6 } from 'lucide-react';
+import { Bomb, Spade, Dice6 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -8,35 +8,35 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-// import crashGame from '@/assets/crash-game.jpg';
-// import plinkoGame from '@/assets/plinko-game.jpg';
+// import minesGame from '@/assets/mines-game.jpg';
+// import blackjackGame from '@/assets/blackjack-game.jpg';
 // import diceGame from '@/assets/dice-game.jpg';
 
 const games = [
   {
-    title: 'Crash',
+    title: 'Mines',
     description:
-      'Watch the multiplier soar and cash out before it crashes. Test your timing and risk management.',
-    // image: crashGame,
-    icon: TrendingUp,
+      'Click on tiles to reveal gems and multiply your bet, but beware of the hidden mines!',
+    // image: minesGame,
+    icon: Bomb,
     difficulty: 'Medium',
     minBet: '0.01',
-    maxMultiplier: '1000x',
+    maxMultiplier: '1,000,000x',
   },
   {
-    title: 'Plinko',
+    title: 'Blackjack',
     description:
-      'Drop the ball and watch it bounce through the pegs. Pure chance with strategic bet sizing.',
-    // image: plinkoGame,
-    icon: Target,
-    difficulty: 'Easy',
+      'The classic card game. Try to beat the dealer by getting as close to 21 as you can.',
+    // image: blackjackGame,
+    icon: Spade,
+    difficulty: 'Hard',
     minBet: '0.01',
-    maxMultiplier: '100x',
+    maxMultiplier: '2.5x',
   },
   {
     title: 'Dice',
     description:
-      'Predict if the dice roll will be over or under your chosen number. Simple yet strategic.game',
+      'Predict if the dice roll will be over or under your chosen number. Simple yet strategic.',
     // image: diceGame,
     icon: Dice6,
     difficulty: 'Easy',
@@ -108,7 +108,13 @@ export function FeaturedGames(): JSX.Element {
                     </div>
                   </div>
 
-                  <Button className="w-full group gap-2" variant="neon">
+                  <Button
+                    className="w-full group gap-2"
+                    variant="neon"
+                    onClick={() =>
+                      window.open(`/casino/games/${game.title.toLowerCase()}`)
+                    }
+                  >
                     Try {game.title}
                     <IconComponent className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   </Button>
