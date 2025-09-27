@@ -2,19 +2,18 @@
 ARG NODE_VERSION=22
 
 # =================================================================================================
-# 1. Builder Stage: Installs all dependencies, builds the source code, and prunes dev dependencies.
+# 1. Builder Stage: Installs all dependencies and builds the source code.
 # =================================================================================================
 FROM node:${NODE_VERSION}-slim AS builder
 
 # Set environment variables for pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-# Use corepack to install pnpm, which is the recommended method since Node.js v16.13
-RUN corepack enable && corepack prepare pnpm@9.9.0 --activate
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /usr/src/app
 
-# 🛠 Install OpenSSL and build tools needed for native modules (like Prisma)
+# Install build tools needed for native modules (like Prisma)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
     libssl-dev \
@@ -23,37 +22,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
  && rm -rf /var/lib/apt/lists/*
 
-# Copy only the files required to install dependencies.
-# This maximizes layer caching. The install step will only re-run if these files change.
+# Copy files required to install dependencies to maximize layer caching
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY package.json tsconfig.json turbo.json ./
+COPY package.json ./
 COPY packages/ packages/
 COPY apps/api/package.json apps/api/
 
-# Use `pnpm fetch` to download dependencies into a shared content-addressable store.
-# This creates a highly cacheable layer.
+# Use `pnpm fetch` to download all dependencies into a shared store.
 RUN pnpm fetch
+
+# Install all dependencies (including devDependencies) using the fetched packages
+RUN pnpm install --frozen-lockfile --offline
 
 # Copy the rest of the source code
 COPY . .
 
-# Install dependencies using the fetched packages (offline) and generate Prisma client
-RUN pnpm install --frozen-lockfile --offline
+# Generate Prisma client
 RUN pnpm db:generate
 
 # Build the specific 'api' application
 RUN pnpm build --filter=api
-
-# Prune development dependencies to reduce the size of the node_modules folder
-RUN pnpm prune --prod
 
 # =================================================================================================
 # 2. Production Stage: Creates the final, small, and secure image.
 # =================================================================================================
 FROM node:${NODE_VERSION}-slim AS production
 
-# Set the environment to production
 ENV NODE_ENV=production
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /usr/src/app
 
@@ -62,27 +60,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
  && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user and group for security
+# Create a non-root user for security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
-# Copy pruned dependencies, built code, and necessary package files from the builder stage
-# --chown sets the correct permissions for our non-root user
-COPY --from=builder --chown=nodejs:nodejs /usr/src/app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /usr/src/app/pnpm-lock.yaml ./pnpm-lock.yaml
+# === THE KEY CHANGE IS HERE ===
+# Instead of copying the pruned node_modules, we will reinstall only production dependencies.
+
+# First, copy over the necessary package manifests and lockfile from the builder
+COPY --from=builder /usr/src/app/pnpm-lock.yaml ./
+COPY --from=builder /usr/src/app/pnpm-workspace.yaml ./
+COPY --from=builder /usr/src/app/package.json ./
+COPY --from=builder /usr/src/app/packages/ packages/
+COPY --from=builder /usr/src/app/apps/api/package.json apps/api/
+
+# Now, install ONLY production dependencies using the packages already fetched by the builder stage.
+# This creates a clean, production-only node_modules folder.
+RUN pnpm install --prod --frozen-lockfile --offline
+
+# Copy the built application code and Prisma schema from the builder stage
 COPY --from=builder --chown=nodejs:nodejs /usr/src/app/apps/api/dist ./apps/api/dist
-COPY --from=builder --chown=nodejs:nodejs /usr/src/app/apps/api/package.json ./apps/api/package.json
-# Prisma client also needs access to the schema file at runtime
 COPY --from=builder --chown=nodejs:nodejs /usr/src/app/packages/db/prisma ./apps/api/prisma
+
 # Switch to the non-root user
 USER nodejs
 
 # Change to the app-specific directory
 WORKDIR /usr/src/app/apps/api
 
-# Expose the port your app runs on (replace 3000 if different)
+# Expose the port your app runs on
 EXPOSE 5000
 
-# Start the application directly with node, avoiding the need for pnpm in the final image.
-# Assumes your start script runs `node dist/main.js` or similar.
+# Start the application
 CMD ["node", "dist/index.js"]
