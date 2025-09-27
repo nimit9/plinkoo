@@ -81,7 +81,7 @@ USER nodejs
 WORKDIR /usr/src/app/apps/api
 
 # Expose the port your app runs on (replace 3000 if different)
-EXPOSE 3000
+EXPOSE 5000
 
 # Start the application directly with node, avoiding the need for pnpm in the final image.
 # Assumes your start script runs `node dist/main.js` or similar.
