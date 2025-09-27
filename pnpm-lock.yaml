@@ -44,12 +44,18 @@ importers:
       express-async-errors:
         specifier: ^3.1.1
         version: 3.1.1(express@4.21.2)
+      express-rate-limit:
+        specifier: 8.1.0
+        version: 8.1.0(express@4.21.2)
       express-session:
         specifier: ^1.18.0
         version: 1.18.1
       http-status-codes:
         specifier: ^2.3.0
         version: 2.3.0
+      ioredis:
+        specifier: 5.7.0
+        version: 5.7.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -65,6 +71,9 @@ importers:
       passport-local:
         specifier: ^1.0.0
         version: 1.0.0
+      rate-limit-redis:
+        specifier: 4.2.2
+        version: 4.2.2(express-rate-limit@8.1.0(express@4.21.2))
     devDependencies:
       '@repo/common':
         specifier: workspace:*
@@ -124,8 +133,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.24)
       supertest:
-        specifier: ^6.3.4
-        version: 6.3.4
+        specifier: 7.1.3
+        version: 7.1.3
       tsup:
         specifier: ^8.0.2
         version: 8.4.0(jiti@1.21.7)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.7.0)
@@ -924,6 +933,9 @@ packages:
     peerDependencies:
       react: ^16.13 || ^17 || ^18 || ^19
 
+  '@ioredis/commands@1.3.1':
+    resolution: {integrity: sha512-bYtU8avhGIcje3IhvF9aSjsa5URMZBHnwKtOvXsT4sfYy9gppW11gLPT/9oNqlJZD47yPKveQFTAFWpHjKvUoQ==}
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -1036,6 +1048,10 @@ packages:
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
 
+  '@noble/hashes@1.8.0':
+    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
+    engines: {node: ^14.21.3 || >=16}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1075,6 +1091,9 @@ packages:
   '@npmcli/promise-spawn@7.0.2':
     resolution: {integrity: sha512-xhfYPXoV5Dy4UkY0D+v2KkwvnDfiA/8Mt3sWCGI/hM03NsYIH8ZaG6QzS9x7pje5vHZBZJ2v6VRFVTWACnqcmQ==}
     engines: {node: ^16.14.0 || >=18.0.0}
+
+  '@paralleldrive/cuid2@2.2.2':
+    resolution: {integrity: sha512-ZOBkgDwEdoYVlSeRbYYXs0S9MejQofiVYoTbKzy/6GQa39/q5tQU2IX46+shYnUkpEl3wc+J6wRlar7r2EK2xA==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -2674,6 +2693,10 @@ packages:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
 
+  cluster-key-slot@1.1.2:
+    resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
+    engines: {node: '>=0.10.0'}
+
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
@@ -2890,6 +2913,10 @@ packages:
 
   delegates@1.0.0:
     resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
+
+  denque@2.1.0:
+    resolution: {integrity: sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==}
+    engines: {node: '>=0.10'}
 
   depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
@@ -3365,6 +3392,12 @@ packages:
     peerDependencies:
       express: ^4.16.2
 
+  express-rate-limit@8.1.0:
+    resolution: {integrity: sha512-4nLnATuKupnmwqiJc27b4dCFmB/T60ExgmtDD7waf4LdrbJ8CPZzZRHYErDYNhoz+ql8fUdYwM/opf90PoPAQA==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      express: '>= 4.11'
+
   express-session@1.18.1:
     resolution: {integrity: sha512-a5mtTqEaZvBCL9A9aqkrtfz+3SMDhOVUnjafjo+s7A9Txkq+SVX2DLvSp1Zrv4uCXa3lMSK3viWnh9Gg07PBUA==}
     engines: {node: '>= 0.8.0'}
@@ -3457,9 +3490,13 @@ packages:
     resolution: {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
     engines: {node: '>= 6'}
 
-  formidable@2.1.2:
-    resolution: {integrity: sha512-CM3GuJ57US06mlpQ47YcunuUZ9jpm8Vx+P2CGt2j7HpgkKZO/DJYQ0Bobim8G6PFQmK5lOqOOdUXboU+h73A4g==}
-    deprecated: 'ACTION REQUIRED: SWITCH TO v3 - v1 and v2 are VULNERABLE! v1 is DEPRECATED FOR OVER 2 YEARS! Use formidable@latest or try formidable-mini for fresh projects'
+  form-data@4.0.4:
+    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
+    engines: {node: '>= 6'}
+
+  formidable@3.5.4:
+    resolution: {integrity: sha512-YikH+7CUTOtP44ZTnUhR7Ic2UASBPOqmaRkRKxRbywPTe5VxF7RRCck4af9wutiZ/QKM5nME9Bie2fFaPz5Gug==}
+    engines: {node: '>=14.0.0'}
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -3650,10 +3687,6 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hexoid@1.0.0:
-    resolution: {integrity: sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==}
-    engines: {node: '>=8'}
-
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
@@ -3755,6 +3788,14 @@ packages:
   internal-slot@1.1.0:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
+
+  ioredis@5.7.0:
+    resolution: {integrity: sha512-NUcA93i1lukyXU+riqEyPtSEkyFq8tX90uL659J+qpCZ3rEdViB/APC58oAhIh3+bJln2hzdlZbBZsGNrlsR8g==}
+    engines: {node: '>=12.22.0'}
+
+  ip-address@10.0.1:
+    resolution: {integrity: sha512-NWv9YLW4PoW2B7xtzaS3NCot75m6nK7Icdv0o3lfMceJVRfSoQwqD4wEH5rLwoKJwUiZ/rfpiVBhnaF0FK4HoA==}
+    engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
@@ -4248,6 +4289,12 @@ packages:
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
+
+  lodash.defaults@4.2.0:
+    resolution: {integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==}
+
+  lodash.isarguments@3.1.0:
+    resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
 
   lodash.memoize@4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
@@ -5111,6 +5158,12 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
+  rate-limit-redis@4.2.2:
+    resolution: {integrity: sha512-0SGzpSCZQgkJuUK5AqGaUkgwTMaujWIek0PwlZBDsdNIcasrJae8AC47tP5UHayqDcocJxtogL6DnZFTLoruUw==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      express-rate-limit: '>= 6'
+
   raw-body@2.5.2:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
     engines: {node: '>= 0.8'}
@@ -5206,6 +5259,14 @@ packages:
   readdirp@4.1.2:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
+
+  redis-errors@1.2.0:
+    resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
+    engines: {node: '>=4'}
+
+  redis-parser@3.0.0:
+    resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
+    engines: {node: '>=4'}
 
   reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
@@ -5491,6 +5552,9 @@ packages:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
     engines: {node: '>=10'}
 
+  standard-as-callback@2.1.0:
+    resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
+
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
@@ -5594,15 +5658,13 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
-  superagent@8.1.2:
-    resolution: {integrity: sha512-6WTxW1EB6yCxV5VFOIPQruWGHqc3yI7hEmZK6h+pyk69Lk/Ut7rLUY6W/ONF2MjBuGjvmMiIpsrVJ2vjrHlslA==}
-    engines: {node: '>=6.4.0 <13 || >=14'}
-    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
+  superagent@10.2.3:
+    resolution: {integrity: sha512-y/hkYGeXAj7wUMjxRbB21g/l6aAEituGXM9Rwl4o20+SX3e8YOSV6BxFXl+dL3Uk0mjSL3kCbNkwURm8/gEDig==}
+    engines: {node: '>=14.18.0'}
 
-  supertest@6.3.4:
-    resolution: {integrity: sha512-erY3HFDG0dPnhw4U+udPfrzXa4xhSG+n4rxfRuZWCUvjFWwKl+OxWf/7zk50s84/fAAs7vf5QAb9uRa0cCykxw==}
-    engines: {node: '>=6.4.0'}
-    deprecated: Please upgrade to supertest v7.1.3+, see release notes at https://github.com/forwardemail/supertest/releases/tag/v7.1.3 - maintenance is supported by Forward Email @ https://forwardemail.net
+  supertest@7.1.3:
+    resolution: {integrity: sha512-ORY0gPa6ojmg/C74P/bDoS21WL6FMXq5I8mawkEz30/zkwdu0gOeqstFy316vHG6OKxqQ+IbGneRemHI8WraEw==}
+    engines: {node: '>=14.18.0'}
 
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
@@ -6684,6 +6746,8 @@ snapshots:
     dependencies:
       react: 18.3.1
 
+  '@ioredis/commands@1.3.1': {}
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -6917,6 +6981,8 @@ snapshots:
     dependencies:
       eslint-scope: 5.1.1
 
+  '@noble/hashes@1.8.0': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -6982,6 +7048,10 @@ snapshots:
   '@npmcli/promise-spawn@7.0.2':
     dependencies:
       which: 4.0.0
+
+  '@paralleldrive/cuid2@2.2.2':
+    dependencies:
+      '@noble/hashes': 1.8.0
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -8688,6 +8758,8 @@ snapshots:
 
   clsx@2.1.1: {}
 
+  cluster-key-slot@1.1.2: {}
+
   co@4.6.0: {}
 
   collect-v8-coverage@1.0.2: {}
@@ -8893,6 +8965,8 @@ snapshots:
   delayed-stream@1.0.0: {}
 
   delegates@1.0.0: {}
+
+  denque@2.1.0: {}
 
   depd@2.0.0: {}
 
@@ -9562,6 +9636,11 @@ snapshots:
     dependencies:
       express: 4.21.2
 
+  express-rate-limit@8.1.0(express@4.21.2):
+    dependencies:
+      express: 4.21.2
+      ip-address: 10.0.1
+
   express-session@1.18.1:
     dependencies:
       cookie: 0.7.2
@@ -9701,12 +9780,19 @@ snapshots:
       es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
 
-  formidable@2.1.2:
+  form-data@4.0.4:
     dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.2
+      mime-types: 2.1.35
+
+  formidable@3.5.4:
+    dependencies:
+      '@paralleldrive/cuid2': 2.2.2
       dezalgo: 1.0.4
-      hexoid: 1.0.0
       once: 1.4.0
-      qs: 6.14.0
 
   forwarded@0.2.0: {}
 
@@ -9895,8 +9981,6 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hexoid@1.0.0: {}
-
   hmac-drbg@1.0.1:
     dependencies:
       hash.js: 1.1.7
@@ -9992,6 +10076,22 @@ snapshots:
       es-errors: 1.3.0
       hasown: 2.0.2
       side-channel: 1.1.0
+
+  ioredis@5.7.0:
+    dependencies:
+      '@ioredis/commands': 1.3.1
+      cluster-key-slot: 1.1.2
+      debug: 4.4.0
+      denque: 2.1.0
+      lodash.defaults: 4.2.0
+      lodash.isarguments: 3.1.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+
+  ip-address@10.0.1: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -10727,6 +10827,10 @@ snapshots:
   locate-path@6.0.0:
     dependencies:
       p-locate: 5.0.0
+
+  lodash.defaults@4.2.0: {}
+
+  lodash.isarguments@3.1.0: {}
 
   lodash.memoize@4.1.2: {}
 
@@ -11689,6 +11793,10 @@ snapshots:
 
   range-parser@1.2.1: {}
 
+  rate-limit-redis@4.2.2(express-rate-limit@8.1.0(express@4.21.2)):
+    dependencies:
+      express-rate-limit: 8.1.0(express@4.21.2)
+
   raw-body@2.5.2:
     dependencies:
       bytes: 3.1.2
@@ -11794,6 +11902,12 @@ snapshots:
       picomatch: 2.3.1
 
   readdirp@4.1.2: {}
+
+  redis-errors@1.2.0: {}
+
+  redis-parser@3.0.0:
+    dependencies:
+      redis-errors: 1.2.0
 
   reflect.getprototypeof@1.0.10:
     dependencies:
@@ -12156,6 +12270,8 @@ snapshots:
     dependencies:
       escape-string-regexp: 2.0.0
 
+  standard-as-callback@2.1.0: {}
+
   statuses@2.0.1: {}
 
   stream-browserify@3.0.0:
@@ -12296,25 +12412,24 @@ snapshots:
       pirates: 4.0.6
       ts-interface-checker: 0.1.13
 
-  superagent@8.1.2:
+  superagent@10.2.3:
     dependencies:
       component-emitter: 1.3.1
       cookiejar: 2.1.4
       debug: 4.4.0
       fast-safe-stringify: 2.1.1
-      form-data: 4.0.2
-      formidable: 2.1.2
+      form-data: 4.0.4
+      formidable: 3.5.4
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.14.0
-      semver: 7.7.1
     transitivePeerDependencies:
       - supports-color
 
-  supertest@6.3.4:
+  supertest@7.1.3:
     dependencies:
       methods: 1.1.2
-      superagent: 8.1.2
+      superagent: 10.2.3
     transitivePeerDependencies:
       - supports-color
 

@@ -167,18 +167,3 @@ export const verifyMe = (req: Request, res: Response, next: NextFunction) => {
   req.isMyBet = req.isAuthenticated();
   next();
 };
-
-/**
- * Rate limiting middleware for betting
- */
-export const rateLimitBets = (options: {
-  maxBetsPerMinute?: number;
-  maxBetsPerHour?: number;
-}) => {
-  // This would need to be implemented with a proper rate limiting solution
-  // like Redis or in-memory cache
-  return (req: Request, res: Response, next: NextFunction) => {
-    // Placeholder implementation
-    next();
-  };
-};

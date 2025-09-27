@@ -12,6 +12,7 @@ import { authRouter, gameRouter, userRouter } from './routes';
 import './config/passport';
 import notFoundMiddleware from './middlewares/not-found';
 import { errorHandlerMiddleware } from './middlewares/error-handler';
+import { rateLimitRequests } from './middlewares/rateLimit.middleware';
 
 export const createServer = (): Express => {
   const app = express();
@@ -40,6 +41,14 @@ export const createServer = (): Express => {
     )
     .use(passport.initialize())
     .use(passport.session())
+    // Global lightweight rate limiter to protect endpoints
+    .use(
+      rateLimitRequests({
+        windowMs: 60 * 1000,
+        max: 300,
+        message: 'Too many requests - global limit',
+      })
+    )
     .get('/health', (_, res) => {
       return res.status(StatusCodes.OK).json({ ok: true });
     })
