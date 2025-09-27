@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: '/api/v1/auth/google/callback',
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || `${process.env.API_BASE_URL || 'http://localhost:5000'}/api/v1/auth/google/callback`,
     },
     async (_, __, profile, done) => {
       const profileInfo = {
@@ -20,26 +20,43 @@ passport.use(
       };
 
       try {
+        console.log('Processing Google profile:', {
+          id: profile.id,
+          email: profile.emails?.[0].value,
+          name: profile.displayName,
+        });
+
+        const email = profile.emails?.[0].value;
+        if (!email) {
+          console.error('No email provided by Google OAuth');
+          return done(new Error('No email provided by Google'), undefined);
+        }
+
         // Find the user by email
         let user = await db.user.findFirst({
-          where: { email: profile.emails?.[0].value || '' },
+          where: { email },
         });
+        
         if (!user) {
+          console.log('Creating new user for email:', email);
           user = await db.user.create({
             data: {
               ...profileInfo,
-              email: profile.emails?.[0].value || '',
+              email,
             },
           });
         } else {
+          console.log('Updating existing user:', user.id);
           user = await db.user.update({
             where: { id: user.id },
             data: profileInfo,
           });
         }
 
+        console.log('User authentication successful:', user.id);
         done(null, user);
       } catch (err) {
+        console.error('Google OAuth processing error:', err);
         done(err, undefined);
       }
     }

@@ -31,9 +31,11 @@ export const createServer = (): Express => {
       session({
         secret: process.env.COOKIE_SECRET || 'secr3T',
         cookie: {
-          secure: process.env.NODE_ENV === 'production' ? true : 'auto',
+          secure: process.env.NODE_ENV === 'production',
           httpOnly: true,
           maxAge: 2 * 24 * 60 * 60 * 1000,
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+          domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
         },
         resave: false,
         saveUninitialized: false,

@@ -19,31 +19,49 @@ const router: Router = Router();
 
 // Google authentication routes
 router.get('/google', (req, res, next) => {
-  // Get redirect URL from query parameter or use default
-  const redirectUrl =
-    (req.query.redirect_to as string) || process.env.CLIENT_URL;
-  const state = JSON.stringify({ redirect: redirectUrl });
+  try {
+    // Get redirect URL from query parameter or use default
+    const redirectUrl =
+      (req.query.redirect_to as string) || process.env.CLIENT_URL;
+    const state = JSON.stringify({ redirect: redirectUrl });
 
-  (
-    passport.authenticate('google', {
-      scope: ['profile', 'email'],
-      state: encodeURIComponent(state),
-    }) as RequestHandler
-  )(req, res, next);
+    console.log('Initiating Google OAuth with redirect:', redirectUrl);
+
+    (
+      passport.authenticate('google', {
+        scope: ['profile', 'email'],
+        state: encodeURIComponent(state),
+      }) as RequestHandler
+    )(req, res, next);
+  } catch (error) {
+    console.error('Google OAuth initiation error:', error);
+    next(error);
+  }
 });
 
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    failureRedirect: `${process.env.CLIENT_URL}/login`,
+    failureRedirect: `${process.env.CLIENT_URL}?error=auth_failed`,
   }) as RequestHandler,
   (req, res) => {
-    const state = req.query.state
-      ? (JSON.parse(decodeURIComponent(req.query.state as string)) as {
-          redirect?: string;
-        })
-      : {};
-    res.redirect(state.redirect || `${process.env.CLIENT_URL}`);
+    try {
+      console.log('Google authentication successful for user:', req.user);
+
+      const state = req.query.state
+        ? (JSON.parse(decodeURIComponent(req.query.state as string)) as {
+            redirect?: string;
+          })
+        : {};
+
+      const redirectUrl = state.redirect || `${process.env.CLIENT_URL}`;
+      console.log('Redirecting to:', redirectUrl);
+
+      res.redirect(redirectUrl);
+    } catch (error) {
+      console.error('Google callback processing error:', error);
+      res.redirect(`${process.env.CLIENT_URL}?error=callback_failed`);
+    }
   }
 );
 

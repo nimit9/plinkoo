@@ -75,7 +75,9 @@ jobs:
               -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
               -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
               -e CLIENT_URL="${{ secrets.CLIENT_URL }}" \
-              -e REDIRECT_URL="${{ secrets.REDIRECT_URL }}" \
+              -e API_BASE_URL="${{ secrets.API_BASE_URL }}" \
+              -e GOOGLE_CALLBACK_URL="${{ secrets.GOOGLE_CALLBACK_URL }}" \
+              -e COOKIE_DOMAIN="${{ secrets.COOKIE_DOMAIN }}" \
               ${{ secrets.DOCKER_USERNAME }}/simcasino-api:latest
 
       - name: Deployment Notification
