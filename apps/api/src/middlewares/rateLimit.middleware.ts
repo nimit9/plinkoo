@@ -1,8 +1,10 @@
 import type { Request, Response } from 'express';
 import type { User } from '@prisma/client';
 import rateLimit from 'express-rate-limit';
-import RedisStore from 'rate-limit-redis';
-import redis from '../utils/redisClient';
+
+// NOTE: Using the default in-memory store from `express-rate-limit`.
+// This is intended for single-instance or development environments only.
+// For production with multiple instances, replace with a shared store (Redis).
 
 /**
  * Rate limiting middleware for betting
@@ -21,11 +23,7 @@ export const rateLimitBets = (options: {
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 
-    // Redis store configuration
-    store: new RedisStore({
-      sendCommand: (command: string, ...args: string[]) =>
-        (redis as any).call(command, ...args) as Promise<any>,
-    }),
+    // Using default in-memory store (suitable for single-instance / dev only).
 
     handler: (req: Request, res: Response) => {
       res.status(429).json({
@@ -56,10 +54,7 @@ export const rateLimitRequests = (options?: {
     keyGenerator: (req: Request) => String((req.user as User)?.id || req.ip),
     standardHeaders: true,
     legacyHeaders: false,
-    store: new RedisStore({
-      sendCommand: (command: string, ...args: string[]) =>
-        (redis as any).call(command, ...args) as Promise<any>,
-    }),
+    // Using default in-memory store (suitable for single-instance / dev only).
     handler: (_req: Request, res: Response) => {
       res.status(429).json({ message });
     },
